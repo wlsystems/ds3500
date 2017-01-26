@@ -1,7 +1,9 @@
 ﻿// Skeleton written by Joe Zachary for CS 3500, January 2017
+// Formula by Dustin Shiozaki u0054455 Feb 2017
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Formulas
@@ -35,8 +37,108 @@ namespace Formulas
         /// If the formula is syntacticaly invalid, throws a FormulaFormatException with an 
         /// explanatory Message.
         /// </summary>
+        private string f = "";
+      
         public Formula(String formula)
         {
+            List<string> sl = new List<string>();
+            IEnumerable<String> ieb = GetTokens(formula);
+            int number = 0;
+            bool result2;
+            int counter = 0;
+            int previous = 0;  //the type of token; 1 = double, 2 operator, 3 = ( parenthesis, 4 = ) parenthesis
+            foreach (string s in ieb)
+            {
+                bool result = Int32.TryParse(s, out number);
+                {
+                    if (result)
+                    {
+                        if (previous == 1)
+                        {
+                            Console.WriteLine("error");
+                            previous = 1;
+                            continue;
+                        }         
+                        else
+                        {
+                            Console.WriteLine(number);
+                            continue;
+                        }
+                            
+                    }
+                    else
+                    {
+                        if (s.Equals(")"))
+                        {
+                            counter = counter - 1;
+                            ;
+                            if (counter < 0)
+                            {
+                                Console.Write("p error");
+                                break;
+                            }
+                            if (previous == 3)
+                            {
+                                Console.WriteLine("invalid");
+                                break;
+                            }
+                                
+                            previous = 3;
+                            continue;
+                        }
+
+                        else
+                        if (s.Equals("("))
+                        {
+                            counter = counter + 1;
+                            previous = 3;
+                            continue;  
+                        }
+
+                        else if (s.Equals("+"))
+                        {
+                            Console.WriteLine("add" + s);
+                            previous = 2;
+                            continue;
+                        }
+
+                        else if (s.Equals("-"))
+                        {
+                            Console.WriteLine("sub" + s);
+                            previous = 2;
+                            continue;
+                        }
+
+                        else if (s.Equals("*"))
+                        {
+                            Console.WriteLine("mul" + s);
+                            previous = 2;
+                            continue;
+                        }
+
+                        else if (s.Equals("/"))
+                        {
+                            Console.WriteLine("div" + s);
+                            previous = 2;
+                            continue;
+                        }                          
+                        
+                        if (result2 = s.Any(x => !char.IsLetter(x)))
+                        {
+                            Console.WriteLine("not found " + s);
+                            break;
+                        }                          
+                        else
+                        {
+                            Console.WriteLine(s + " is var");
+                            previous = 1;
+                        }
+                            
+                    }
+                }               
+            }
+            if (counter > 0)
+                Console.WriteLine("counter error");
         }
         /// <summary>
         /// Evaluates this Formula, using the Lookup delegate to determine the values of variables.  (The
