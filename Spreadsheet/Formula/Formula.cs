@@ -1,7 +1,9 @@
 ﻿// Skeleton written by Joe Zachary for CS 3500, January 2017
+// Formula by Dustin Shiozaki u0054455 Feb 2017
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Formulas
@@ -10,7 +12,7 @@ namespace Formulas
     /// Represents formulas written in standard infix notation using standard precedence
     /// rules.  Provides a means to evaluate Formulas.  Formulas can be composed of
     /// non-negative floating-point numbers, variables, left and right parentheses, and
-    /// the four binary operator symbols +, -, *, and /.  (The unary operators + and -
+    /// the four binary operator symbols +, -, *, and /.  (The unarry operators + and -
     /// are not allowed.)
     /// </summary>
     public class Formula
@@ -35,8 +37,109 @@ namespace Formulas
         /// If the formula is syntacticaly invalid, throws a FormulaFormatException with an 
         /// explanatory Message.
         /// </summary>
+        private string f = "";
+        int counter = 0;
+        int previous = 0;  //the type of token; 1 = double, 2 operator, 3 = ( parenthesis, 4 = ) parenthesis
+
         public Formula(String formula)
         {
+            List<string> sl = new List<string>();
+            IEnumerable<String> ieb = GetTokens(formula);
+            Stack<double> dbls = new Stack<double>();
+            Stack<string> ops = new Stack<string>();
+            foreach (string s in ieb)
+            {
+
+            }
+            if (counter > 0)
+                Console.WriteLine("counter error");
+        }
+
+        private string verify(String s, int previousType)
+        {
+            int number = 0;
+            bool result = Int32.TryParse(s, out number);
+            {
+                if (result)
+                {
+                    if (previous == 1)
+                    {
+                        Console.WriteLine("error");
+                        previous = 1;
+                    }
+                    else
+                    {
+                        Console.WriteLine(number);
+                        return s;
+                    }
+                }
+                else
+                {
+                    if (s.Equals(")"))
+                    {
+                        counter = counter - 1;
+                        ;
+                        if (counter < 0)
+                        {
+                            Console.Write("p error");
+                        }
+                        if (previous == 3)
+                        {
+                            Console.WriteLine("invalid");
+                        }
+                        previous = 3;
+                        return s;
+                    }
+
+                    else
+                    if (s.Equals("("))
+                    {
+                        counter = counter + 1;
+                        previous = 3;
+                        return s;
+                    }
+                    else if (s.Equals("+"))
+                    {
+                        if (previous == 2)
+                        {
+                            Console.WriteLine("double operator error");
+                        }
+                        else
+                        {
+                            previous = 2;
+                            return s;
+                        }
+                    }
+
+                    else if (s.Equals("-"))
+                    {
+                        previous = 2;
+                        return s;
+                    }
+
+                    else if (s.Equals("*"))
+                    {
+                        previous = 2;
+                        return s;
+                    }
+
+                    else if (s.Equals("/"))
+                    {
+                        previous = 2;
+                        return s;
+                    }
+                    string result2 = "";
+                    if (result2 = s.Any(x => !char.IsLetter(x)))
+                    {
+                        Console.WriteLine("not found " + s);
+                    }
+                    else
+                    {
+                        Console.WriteLine(s + " is var");
+                        previous = 1;
+                    }
+                }
+            }
         }
         /// <summary>
         /// Evaluates this Formula, using the Lookup delegate to determine the values of variables.  (The
