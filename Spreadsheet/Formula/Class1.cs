@@ -40,26 +40,14 @@ namespace Formulas
         /// </summary>
         private string formula = "";
         private int counter = 0; //counts parenthesis
-        private int counterx = 0; //tracks empty spaces
         private int counter2 = 0; //tracks the index of what the token is that is being checked
         private int previous = 0;  //the type of token; 1 = double, 2 = + , 3 = ( parenthesis, 4 = ) parenthesis, 5 = var, = 6 * , 7 = "/", 8 = "-"
-        private double result;
 
         /// <summary>
-        /// values[0..size-1] contains the elements of this ArrayList.
-        /// There can be up to size unused elements for future use.
+        /// The constructor throw exceptions if there is an invalid character at the beginning or end of the string
+        /// It also detects if an Operator token is in the first token and throws an exception if so.
         /// </summary>
-
-        public double Lookup4(String v)
-        {
-            switch (v)
-            {
-                case "x": return 4.0;
-                case "y": return 6.0;
-                case "z": return 8.0;
-                default: throw new UndefinedVariableException(v);
-            }
-        }
+        /// <param name="_formula"></param>
         public Formula(String _formula)
         {
             this.formula = _formula;
@@ -77,6 +65,36 @@ namespace Formulas
                 throw new FormulaFormatException(formula); //throw exception if last token is an operator
         }
 
+        /// <summary>
+        /// values[0..size-1] contains the elements of this ArrayList.
+        /// There can be up to size unused elements for future use.
+        /// </summary>
+
+        public double Lookup4(String v)
+        {
+            switch (v)
+            {
+                case "x": return 4.0;
+                case "y": return 6.0;
+                case "z": return 8.0;
+                default: throw new UndefinedVariableException(v);
+            }
+        }  
+
+        /// <summary>
+        /// Checks the sequence of the tokens and throws exceptions according to the following rules
+        /// There can be no invalid tokens.
+        /// There must be at least one token.
+        /// The total number of opening parentheses must equal the total number of closing parentheses.
+        /// The first token of a formula must be a number, a variable, or an opening parenthesis.
+        /// The first token of a formula must be a number, a variable, or an opening parenthesis.
+        /// Any token that immediately follows an opening parenthesis or an operator must be either a number, a variable, or an opening parenthesis. 
+        /// Any token that immediately follows a number, a variable, or a closing parenthesis must be either an operator or a closing parenthesis.
+        /// When reading tokens from left to right, at no point should the number of closing parentheses seen so far be greater than the number of opening parentheses seen so far.
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="s"></param>
+        /// <returns></returns>
         private bool orderCheck(int current, string s)
         {
             if (current == 1) //1=double. example 3: diallowed: 3 3, 3 z, ) 3  allowed: 3 *, (3 
@@ -140,6 +158,11 @@ namespace Formulas
             throw new FormulaFormatException(s);
         }
 
+        /// <summary>
+        /// Verify does checking to ensure that there are no invalid formulas.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         private string verify(string s)
         {
             double number = 0;
@@ -149,7 +172,7 @@ namespace Formulas
                 {
                     if (number >= 0)
                     {
-                        if (orderCheck(1, s))
+                        if (orderCheck(1, s))  //see the order method for a description of what tokens the integers map to. 
                         {
                             return s;
                         }
@@ -504,7 +527,7 @@ namespace Formulas
     public class FormulaFormatException : Exception
     {
         /// <summary>
-        /// Constructs a FormulaFormatException containing the explanatory message..
+        /// Constructs a FormulaFormatException containing the explanatory message.
         /// </summary>
         public FormulaFormatException(String message) : base(message)
         {
@@ -512,7 +535,7 @@ namespace Formulas
     }
 
     /// <summary>
-    /// Used to report errors that occur when evaluating a Formula.
+    /// Used to report errors that occur when evaluating a Formula..
     /// </summary>
     [Serializable]
     public class FormulaEvaluationException : Exception
