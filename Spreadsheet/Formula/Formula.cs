@@ -504,7 +504,7 @@ namespace Formulas
     public class FormulaFormatException : Exception
     {
         /// <summary>
-        /// Constructs a FormulaFormatException containing the explanatory message.
+        /// Constructs a FormulaFormatException containing the explanatory message..
         /// </summary>
         public FormulaFormatException(String message) : base(message)
         {
