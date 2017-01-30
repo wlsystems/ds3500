@@ -3,6 +3,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Formulas;
+using System.Collections;
 
 namespace FormulaTestCases
 {
@@ -22,7 +23,8 @@ namespace FormulaTestCases
         [TestMethod]
         [ExpectedException(typeof(FormulaFormatException))]
         public void Construct1()
-        {
+        { 
+            
             Formula f = new Formula("_");
         }
 
