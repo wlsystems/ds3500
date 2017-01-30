@@ -131,7 +131,7 @@ namespace Formulas
     }
 
     /// <summary>
-    /// Used to report errors that occur when evaluating a Formula.
+    /// Used to report errors that occur when evaluating a Formula..
     /// </summary>
     [Serializable]
     public class FormulaEvaluationException : Exception
