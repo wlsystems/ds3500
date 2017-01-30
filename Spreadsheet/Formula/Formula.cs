@@ -1,16 +1,19 @@
 ﻿// Skeleton written by Joe Zachary for CS 3500, January 2017
+// Formula by Dustin Shiozaki u0054455 Feb 2017
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Formulas
 {
+
     /// <summary>
     /// Represents formulas written in standard infix notation using standard precedence
     /// rules.  Provides a means to evaluate Formulas.  Formulas can be composed of
     /// non-negative floating-point numbers, variables, left and right parentheses, and
-    /// the four binary operator symbols +, -, *, and /.  (The unary operators + and -
+    /// the four binary operator symbols +, -, *, and /.  (The unarry operators + and -
     /// are not allowed.)
     /// </summary>
     public class Formula
@@ -35,9 +38,176 @@ namespace Formulas
         /// If the formula is syntacticaly invalid, throws a FormulaFormatException with an 
         /// explanatory Message.
         /// </summary>
-        public Formula(String formula)
+        private string formula = "";
+        private int counter = 0; //counts parenthesis
+        private int counterx = 0; //tracks empty spaces
+        private int counter2 = 0; //tracks the index of what the token is that is being checked
+        private int previous = 0;  //the type of token; 1 = double, 2 = + , 3 = ( parenthesis, 4 = ) parenthesis, 5 = var, = 6 * , 7 = "/", 8 = "-"
+        private double result;
+
+        /// <summary>
+        /// values[0..size-1] contains the elements of this ArrayList.
+        /// There can be up to size unused elements for future use.
+        /// </summary>
+
+        public double Lookup4(String v)
         {
+            switch (v)
+            {
+                case "x": return 4.0;
+                case "y": return 6.0;
+                case "z": return 8.0;
+                default: throw new UndefinedVariableException(v);
+            }
         }
+        public Formula(String _formula)
+        {
+            this.formula = _formula;
+            IEnumerable<String> ieb = GetTokens(formula);
+            foreach (string s in ieb)
+            {
+                verify(s);
+                counter2++;
+            }
+            if (counter > 0)
+                throw new FormulaFormatException(formula); //throw exception if parenthesis unbalance 
+            if (counter2 == 0)
+                throw new FormulaFormatException(formula); //throw exception if contains all empty spaces
+            if (previous == 2)
+                throw new FormulaFormatException(formula); //throw exception if last token is an operator
+        }
+
+        private bool orderCheck(int current, string s)
+        {
+            if (current == 1) //1=double. example 3: diallowed: 3 3, 3 z, ) 3  allowed: 3 *, (3 
+            {
+                if (previous == 1 | previous == 5 | previous == 4)
+                    throw new FormulaFormatException(s);
+                else
+                {
+                    previous = 1;
+                    return true;
+                }
+
+            }
+            if (current == 2)
+            { //2 = operator not allowed: + +, ( +, 
+                if (previous == 2 | previous == 3 | counter2 == 0)
+                    throw new FormulaFormatException(s);
+                else
+                {
+                    if (s.Equals("+"))
+                        previous = 2;
+                    else if (s.Equals("-"))
+                        previous = 8;
+                    else if (s.Equals("*"))
+                        previous = 6;
+                    else if (s.Equals("/"))
+                        previous = 7;
+                    return true;
+                }
+            }
+            if (current == 3) //3 = (; previous not allowed: ), 1
+            {
+                if (previous == 1 | previous == 4)
+                    throw new FormulaFormatException(s);
+                else
+                {
+                    previous = 3;
+                    return true;
+                }
+            }
+            if (current == 4) //4 = ); not allowed: (, *
+            {
+                if (previous == 2 | previous == 3 | previous == 6 | counter2 == 0)
+                    throw new FormulaFormatException(s);
+                else
+                {
+                    previous = 4;
+                    return true;
+                }
+            }
+            if (current == 5) //5 = x; previous not allowed: ), *
+            {
+                if (previous == 1 | previous == 5 | previous == 4)
+                    throw new FormulaFormatException(s);
+                else
+                {
+                    previous = 5;
+                    return true;
+                }
+            }
+            throw new FormulaFormatException(s);
+        }
+
+        private string verify(string s)
+        {
+            double number = 0;
+            bool result = Double.TryParse(s, out number);
+            {
+                if (result)
+                {
+                    if (number >= 0)
+                    {
+                        if (orderCheck(1, s))
+                        {
+                            return s;
+                        }
+
+                        else
+                        {
+                            throw new UndefinedVariableException(s);
+                        }
+                    }
+                }
+                else
+                {
+                    if (s.Equals("("))
+                    {
+                        counter = counter + 1;
+                        if (orderCheck(3, s))
+                        {
+                            return s;
+                        }
+                    }
+                    else if (s.Equals(")"))
+                    {
+                        counter = counter - 1;
+
+                        if (counter < 0)
+                        {
+                            throw new FormulaFormatException(s); ;
+                        }
+                        else if (orderCheck(4, s))
+                        {
+                            return s;
+                        }
+                    }
+                    else if (s.Equals("+") | s.Equals("-") | s.Equals("*") | s.Equals("/"))
+                    {
+                        if (orderCheck(2, s))
+                        {
+                            return s;
+                        }
+                        else
+                        {
+                            throw new FormulaFormatException(s);
+                        }
+                    }
+
+                    else if (s != "+" | s != "-" | s != "*" | s != "/" | s != "(" | s != ")")
+                    {
+                        if (!s.All(Char.IsLetterOrDigit))
+                            throw new FormulaFormatException(s);
+                        if (orderCheck(5, s))
+                            return s;
+                    }
+                }
+            }
+            return s;
+        }
+
+
         /// <summary>
         /// Evaluates this Formula, using the Lookup delegate to determine the values of variables.  (The
         /// delegate takes a variable name as a parameter and returns its value (if it has one) or throws
@@ -49,7 +219,217 @@ namespace Formulas
         /// </summary>
         public double Evaluate(Lookup lookup)
         {
-            return 0;
+            List<string> sl = new List<string>();
+            IEnumerable<String> ieb = GetTokens(formula);
+            Stack<double> dbls = new Stack<double>();
+            Stack<string> ops = new Stack<string>();
+            int count = 0;
+            int length = 0;
+            string temp2 = "";
+            string temp = "";
+            Stack<double> sDBL = new Stack<double>();
+            Stack<string> sOP = new Stack<string>();
+            foreach (string s in ieb) //get length
+                length++;
+            previous = 0;
+            foreach (string s in ieb)
+            {
+                double last;
+                double dbl;
+                last = previous;
+                temp = s;
+                temp2 = "";
+                count++;
+                double var1, var2;
+                verify(s);
+                if (previous == 1 | previous == 5) //if the variable in question is double or var
+                {
+                    if (previous == 1) //1 means double
+                    {
+                        dbl = Double.Parse(s);
+                        if (last == 6) //*
+                        {
+                            sDBL.Push(dbl * sDBL.Pop());
+                            sOP.Pop();
+                        }
+
+                        else if (last == 7)
+                        { // "/"
+                            if (dbl != 0)
+                            {
+                                sDBL.Push(sDBL.Pop() / dbl);
+                                sOP.Pop();
+                            }
+                            else
+                                throw new FormulaEvaluationException(s);
+                        }
+                        else
+                        {
+                            sDBL.Push(dbl);
+                        }
+
+                    }
+                    if (previous == 5)
+                    {
+
+                        try
+                        {
+                            dbl = lookup(s);
+                            if (last == 6)
+                            {
+                                sDBL.Push(dbl * sDBL.Pop());
+                                sOP.Pop();
+                            }
+
+                            else if (last == 7)
+                            {
+                                sDBL.Push(sDBL.Pop() / dbl);
+                                sOP.Pop();
+                            }
+
+                            else
+                            {
+                                sDBL.Push(dbl);
+                            }
+
+                        }
+                        catch (UndefinedVariableException)
+                        {
+                            throw new FormulaEvaluationException("invalid formula");
+                        }
+
+                    }
+                }
+                else
+                {
+                    if ((previous == 2 | previous == 4 | previous == 7 | previous == 8) && count == 1)
+                    {
+                        throw new UndefinedVariableException("invalid formula"); //detects problems with first char
+                    }
+                    else if ((count == length) && (previous == 2 | previous == 3 | previous == 7 | previous == 8 | previous == 6))
+                    {
+                        throw new UndefinedVariableException("invalid formula"); //detects problems with last char
+                    }
+                    if (temp.Equals("+") | temp.Equals("-"))
+                    {
+                        if (sOP.Count > 0)
+                        {
+                            temp2 = sOP.Peek();
+                        }
+                        if (temp2 == "+") //+
+                        {
+                            var1 = sDBL.Pop();
+                            var2 = sDBL.Pop();
+                            dbl = var1 + var2;
+                            sOP.Pop();
+                            sDBL.Push(dbl);
+                            sOP.Push(temp);
+                        }
+                        else if (temp2 == "-") //-
+                        {
+                            var1 = sDBL.Pop();
+                            var2 = sDBL.Pop();
+                            dbl = var2 - var1;
+                            sOP.Pop();
+                            sOP.Push(temp);
+                            sDBL.Push(dbl);
+                        }
+                        else
+                        {
+                            sOP.Push(temp);
+                        }
+
+                    }
+                    else if (temp.Equals("(") | temp.Equals("*") | temp.Equals("/"))
+                    {
+
+                        sOP.Push(temp);
+                    }
+
+                    if (temp.Equals(")"))
+                    {
+                        if (sOP.Any())
+                        {
+                            temp2 = sOP.Peek();
+                            if (temp2.Equals("+")) //+
+                            {
+                                var1 = sDBL.Pop();
+                                var2 = sDBL.Pop();
+                                sDBL.Push(var2 + var1);
+                                sOP.Pop();
+                            }
+                            else if (temp2.Equals("-")) //-
+                            {
+                                var1 = sDBL.Pop();
+                                var2 = sDBL.Pop();
+                                sDBL.Push(var2 - var1);
+                                sOP.Pop();
+                            }
+                        }
+                        sOP.Pop();
+                        if (sOP.Any())
+                        {
+                            temp2 = sOP.Peek();
+                            if (temp2.Equals("*")) //+
+                            {
+                                var1 = sDBL.Pop();
+                                var2 = sDBL.Pop();
+                                sDBL.Push(var2 * var1);
+                                sOP.Pop();
+                            }
+                            else if (temp2.Equals("/")) //-
+                            {
+                                var1 = sDBL.Pop();
+                                var2 = sDBL.Pop();
+                                if (var1 != 0)
+                                    sDBL.Push(var2 / var1);
+                                else throw new FormulaEvaluationException(s);
+                                sOP.Pop();
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (sOP.Any())
+            {
+                Console.Write(sOP.Count + " " + sDBL.Count + " "); //testing purposes
+                //Console.Write(sDBL.Pop()); Console.Write(sDBL.Pop()); Console.Write(sDBL.Pop());
+                temp2 = sOP.Peek();
+                if (temp2.Equals("+"))
+                {
+                    double var1 = sDBL.Pop();
+                    double var2 = sDBL.Pop();
+                    return (var2 + var1);
+                }
+                if (temp2.Equals("-"))
+                {
+                    double var1 = sDBL.Pop();
+                    double var2 = sDBL.Pop();
+                    return (var2 - var1);
+                }
+                if (temp2.Equals("*"))
+                {
+                    double var1 = sDBL.Pop();
+                    double var2 = sDBL.Pop();
+                    return (var2 * var1);
+                }
+                if (temp2.Equals("/"))
+                {
+                    double var1 = sDBL.Pop();
+                    double var2 = sDBL.Pop();
+                    if (var1 != 0)
+                        return (var2 / var1);
+                    else
+                        throw new FormulaEvaluationException(formula);
+                }
+            }
+            else
+            {
+                return sDBL.Pop();
+            }
+
+            return sDBL.Pop();
         }
 
         /// <summary>
@@ -88,6 +468,7 @@ namespace Formulas
             }
         }
     }
+
 
     /// <summary>
     /// A Lookup method is one that maps some strings to double values.  Given a string,
