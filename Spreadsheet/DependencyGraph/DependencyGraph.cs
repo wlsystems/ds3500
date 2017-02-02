@@ -1,4 +1,5 @@
 ﻿// Skeleton implementation written by Joe Zachary for CS 3500, January 2017.
+// Modified by Dustin Shiozaki 1/30/2017 u0054455
 
 using System;
 using System.Collections.Generic;
@@ -46,13 +47,24 @@ namespace Dependencies
     /// the test cases with which you will be graded will create massive DependencyGraphs.  If you
     /// build an inefficient DependencyGraph this week, you will be regretting it for the next month.
     /// </summary>
+    /// 
+
+    
+
     public class DependencyGraph
     {
+        private Dictionary<string, HashSet<string>> dd; //a directed graph going from dependents to dependees (s,t)
+        private Dictionary<string, HashSet<string>> de; //a directed graph going from  dependees todependents  (t, s)
+        private int count; //number of dependencies
+
         /// <summary>
         /// Creates a DependencyGraph containing no dependencies.
         /// </summary>
         public DependencyGraph()
         {
+            dd = new Dictionary<string, HashSet<string>>(); 
+            de = new Dictionary<string, HashSet<string>>();
+            count = 0;
         }
 
         /// <summary>
@@ -60,7 +72,9 @@ namespace Dependencies
         /// </summary>
         public int Size
         {
-            get { return 0; }
+            get {
+                return count;
+            }
         }
 
         /// <summary>
@@ -68,7 +82,10 @@ namespace Dependencies
         /// </summary>
         public bool HasDependents(string s)
         {
-            return false;
+            if (dd.ContainsKey(s))
+                return true;
+            else
+                return false;
         }
 
         /// <summary>
@@ -76,15 +93,27 @@ namespace Dependencies
         /// </summary>
         public bool HasDependees(string s)
         {
-            return false;
+            if (de.ContainsKey(s))
+                return true;
+            else
+                return false;
         }
 
         /// <summary>
         /// Enumerates dependents(s).  Requires s != null.
         /// </summary>
-        public IEnumerable<string> GetDependents(string s)
+        public IEnumerable<string> GetDependents(string s) 
         {
-            return null;
+            if (HasDependents(s))
+            {
+                IEnumerator<string> iet = dd[s].GetEnumerator();
+                while (iet.MoveNext())
+                {
+                    yield return iet.Current;
+                }
+            }
+            else
+                yield return null;
         }
 
         /// <summary>
@@ -92,7 +121,16 @@ namespace Dependencies
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
-            return null;
+            if (HasDependees(s))
+            {
+                IEnumerator<string> iet = de[s].GetEnumerator();
+                while (iet.MoveNext())
+                {
+                    yield return iet.Current;
+                }
+            }
+            else
+                yield return null;
         }
 
         /// <summary>
@@ -102,6 +140,26 @@ namespace Dependencies
         /// </summary>
         public void AddDependency(string s, string t)
         {
+            List<string> bag = new List<string>();
+            if (dd.ContainsKey(s))
+            {
+                if (!dd[s].Contains(t))//only add it if it doesn't contain t
+                { 
+                    dd[s].Add(t);
+                    de[t].Add(s);
+                    count++;
+                }                
+            }
+            else
+            {
+                HashSet<string> dependents = new HashSet<string>();
+                HashSet<string> dependees = new HashSet<string>();
+                dependents.Add(t);
+                dependees.Add(s);
+                dd.Add(s, dependents);
+                de.Add(t, dependees);
+                count++;
+            }
         }
 
         /// <summary>
@@ -111,6 +169,11 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
+            if(dd.ContainsKey(s))
+            {
+                dd[s].Remove(t);
+                de[t].Remove(s);
+            }
         }
 
         /// <summary>
@@ -120,6 +183,20 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
+            
+            if (dd.ContainsKey(s))
+            {
+                IEnumerator<string> iet = dd[s].GetEnumerator(); //get all dependents using the key s. must save them to remove from the reverse graph.
+                while (iet.MoveNext()) //iterate over the dependents
+                {
+                    de[iet.Current].Remove(s); //remove the dependents from the reverse graph
+                    count--;
+                }                   
+                dd[s].Clear(); //clear the dependents from the regular graph.
+                foreach (string str in newDependents)
+                    AddDependency(s, str); //add the dependents to both graphs         
+            }
+                    
         }
 
         /// <summary>
@@ -129,6 +206,7 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
+
         }
     }
 }
