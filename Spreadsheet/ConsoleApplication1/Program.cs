@@ -12,18 +12,16 @@ namespace ConsoleApplication1
         static void Main(string[] args)
         {
             DependencyGraph dg = new DependencyGraph();
-            dg.AddDependency("s", "a");
-            dg.AddDependency("s", "a");
+            dg.AddDependency("s", "1");
+            dg.AddDependency("s", "3");
+            dg.AddDependency("s", "5");
             IEnumerable<string> s = dg.GetDependents("s");
-            foreach (String str in s)
-                Console.Write(str);
-
-            IEnumerable<string> dee = dg.GetDependees("a");
- 
-            foreach (String str in dee)
-                Console.Write(str);
-
-            
+            dg.AddDependency("a", "2");
+            dg.AddDependency("a", "4");
+            dg.AddDependency("a", "6");
+            dg.ReplaceDependents("a", s);
+            IEnumerable < string > s6 = dg.GetDependees("6");
+            IEnumerator<string> iet = s6.GetEnumerator();
         }
     }
 }

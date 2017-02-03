@@ -46,6 +46,10 @@ namespace Dependencies
     /// with as well acceptably efficient according to the guidelines in the PS3 writeup. Some of
     /// the test cases with which you will be graded will create massive DependencyGraphs.  If you
     /// build an inefficient DependencyGraph this week, you will be regretting it for the next month.
+    /// 
+    /// Uses two graphs to improve performance.  One is the reverse of the other.  So for every s,t in
+    /// graph there is a t,s in reverse graph.   Both dicitonaries have a hashset of strings which 
+    /// allows each key to have multiple dependents. 
     /// </summary>
     /// 
 
@@ -53,8 +57,8 @@ namespace Dependencies
 
     public class DependencyGraph
     {
-        private Dictionary<string, HashSet<string>> dd; //a directed graph going from dependents to dependees (s,t)
-        private Dictionary<string, HashSet<string>> de; //a directed graph going from  dependees todependents  (t, s)
+        private Dictionary<string, HashSet<string>> dd; //a dictionary going from dependents to dependees (s,t)
+        private Dictionary<string, HashSet<string>> de; //a dictionary going from  dependees todependents  (t, s)
         private int count; //number of dependencies
 
         /// <summary>
@@ -62,7 +66,7 @@ namespace Dependencies
         /// </summary>
         public DependencyGraph()
         {
-            dd = new Dictionary<string, HashSet<string>>(); 
+            dd = new Dictionary<string, HashSet<string>>();
             de = new Dictionary<string, HashSet<string>>();
             count = 0;
         }
@@ -85,7 +89,7 @@ namespace Dependencies
             if (dd.ContainsKey(s))
                 return true;
             else
-                return false;
+                return false;  
         }
 
         /// <summary>
@@ -140,24 +144,38 @@ namespace Dependencies
         /// </summary>
         public void AddDependency(string s, string t)
         {
-            List<string> bag = new List<string>();
-            if (dd.ContainsKey(s))
+            HashSet<string> dependents; 
+            HashSet<string> dependees;
+            if (dd.ContainsKey(s)) //first check if the regular dictionary contains the key or dependent
             {
-                if (!dd[s].Contains(t))//only add it if it doesn't contain t
-                { 
-                    dd[s].Add(t);
-                    de[t].Add(s);
+                if (!dd[s].Contains(t))//only add the dependee it if it doesn't contain it. It doesn't really matter with hashsets but it would throw off the count. This way the count is incremented twice in the case that a duplicate was added.
+                {
+                    dd[s].Add(t); //add the dependee to the dependent graph
+                    if (de.ContainsKey(t)) //this is necessary because the key could already exist in the reverse graph even though the key in the regular graph may not exist (because there can be multiple instances of the same dependee under different keys)
+                        de[t].Add(s);
+                    else  //create a new hashset and add the string to the set and the set to the dictionary
+                    {
+                        dependees = new HashSet<string>();
+                        dependees.Add(s);
+                        de.Add(t, dependees);
+                    }
                     count++;
-                }                
+                }                            
             }
             else
             {
-                HashSet<string> dependents = new HashSet<string>();
-                HashSet<string> dependees = new HashSet<string>();
+                //first create a new hashset of dependees and then add the new set to the dictionary
+                dependents = new HashSet<string>();
                 dependents.Add(t);
-                dependees.Add(s);
                 dd.Add(s, dependents);
-                de.Add(t, dependees);
+                if (de.ContainsKey(t))
+                    de[t].Add(s);
+                else
+                {
+                    dependees = new HashSet<string>(); //next add the dependees to the reverse dictionary
+                    dependees.Add(s);
+                    de.Add(t, dependees);
+                }
                 count++;
             }
         }
@@ -169,10 +187,19 @@ namespace Dependencies
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
+            Console.Write(s);
             if(dd.ContainsKey(s))
             {
-                dd[s].Remove(t);
-                de[t].Remove(s);
+                if (dd[s].Contains(t))
+                {
+                    dd[s].Remove(t); //remove the dependee if it as no dependents
+                    if (dd[s].Count == 0)
+                        dd.Remove(s);
+                    de[t].Remove(s);
+                    if (de[t].Count == 0)  //remove the dependents from the reverse graph
+                        de.Remove(t);
+                    count--;
+                }              
             }
         }
 
@@ -183,20 +210,20 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            
             if (dd.ContainsKey(s))
             {
                 IEnumerator<string> iet = dd[s].GetEnumerator(); //get all dependents using the key s. must save them to remove from the reverse graph.
                 while (iet.MoveNext()) //iterate over the dependents
                 {
                     de[iet.Current].Remove(s); //remove the dependents from the reverse graph
+                    if (de[iet.Current].Count == 0) //remove the key from the reverse graph it it has no entries
+                        de.Remove(iet.Current);
                     count--;
                 }                   
                 dd[s].Clear(); //clear the dependents from the regular graph.
                 foreach (string str in newDependents)
                     AddDependency(s, str); //add the dependents to both graphs         
-            }
-                    
+            }              
         }
 
         /// <summary>
@@ -206,7 +233,20 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-
+            if (de.ContainsKey(t))
+            {
+                IEnumerator<string> iet = de[t].GetEnumerator(); //get all dependees using the key t. must save them to remove from the reverse graph.
+                while (iet.MoveNext()) //iterate over the dependees
+                {
+                    dd[iet.Current].Remove(t); //remove the dependents from the graph
+                    if (dd[iet.Current].Count == 0)
+                        dd.Remove(iet.Current);
+                    count--;
+                }
+                de[t].Clear(); //clear the dependents from the reverse graph.
+                foreach (string str in newDependees)
+                    AddDependency(t, str); //add the dependents to both graphs         
+            }
         }
     }
 }
