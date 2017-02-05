@@ -16,7 +16,7 @@ namespace Formulas
     /// the four binary operator symbols +, -, *, and /.  (The unarry operators + and -
     /// are not allowed.)
     /// </summary>
-    public class Formula
+    public struct Formula
     {
         /// <summary>
         /// Creates a Formula from a string that consists of a standard infix expression composed
@@ -38,10 +38,7 @@ namespace Formulas
         /// If the formula is syntacticaly invalid, throws a FormulaFormatException with an 
         /// explanatory Message.
         /// </summary>
-        private string formula = "";
-        private int counter = 0; //counts parenthesis
-        private int counter2 = 0; //tracks the index of what the token is that is being checked
-        private int previous = 0;  //the type of token; 1 = double, 2 = + , 3 = ( parenthesis, 4 = ) parenthesis, 5 = var, = 6 * , 7 = "/", 8 = "-"
+        private string formula;
 
         /// <summary>
         /// The constructor throw exceptions if there is an invalid character at the beginning or end of the string
@@ -51,35 +48,8 @@ namespace Formulas
         public Formula(String _formula)
         {
             this.formula = _formula;
-            IEnumerable<String> ieb = GetTokens(formula);
-            foreach (string s in ieb)
-            {
-                verify(s);
-                counter2++;
-            }
-            if (counter > 0)
-                throw new FormulaFormatException(formula); //throw exception if parenthesis unbalance 
-            if (counter2 == 0)
-                throw new FormulaFormatException(formula); //throw exception if contains all empty spaces
-            if (previous == 2)
-                throw new FormulaFormatException(formula); //throw exception if last token is an operator
+            verify(); 
         }
-
-        /// <summary>
-        /// values[0..size-1] contains the elements of this ArrayList.
-        /// There can be up to size unused elements for future use.
-        /// </summary>
-
-        public double Lookup4(String v)
-        {
-            switch (v)
-            {
-                case "x": return 4.0;
-                case "y": return 6.0;
-                case "z": return 8.0;
-                default: throw new UndefinedVariableException(v);
-            }
-        }  
 
         /// <summary>
         /// Checks the sequence of the tokens and throws exceptions according to the following rules
@@ -95,67 +65,33 @@ namespace Formulas
         /// <param name="current"></param>
         /// <param name="s"></param>
         /// <returns></returns>
-        private bool orderCheck(int current, string s)
+        private void orderCheck(int current, string s, int previous, int counter2)
         {
             if (current == 1) //1=double. example 3: diallowed: 3 3, 3 z, ) 3  allowed: 3 *, (3 
             {
                 if (previous == 1 | previous == 5 | previous == 4)
                     throw new FormulaFormatException(s);
-                else
-                {
-                    previous = 1;
-                    return true;
-                }
-
             }
-            if (current == 2)
+            if (current == 2 | current == 8 | current == 6 |current == 7)
             { //2 = operator not allowed: + +, ( +, 
                 if (previous == 2 | previous == 3 | counter2 == 0)
                     throw new FormulaFormatException(s);
-                else
-                {
-                    if (s.Equals("+"))
-                        previous = 2;
-                    else if (s.Equals("-"))
-                        previous = 8;
-                    else if (s.Equals("*"))
-                        previous = 6;
-                    else if (s.Equals("/"))
-                        previous = 7;
-                    return true;
-                }
             }
             if (current == 3) //3 = (; previous not allowed: ), 1
             {
                 if (previous == 1 | previous == 4)
                     throw new FormulaFormatException(s);
-                else
-                {
-                    previous = 3;
-                    return true;
-                }
             }
             if (current == 4) //4 = ); not allowed: (, *
             {
                 if (previous == 2 | previous == 3 | previous == 6 | counter2 == 0)
                     throw new FormulaFormatException(s);
-                else
-                {
-                    previous = 4;
-                    return true;
-                }
             }
             if (current == 5) //5 = x; previous not allowed: ), *
             {
                 if (previous == 1 | previous == 5 | previous == 4)
                     throw new FormulaFormatException(s);
-                else
-                {
-                    previous = 5;
-                    return true;
-                }
             }
-            throw new FormulaFormatException(s);
         }
 
         /// <summary>
@@ -163,71 +99,69 @@ namespace Formulas
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private string verify(string s)
+        private void verify()
+        {
+            IEnumerable<String> ieb = GetTokens(formula);
+            int counter=0; //counts parenthesis
+            int counter2=0; //tracks the index of what the token is that is being checked
+            int previous=0;  //the type of token; 1 = double, 2 = + , 3 = ( parenthesis, 4 = ) parenthesis, 5 = var, = 6 * , 7 = "/", 8 = "-"
+            int currentType = 0;
+            foreach (string s in ieb)
+            {
+                previous = currentType;
+                counter2++;
+                currentType = getType(s);  
+                //see the order method for a description of what tokens the integers map to. 
+                if (currentType == 3)
+                    counter = counter + 1;
+                else if (currentType == 4)
+                {
+                    counter = counter - 1;
+                    if (counter < 0)
+                        throw new FormulaFormatException(s);
+                }
+                orderCheck(currentType, s, previous, counter2);
+                if ((currentType == 2 | currentType == 4 | currentType == 7 | currentType == 8 | currentType == 6) && counter2 == 1)
+                    throw new FormulaFormatException(formula); //detects problems with first char
+            }
+            Console.WriteLine(currentType);
+            if (counter > 0)
+                throw new FormulaFormatException(formula); //throw exception if parenthesis unbalanced
+            if (counter2 == 0)
+                throw new FormulaFormatException(formula); //throw exception if contains all empty spaces
+            if (currentType == 2 | currentType == 3 | currentType == 7 | currentType == 8 | currentType == 6)
+                throw new FormulaFormatException(formula); //detects problems with last char
+        }
+        private int getType(string s)
         {
             double number = 0;
-            bool result = Double.TryParse(s, out number);
+            if (Double.TryParse(s, out number))
             {
-                if (result)
-                {
-                    if (number >= 0)
-                    {
-                        if (orderCheck(1, s))  //see the order method for a description of what tokens the integers map to. 
-                        {
-                            return s;
-                        }
-
-                        else
-                        {
-                            throw new UndefinedVariableException(s);
-                        }
-                    }
-                }
+                if (number >= 0)
+                    return 1;
                 else
-                {
-                    if (s.Equals("("))
-                    {
-                        counter = counter + 1;
-                        if (orderCheck(3, s))
-                        {
-                            return s;
-                        }
-                    }
-                    else if (s.Equals(")"))
-                    {
-                        counter = counter - 1;
-
-                        if (counter < 0)
-                        {
-                            throw new FormulaFormatException(s); ;
-                        }
-                        else if (orderCheck(4, s))
-                        {
-                            return s;
-                        }
-                    }
-                    else if (s.Equals("+") | s.Equals("-") | s.Equals("*") | s.Equals("/"))
-                    {
-                        if (orderCheck(2, s))
-                        {
-                            return s;
-                        }
-                        else
-                        {
-                            throw new FormulaFormatException(s);
-                        }
-                    }
-
-                    else if (s != "+" | s != "-" | s != "*" | s != "/" | s != "(" | s != ")")
-                    {
-                        if (!s.All(Char.IsLetterOrDigit))
-                            throw new FormulaFormatException(s);
-                        if (orderCheck(5, s))
-                            return s;
-                    }
-                }
+                    throw new UndefinedVariableException(s);
             }
-            return s;
+            else if (s.Equals("+"))
+                return 2;
+            else if (s.Equals("("))
+                return 3;
+            else if (s.Equals(")"))
+                return 4;
+            else if (s.Equals("*"))
+                return 6;
+            else if (s.Equals("/"))
+                return 7;
+            else if (s.Equals("-"))
+                return 8;
+            else if (s != "+" | s != "-" | s != "*" | s != "/" | s != "(" | s != ")")
+            {
+                if (!s.All(Char.IsLetterOrDigit))
+                    throw new FormulaFormatException(s);
+                else
+                    return 5;
+            }
+            else return 0;
         }
 
 
@@ -242,29 +176,28 @@ namespace Formulas
         /// </summary>
         public double Evaluate(Lookup lookup)
         {
+            if (formula == null)
+                formula = "0";
             List<string> sl = new List<string>();
             IEnumerable<String> ieb = GetTokens(formula);
             Stack<double> dbls = new Stack<double>();
             Stack<string> ops = new Stack<string>();
             int count = 0;
-            int length = 0;
             string temp2 = "";
             string temp = "";
             Stack<double> sDBL = new Stack<double>();
             Stack<string> sOP = new Stack<string>();
-            foreach (string s in ieb) //get length
-                length++;
-            previous = 0;
+            int last = 0;
+            int previous = 0;
             foreach (string s in ieb)
             {
-                double last;
-                double dbl;
                 last = previous;
+                previous = getType(s);
+                double dbl;
                 temp = s;
                 temp2 = "";
                 count++;
                 double var1, var2;
-                verify(s);
                 if (previous == 1 | previous == 5) //if the variable in question is double or var
                 {
                     if (previous == 1) //1 means double
@@ -290,7 +223,6 @@ namespace Formulas
                         {
                             sDBL.Push(dbl);
                         }
-
                     }
                     if (previous == 5)
                     {
@@ -320,19 +252,11 @@ namespace Formulas
                         {
                             throw new FormulaEvaluationException("invalid formula");
                         }
-
                     }
                 }
                 else
                 {
-                    if ((previous == 2 | previous == 4 | previous == 7 | previous == 8) && count == 1)
-                    {
-                        throw new UndefinedVariableException("invalid formula"); //detects problems with first char
-                    }
-                    else if ((count == length) && (previous == 2 | previous == 3 | previous == 7 | previous == 8 | previous == 6))
-                    {
-                        throw new UndefinedVariableException("invalid formula"); //detects problems with last char
-                    }
+                    
                     if (temp.Equals("+") | temp.Equals("-"))
                     {
                         if (sOP.Count > 0)
@@ -416,8 +340,6 @@ namespace Formulas
 
             if (sOP.Any())
             {
-                Console.Write(sOP.Count + " " + sDBL.Count + " "); //testing purposes
-                //Console.Write(sDBL.Pop()); Console.Write(sDBL.Pop()); Console.Write(sDBL.Pop());
                 temp2 = sOP.Peek();
                 if (temp2.Equals("+"))
                 {
