@@ -445,9 +445,9 @@ namespace DependencyGraphTestCases
             dg.AddDependency("e", "2");
             dg.AddDependency("f", "2");
             dg.ReplaceDependees("2", s);
-            Assert.AreEqual(dg.HasDependees("a"), true);
-            Assert.AreEqual(dg.HasDependees("b"), true);
-            Assert.AreEqual(dg.HasDependees("c"), true);
+            Assert.AreEqual(dg.HasDependees("a"), false);
+            Assert.AreEqual(dg.HasDependees("b"), false);
+            Assert.AreEqual(dg.HasDependees("c"), false);
         }
 
             //test the dependee size

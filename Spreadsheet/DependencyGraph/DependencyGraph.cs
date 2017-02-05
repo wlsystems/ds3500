@@ -117,7 +117,7 @@ namespace Dependencies
                 }
             }
             else
-                yield return null;
+                yield break;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Dependencies
                 }
             }
             else
-                yield return null;
+                yield break;
         }
 
         /// <summary>
@@ -245,8 +245,9 @@ namespace Dependencies
                 }
                 de[t].Clear(); //clear the dependents from the reverse graph.
                 foreach (string str in newDependees)
-                    AddDependency(t, str); //add the dependents to both graphs         
+                    AddDependency(str, t); //add the dependents to both graphs                   
             }
+            else foreach (string s in newDependees) AddDependency(s, t);
         }
     }
 }
