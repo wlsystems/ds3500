@@ -13,9 +13,11 @@ namespace ConsoleApplication2
         static void Main(string[] args)
         {
             Program p = new Program();
-            string str = "2 4";
+            string str = "2 + 4";
             Formula f = new Formula(str);
-            Console.WriteLine(f.ToString());
+            ISet <string> iss = f.GetVariables();
+            Console.WriteLine(f.GetVariables());
+
         }
         public double Lookup4(String v)
         {
