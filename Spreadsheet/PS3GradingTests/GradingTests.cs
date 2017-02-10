@@ -60,18 +60,6 @@ namespace GradingTests
                 t.RemoveDependency("x", "y");
             }
 
-            /// <summary>
-            ///Replace on an empty DG shouldn't fail
-            ///</summary>
-            [TestMethod()]
-            public void EmptyTest6()
-            {
-                DependencyGraph t = new DependencyGraph();
-                t.ReplaceDependents("x", new HashSet<string>());
-                t.ReplaceDependees("y", new HashSet<string>());
-            }
-
-
             // ************************ MORE TESTS ON EMPTY DGs *********************** //
 
             /// <summary>
@@ -134,19 +122,6 @@ namespace GradingTests
                 t.RemoveDependency("x", "y");
             }
 
-            /// <summary>
-            ///Replace on an empty DG shouldn't fail
-            ///</summary>
-            [TestMethod()]
-            public void EmptyTest12()
-            {
-                DependencyGraph t = new DependencyGraph();
-                t.AddDependency("x", "y");
-                Assert.AreEqual(t.Size, 1);
-                t.RemoveDependency("x", "y");
-                t.ReplaceDependents("x", new HashSet<string>());
-                t.ReplaceDependees("y", new HashSet<string>());
-            }
 
 
             // ********************** Making Sure that Static Variables Weren't Used ****************** //
