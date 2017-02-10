@@ -13,21 +13,37 @@ namespace ConsoleApplication2
         static void Main(string[] args)
         {
             Program p = new Program();
-
-            Formula f = new Formula("x5 + x6 + x7 + (x8) +");
-            Console.WriteLine(f.Evaluate(p.Lookup4));
+            string str = "x + x + x";
+            //Formula f = new Formula(str);
+            Formula f1 = new Formula(str, p.Lookup2, p.Lookup3);
+            Console.WriteLine(f1.ToString());
         }
         public double Lookup4(String v)
         {
             switch (v)
             {
-                case "x": return 4.0;
-                case "y": return 6.0;
-                case "z": return 8.0;
+                case "X": return 4.0;
+                case "Y": return 6.0;
+                case "Z": return 8.0;
                 default: throw new UndefinedVariableException(v);
             }
         }
-    }
+        public string Lookup2(String v)
+        {
+            switch (v)
+            {
+                case "x": return "X";
+                case "y": return "Y";
+                case "z": return "Z";
+                default: throw new UndefinedVariableException(v);
+            }
+        }
 
-    
+        public bool Lookup3(String v)
+        {
+            if (v.Equals("X"))
+                return true;
+            else return false;
+        }
+    }
 }

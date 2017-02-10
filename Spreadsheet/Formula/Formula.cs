@@ -1,6 +1,7 @@
 ﻿// Skeleton written by Joe Zachary for CS 3500, January 2017
 // Formula by Dustin Shiozaki u0054455 Feb 2017
 
+using Formulas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,8 @@ namespace Formulas
         /// variable symbols (a letter followed by zero or more letters and/or digits), left and right
         /// parentheses, and the four binary operator symbols +, -, *, and /.  White space is
         /// permitted between tokens, but is not required.
+        /// /// This constructor still has the formula but it also has Validator and Normalizer. Throws a ArgumentNullException if
+        /// any parameters are null.
         /// 
         /// Examples of a valid parameter to this constructor are:
         ///     "2.5e9 + x5 / 17"
@@ -39,6 +42,7 @@ namespace Formulas
         /// explanatory Message.
         /// </summary>
         private string formula;
+        
 
         /// <summary>
         /// The constructor throw exceptions if there is an invalid character at the beginning or end of the string
@@ -46,10 +50,63 @@ namespace Formulas
         /// </summary>
         /// <param name="_formula"></param>
         public Formula(String _formula)
+            : this(_formula, s =>s, s=>true)
         {
-            this.formula = _formula;
-            verify(); 
+            if (_formula.Equals(null))
+                throw new ArgumentNullException("cannot be null");
         }
+        /// <summary>
+        /// This constructor still has the formula but it also has Validator and Normalizer. Throws a ArgumentNullException if
+        /// any parameters are null.
+        /// </summary>
+        /// <param name="_formula"></param>
+
+        public Formula(String _formula, Normalizer N, Validator V)
+        { 
+            if(_formula==null | N == null | V == null)
+                throw new ArgumentNullException();
+            this.formula = _formula;
+            string str = "x";
+            foreach (string s in GetTokens(formula))
+            {
+                if (getType(s) == 5)
+                {
+                    try
+                    {
+                        str = str + N(s);
+                        if (!V(N(s)))
+                            throw new FormulaFormatException(s + " :failed validator");
+                    }
+                    catch
+                    {
+                        throw new FormulaFormatException(s + " :variable not found");
+                    }
+                }
+                else
+                    str = str + s;
+            }
+            formula = str;
+            verify();
+        }
+
+        /// <summary>
+        /// This returns each distinct variable that appears in the formula.
+        /// </summary>
+        /// <returns></returns>
+        public ISet<string> GetVariables()
+        {
+            ISet<string> iss = new HashSet<string>();
+            iss.UnionWith(GetTokens(formula));
+            return iss;
+        }
+        ///
+        /// This Will override the toString method to return the normalized string of the formula
+        ///
+        public override string ToString()
+        {
+            return formula;
+        }
+
 
         /// <summary>
         /// Checks the sequence of the tokens and throws exceptions according to the following rules
@@ -124,7 +181,6 @@ namespace Formulas
                 if ((currentType == 2 | currentType == 4 | currentType == 7 | currentType == 8 | currentType == 6) && counter2 == 1)
                     throw new FormulaFormatException(formula); //detects problems with first char
             }
-            Console.WriteLine(currentType);
             if (counter > 0)
                 throw new FormulaFormatException(formula); //throw exception if parenthesis unbalanced
             if (counter2 == 0)
@@ -423,7 +479,8 @@ namespace Formulas
     /// don't is up to the implementation of the method.
     /// </summary>
     public delegate double Lookup(string var);
-
+    public delegate string Normalizer(string s);
+    public delegate bool Validator(string s);
     /// <summary>
     /// Used to report that a Lookup delegate is unable to determine the value
     /// of a variable.
