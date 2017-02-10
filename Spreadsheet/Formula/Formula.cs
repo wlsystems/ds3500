@@ -62,11 +62,12 @@ namespace Formulas
         /// <param name="_formula"></param>
 
         public Formula(String _formula, Normalizer N, Validator V)
-        { 
-            if(_formula==null | N == null | V == null)
+        {
+            if (_formula==null | N == null | V == null)
                 throw new ArgumentNullException();
             this.formula = _formula;
-            string str = "x";
+            verify();
+            string str = null;
             foreach (string s in GetTokens(formula))
             {
                 if (getType(s) == 5)
@@ -85,7 +86,7 @@ namespace Formulas
                 else
                     str = str + s;
             }
-            formula = str;
+            formula = str;   
             verify();
         }
 
@@ -167,10 +168,11 @@ namespace Formulas
             {
                 previous = currentType;
                 counter2++;
-                currentType = getType(s);  
+                currentType = getType(s);
                 //see the order method for a description of what tokens the integers map to. 
                 if (currentType == 3)
                     counter = counter + 1;
+
                 else if (currentType == 4)
                 {
                     counter = counter - 1;

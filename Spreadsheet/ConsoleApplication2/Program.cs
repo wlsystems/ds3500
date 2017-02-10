@@ -13,10 +13,9 @@ namespace ConsoleApplication2
         static void Main(string[] args)
         {
             Program p = new Program();
-            string str = "x + x + x";
-            //Formula f = new Formula(str);
-            Formula f1 = new Formula(str, p.Lookup2, p.Lookup3);
-            Console.WriteLine(f1.ToString());
+            string str = "2 4";
+            Formula f = new Formula(str);
+            Console.WriteLine(f.ToString());
         }
         public double Lookup4(String v)
         {
