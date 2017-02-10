@@ -52,7 +52,7 @@ namespace Formulas
         public Formula(String _formula)
             : this(_formula, s =>s, s=>true)
         {
-            if (_formula.Equals(null))
+            if (_formula == null)
                 throw new ArgumentNullException("cannot be null");
         }
         /// <summary>
@@ -63,7 +63,7 @@ namespace Formulas
 
         public Formula(String _formula, Normalizer N, Validator V)
         {
-            if (_formula==null | N == null | V == null)
+            if (_formula == null | N == null | V == null)
                 throw new ArgumentNullException();
             this.formula = _formula;
             verify();
@@ -410,21 +410,6 @@ namespace Formulas
                     double var1 = sDBL.Pop();
                     double var2 = sDBL.Pop();
                     return (var2 - var1);
-                }
-                if (temp2.Equals("*"))
-                {
-                    double var1 = sDBL.Pop();
-                    double var2 = sDBL.Pop();
-                    return (var2 * var1);
-                }
-                if (temp2.Equals("/"))
-                {
-                    double var1 = sDBL.Pop();
-                    double var2 = sDBL.Pop();
-                    if (var1 != 0)
-                        return (var2 / var1);
-                    else
-                        throw new FormulaEvaluationException(formula);
                 }
             }
             else

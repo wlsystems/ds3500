@@ -123,6 +123,26 @@ namespace UnitTestProject1
         }
 
         /// <summary>
+        /// Simple test of formula verify
+        /// </summary>
+        [TestMethod()]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void TestVerify1()
+        {
+            Formula f = new Formula("(1 + 2) (3 + 4)", Lookup2, Lookup3);
+        }
+
+        /// <summary>
+        /// Simple test of formula verify
+        /// </summary>
+        [TestMethod()]
+        [ExpectedException(typeof(FormulaFormatException))]
+        public void TestVerify2()
+        {
+            Formula f = new Formula("(1 + 2) 3 + 4", Lookup2, Lookup3);
+        }
+
+        /// <summary>
         /// Test zero parameter constructor
         /// </summary>
         [TestMethod()]
@@ -131,6 +151,7 @@ namespace UnitTestProject1
             Formula f = new Formula();
             Assert.AreEqual(f.Evaluate(Lookup4), (0));
         }
+
 
         public double Lookup4(String v)
         {
