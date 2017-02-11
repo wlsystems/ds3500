@@ -51,9 +51,7 @@ namespace Formulas
         /// <param name="_formula"></param>
         public Formula(String _formula)
             : this(_formula, s =>s, s=>true)
-        {
-            if (_formula == null)
-                throw new ArgumentNullException("cannot be null");
+        {    
         }
         /// <summary>
         /// This constructor still has the formula but it also has Validator and Normalizer. Throws a ArgumentNullException if

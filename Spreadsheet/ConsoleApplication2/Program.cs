@@ -14,7 +14,7 @@ namespace ConsoleApplication2
         {
             Program p = new Program();
             string str = "2 + 4";
-            Formula f = new Formula(str);
+            Formula f = new Formula(null);
             ISet <string> iss = f.GetVariables();
             Console.WriteLine(f.GetVariables());
 
