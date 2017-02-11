@@ -243,15 +243,19 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            if (s==null | newDependents == null)
+            if (newDependents == null)
+                throw new ArgumentNullException("null argument not allowed");
+            IEnumerator<string> test = newDependents.GetEnumerator();
+            while (test.MoveNext())
+                if (test.Current==null)
+                    throw new ArgumentNullException("null not allowed");
+            if (s==null)
                 throw new ArgumentNullException("null argument not allowed");
             if (dd.ContainsKey(s))
             {
                 IEnumerator<string> iet = dd[s].GetEnumerator(); //get all dependents using the key s. must save them to remove from the reverse graph.
                 while (iet.MoveNext()) //iterate over the dependents
                 {
-                    if (iet.Current.Equals(null))
-                        throw new ArgumentNullException("null argument not allowed");
                     de[iet.Current].Remove(s); //remove the dependents from the reverse graph
                     if (de[iet.Current].Count == 0) //remove the key from the reverse graph it it has no entries
                         de.Remove(iet.Current);
@@ -271,7 +275,13 @@ namespace Dependencies
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-            if (newDependees == null | t == null)
+            if (newDependees == null)
+                throw new ArgumentNullException("null");
+            IEnumerator<string> test = newDependees.GetEnumerator();
+            while (test.MoveNext())
+                if (test.Current == null)
+                    throw new ArgumentNullException("Null encountered");
+            if (t == null)
                 throw new ArgumentNullException("null");
             if (de.ContainsKey(t))
             {
@@ -279,8 +289,6 @@ namespace Dependencies
                 //get all dependees using the key t. must save them to remove from the reverse graph.
                 while (iet.MoveNext()) //iterate over the dependees
                 {
-                    if (iet.Current.Equals(null))
-                        throw new ArgumentNullException("null");
                     dd[iet.Current].Remove(t); //remove the dependents from the graph
                     if (dd[iet.Current].Count == 0)
                         dd.Remove(iet.Current);

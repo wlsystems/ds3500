@@ -1219,7 +1219,6 @@ namespace DependencyGraphTestCases
         {
             DependencyGraph t = new DependencyGraph();
             t.AddDependency("d", "f");
-            IEnumerable<string> ieb = t.GetDependents("d");
             t.ReplaceDependees("f", null);
         }
 
@@ -1235,5 +1234,38 @@ namespace DependencyGraphTestCases
             IEnumerable<string> ieb = t.GetDependents("d");
             t.ReplaceDependents("f", null);
         }
+
+        /// <summary>
+        /// test ReplaceDependents  throw exception if null element in IEnumerable
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestReplaceDependents11()
+        {
+            DependencyGraph t = new DependencyGraph();
+            t.AddDependency("d", "f");
+            HashSet<string> hs = new HashSet<string>();
+            hs.Add("a");
+            hs.Add(null);
+            hs.Add("b");
+            t.ReplaceDependents("d", hs);
+        }
+
+        /// <summary>
+        /// test ReplaceDepees  throw exception if null element in IEnumerable
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestReplaceDependees11()
+        {
+            DependencyGraph t = new DependencyGraph();
+            t.AddDependency("d", "f");
+            HashSet<string> hs = new HashSet<string>();
+            hs.Add("a");
+            hs.Add(null);
+            hs.Add("b");
+            t.ReplaceDependees("d", hs);
+        }
+
     }
 }

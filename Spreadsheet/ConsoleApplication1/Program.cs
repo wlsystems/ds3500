@@ -13,8 +13,11 @@ namespace ConsoleApplication1
         {
             DependencyGraph t = new DependencyGraph();
             t.AddDependency("d", "f");
-            IEnumerable<string> ieb = t.GetDependents(null);
-            
+            HashSet < string > hs = new HashSet<string>();
+            hs.Add("a");
+            hs.Add(null);
+            hs.Add("b");
+            t.ReplaceDependees("d", null);
         }   
     }
 }
