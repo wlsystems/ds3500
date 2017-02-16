@@ -11,13 +11,17 @@ namespace ConsoleApplication1
     {
         static void Main(string[] args)
         {
-            DependencyGraph t = new DependencyGraph();
-            t.AddDependency("d", "f");
-            HashSet < string > hs = new HashSet<string>();
-            hs.Add("a");
-            hs.Add(null);
-            hs.Add("b");
-            t.ReplaceDependees("d", null);
-        }   
+            var d1 = new DependencyGraph();
+            var d2 = new DependencyGraph(d1);
+            d1.AddDependency("a", "b");
+            d2.AddDependency("c", "d");
+            IEnumerable<string> iet = d2.GetDependents("a");
+            Console.WriteLine(d2.Size);
+            foreach (string s in iet)
+                Console.WriteLine();
+            //Console.WriteLine(d2.GetDependents("a"));
+            //Assert.IsFalse(d2.HasDependents("a"));
+            //Assert.IsTrue(d2.HasDependents("c"));
+        }
     }
 }

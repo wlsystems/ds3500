@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dependencies
 {
@@ -73,15 +74,37 @@ namespace Dependencies
             count = 0;
         }
 
+        /// <summary>
+        /// return the instance of this object
+        /// </summary>
+        public Dictionary<string, HashSet<string>> getdd
+        {
+            get
+            {
+                var copied = new Dictionary<string, HashSet<string>>(dd);
+                return copied;
+            }
+        }
+
+        /// <summary>
+        /// return the instance of this object
+        /// </summary>
+        public Dictionary<string, HashSet<string>> getde
+        {
+            get
+            {
+                var copied = new Dictionary<string, HashSet<string>>(de);
+                return copied;
+            }
+        }
+
         public DependencyGraph(DependencyGraph dg)
         {
             if (dg == null)
                 throw new ArgumentNullException("null");
-            dd = new Dictionary<string, HashSet<string>>();
-            de = new Dictionary<string, HashSet<string>>();
-            dd = dg.dd;
-            de = dg.de;
-            count = dg.count;
+            this.dd = dg.getdd;
+            this.de = dg.getde;
+            this.count = dg.count;
         }
         /// <summary>
         /// The number of dependencies in the DependencyGraph.
