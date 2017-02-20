@@ -248,21 +248,5 @@ namespace UnitTestProject3
             Assert.AreEqual("C1", iet.Current);
         }
 
-        /// <summary>
-        /// Simple test to GetCellContents
-        /// </summary>
-        [TestMethod]
-        public void TestGetCellContents1()
-        {
-            AbstractSpreadsheet ss = new Spreadsheet();
-            Formula f = new Formula("B1+A1");
-            Formula f2 = new Formula("E1+F1");
-            Formula f1 = new Formula("A1*2");
-            ss.SetCellContents("B1", 1);
-            ss.SetCellContents("C1", f1);
-            ss.SetCellContents("A1", f2);
-            Object ob = ss.GetCellContents("B1");
-            Assert.IsTrue(ob.Equals(1));
-        }
     }
 }
