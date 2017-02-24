@@ -116,7 +116,7 @@ namespace SS
         public override object GetCellContents(string name)
         {
             if (!validName(name))
-                throw new InvalidNameException(name);
+                throw new InvalidNameException();
             if (!dic.ContainsKey(name))
                 return "";
             else if (dic[name].variety == 1)
@@ -154,7 +154,7 @@ namespace SS
         private static Boolean validName(string name)
         {
             if (name == null)
-                throw new InvalidNameException(name);
+                throw new InvalidNameException();
             const string pat = @"[A-Z]+[0-9]+$";
             Regex r = new Regex(pat);
             Match m = r.Match(name);
@@ -171,7 +171,7 @@ namespace SS
         public override ISet<string> SetCellContents(string name, Formula formula)
         {        
             if (!validName(name))
-                throw new InvalidNameException(name);
+                throw new InvalidNameException();
             else
             {
                 Cell cl = new SS.Cell(3, formula);
@@ -200,7 +200,7 @@ namespace SS
         public override ISet<string> SetCellContents(string name, string text)
         {
             if (!validName(name))
-                throw new InvalidNameException(name);
+                throw new InvalidNameException();
             if (text == (string)null)
                 throw new ArgumentNullException(name);
             else
@@ -226,7 +226,7 @@ namespace SS
         public override ISet<string> SetCellContents(string name, double number)
         {
             if (name == null | !validName(name))
-                throw new InvalidNameException(name);
+                throw new InvalidNameException();
             else
             {
                 HashSet<string> hs = new HashSet<string>();
@@ -251,7 +251,7 @@ namespace SS
         {
             HashSet<string> hs = new HashSet<string>();
             if (name == null | !validName(name))
-                throw new InvalidNameException(name);
+                throw new InvalidNameException();
             else
             {
                 IEnumerable<string> ib = dg.GetDependees(name);
