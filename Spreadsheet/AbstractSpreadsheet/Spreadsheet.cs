@@ -30,7 +30,34 @@ namespace SS
         private double dbl;
         private string str;
         private Formula frm;
-       
+        public int variety
+        {
+            get
+            {
+                return type;
+            }
+        }
+        public string s
+        {
+            get
+            {
+                return str;
+            }
+        }
+        public double d
+        {
+            get
+            {
+                return dbl;
+            }
+        }
+        public Formula f
+        {
+            get
+            {
+                return frm;
+            }
+        }
         /// <summary>
         /// Type double
         /// </summary>
@@ -88,10 +115,17 @@ namespace SS
         /// <returns></returns>
         public override object GetCellContents(string name)
         {
-            if (dic.ContainsKey(name))
-                return dic[name];
-            else
+            if (!validName(name))
                 throw new InvalidNameException(name);
+            if (!dic.ContainsKey(name))
+                return "";
+            else if (dic[name].variety == 1)
+                return dic[name].d;
+            else if (dic[name].variety == 2)
+                return dic[name].s;
+            else if (dic[name].variety == 3)
+                return dic[name].f;
+            else return "";
         }
         /// <summary>
         /// Get an IEnumerableo of all cells in a dictionary that aren't empty.
@@ -99,8 +133,17 @@ namespace SS
         /// <returns></returns>
         public override IEnumerable<string> GetNamesOfAllNonemptyCells()
         {
-            foreach (KeyValuePair<string, Cell> vals in this.dic)
-                yield return vals.Key;
+            foreach (KeyValuePair<string, Cell> vals in this.dic) {
+                if (vals.Value.variety == 2)
+                {
+                    if (vals.Value.s == "")
+                        yield break;
+                    else
+                        yield return vals.Key;
+                }   
+                else
+                    yield return vals.Key;
+            }
         }
         /// <summary>
         /// 
@@ -110,7 +153,9 @@ namespace SS
         /// <returns></returns>
         private static Boolean validName(string name)
         {
-            const string pat = @"[A-Z]+[1-9]+$";
+            if (name == null)
+                throw new InvalidNameException(name);
+            const string pat = @"[A-Z]+[0-9]+$";
             Regex r = new Regex(pat);
             Match m = r.Match(name);
             return m.Success;
@@ -118,29 +163,27 @@ namespace SS
 
         /// <summary>
         /// checks if the name is valid and returns dependencies of that name.
-        /// If there is a circular problem it returns a 
+        /// If there is a circular problem it returns an error 
         /// </summary>
         /// <param name="name"></param>
         /// <param name="formula"></param>
         /// <returns></returns>
         public override ISet<string> SetCellContents(string name, Formula formula)
-        {
-            if (name == null | !validName(name))
+        {        
+            if (!validName(name))
                 throw new InvalidNameException(name);
             else
             {
                 Cell cl = new SS.Cell(3, formula);
                 HashSet<string> hs = new HashSet<string>();
                 hs.Add(name);
-                if (this.dic.ContainsKey(name))
-                    this.dic.Remove(name);
-                this.dic.Add(name, cl);
-
                 IEnumerable<string> tokens = formula.GetVariables();
                 foreach (string s in tokens)
                     this.dg.AddDependency(name, s);
-
-                IEnumerable<string> ib = dg.GetDependees(name);
+                IEnumerable<string> ib = GetCellsToRecalculate(name);
+                if (this.dic.ContainsKey(name))
+                    this.dic.Remove(name);
+                this.dic.Add(name, cl);
                 IEnumerator<string> iet = ib.GetEnumerator();
                 while (iet.MoveNext())
                     hs.Add(iet.Current);
@@ -156,17 +199,20 @@ namespace SS
         /// <returns></returns>
         public override ISet<string> SetCellContents(string name, string text)
         {
-            if (name == null | !validName(name))
+            if (!validName(name))
                 throw new InvalidNameException(name);
+            if (text == (string)null)
+                throw new ArgumentNullException(name);
             else
             {
+                //IEnumerable<string> ieb = GetCellsToRecalculate(name);
                 HashSet<string> hs = new HashSet<string>();
                 hs.Add(name);
                 Cell cl = new SS.Cell(2, text);
                 if (this.dic.ContainsKey(name))
                     this.dic.Remove(name);
                 this.dic.Add(name, cl);
-                IEnumerable<string> ib = dg.GetDependees(name);
+                IEnumerable<string> ib = GetCellsToRecalculate(name);
                 IEnumerator<string> iet = ib.GetEnumerator();
                 while (iet.MoveNext())
                     hs.Add(iet.Current);
@@ -189,7 +235,7 @@ namespace SS
                 if (this.dic.ContainsKey(name))
                     this.dic.Remove(name);
                 this.dic.Add(name, cl);
-                IEnumerable<string> ib = dg.GetDependees(name);
+                IEnumerable<string> ib = GetCellsToRecalculate(name);
                 IEnumerator<string> iet = ib.GetEnumerator();
                 while (iet.MoveNext())
                     hs.Add(iet.Current);
@@ -208,7 +254,7 @@ namespace SS
                 throw new InvalidNameException(name);
             else
             {
-                IEnumerable<string> ib = dg.GetDependents(name);
+                IEnumerable<string> ib = dg.GetDependees(name);
                 IEnumerator<string> iet = ib.GetEnumerator();
                 while (iet.MoveNext())
                     hs.Add(iet.Current);

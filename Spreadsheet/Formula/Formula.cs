@@ -1,4 +1,7 @@
-﻿// Skeleton written by Joe Zachary for CS 3500, January 2017
+﻿
+
+
+// Skeleton written by Joe Zachary for CS 3500, January 2017
 // Formula by Dustin Shiozaki u0054455 Feb 2017
 
 using Formulas;
