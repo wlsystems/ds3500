@@ -18,7 +18,6 @@ namespace ConsoleApplication5
             AbstractSpreadsheet s = new Spreadsheet();
             s.SetContentsOfCell("A1", ("=A2"));
             s.SetContentsOfCell("A2", ("=A11"));
-            s.Save();
         }
 
         static string replace(string s){
