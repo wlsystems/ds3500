@@ -13,7 +13,6 @@ namespace ConsoleApplication5
 {
     /// <summary>
     /// 
-
     /// </summary>
     class Program
     {
