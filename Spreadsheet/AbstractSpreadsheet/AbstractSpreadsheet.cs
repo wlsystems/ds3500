@@ -153,7 +153,7 @@ namespace SS
         ///
         /// If there are any problems writing to dest, the method should throw an IOException.
         /// </summary>
-        public abstract void Save(TextWriter dest);
+        public  abstract void Save(TextWriter dest);
 
         // ADDED FOR PS6
         /// <summary>
