@@ -14,13 +14,32 @@ namespace ConsoleApplication5
     /// <summary>
     /// 
     /// </summary>
-    class Program
+    class Program : TextWriter
     {
+        public override Encoding Encoding
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         static void Main(string[] args)
         {
-            AbstractSpreadsheet s = new Spreadsheet();
-            s.SetContentsOfCell("A1", ("=A2"));
-            s.SetContentsOfCell("A2", ("=A11"));
+            
+            try
+            {
+                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
+                TextReader t = new StreamReader("ss.xml");
+                AbstractSpreadsheet s = new Spreadsheet(t, rg1);
+                IEnumerable<string> ieb = (s.GetNamesOfAllNonemptyCells());
+                foreach (string st in ieb)
+                    Console.WriteLine(st);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine((e.GetType().ToString()));
+            }          
         }
 
         static string replace(string s){

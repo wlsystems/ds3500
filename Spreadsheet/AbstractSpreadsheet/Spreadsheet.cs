@@ -16,6 +16,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Xml;
 using System.Xml.Schema;
+using System.Xml.Linq;
 
 /// <summary>
 /// Contains cell to contain the contents of the Cell and Spreadsheet which contains the DependencyGraph.
@@ -122,17 +123,17 @@ namespace SS
         private Regex rg;
         private DependencyGraph dg;
         private Dictionary<string, Cell> dic;
-
+        Boolean saved = false; 
         public override bool Changed
         {
             get
             {
-                throw new NotImplementedException();
+                return saved;
             }
 
             protected set
             {
-                throw new NotImplementedException();
+                this.saved = value;
             }
         }
 
@@ -167,14 +168,91 @@ namespace SS
         /// the new Spreadsheet's IsValid regular expression should be newIsValid.
         public Spreadsheet(TextReader source, Regex newIsValid)
         {
-            
-        }
+            this.dg = new DependencyGraph();
+            this.dic = new Dictionary<string, Cell>();
+            if (source == null)
+                throw new IOException();
+            try
+            {
+                // Create and load the XML document.
+                XmlDocument doc = new XmlDocument();
+                doc.Load(source);
 
+                // Create an XmlNodeReader using the XML document.
+                XmlNodeReader nodeReader = new XmlNodeReader(doc);
+
+                XmlSchemaSet schemas;
+                schemas = new XmlSchemaSet();
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.ValidationType = ValidationType.Schema;
+                settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
+                //settings.ValidationFlags |= XmlSchemaValidationFlags.AllowXmlAttributes;
+                //settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
+                //settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+                settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
+                schemas = new XmlSchemaSet();
+                schemas.Add("SS", "../../Spreadsheet.xsd");
+                settings.Schemas = schemas;
+                XmlReader reader = XmlReader.Create(nodeReader, settings);
+                using (reader)
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.IsStartElement())
+                        {
+                            switch (reader.Name)
+                            {
+                                case "spreadsheet":
+                                    this.rg = new Regex(reader.GetAttribute("IsValid"));
+                                    break;
+
+                                case "cell":
+                                    if (dic.ContainsKey(reader.GetAttribute("name")))
+                                    {
+                                        throw new SpreadsheetReadException("duplicate name");
+                                    }
+                                    try
+                                    {
+                                        SetContentsOfCell(reader.GetAttribute("name"), reader.GetAttribute("contents"));
+                                        break;
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        throw new SpreadsheetReadException(e.ToString());
+                                    }
+
+                            }
+                        }
+                    }
+                    reader.Close();                   
+                    source.Close();
+                }
+                this.rg = newIsValid;
+            }
+            catch (Exception e)
+            {
+                if (e.GetType().ToString().Equals("SS.SpreadsheetReadException"))
+                    throw new SpreadsheetReadException(e.ToString());
+                else
+                    throw e;
+            }
+            this.Changed = false;
+        }
+        // Display any warnings or errors.
+        private static void ValidationCallBack(object sender, ValidationEventArgs args)
+        {
+            if (args.Severity == XmlSeverityType.Warning)
+               throw new SpreadsheetReadException("\tWarning: Matching schema not found.  No validation occurred." + args.Message);
+            else
+                throw new SpreadsheetReadException("\tValidation error: " + args.Message);
+
+        }
         /// Creates an empty Spreadsheet whose IsValid regular expression is provided as the parameter
         public Spreadsheet(Regex isValid) : base()
         {
             this.dg = new DependencyGraph();
             this.dic = new Dictionary<string, Cell>();
+            this.Changed = false;
             this.rg = isValid;
         }
 
@@ -187,6 +265,7 @@ namespace SS
             this.dg = new DependencyGraph();
             this.dic = new Dictionary<string, Cell>();
             this.rg = new Regex(@"[\s\S]*[\w\W]*[\d\D]*$");
+            this.Changed = false;
         }
         /// <summary>
         /// 
@@ -265,22 +344,43 @@ namespace SS
 
         public override void Save(TextWriter dest)
         {
-            using (XmlWriter writer = XmlWriter.Create(dest))
+            saved = true;
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.NewLineOnAttributes = true;
+            settings.NewLineChars = "\r\n";
+            settings.NewLineHandling = NewLineHandling.Replace;
+           try
             {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("Name");
-
-                for (int i = 0; i < dic.Count; i++)
+                using (XmlWriter writer = XmlWriter.Create(dest, settings))
                 {
-                    writer.WriteStartElement("Name");
-                    writer.WriteAttributeString("Name", dic.ElementAt(i).Key);
-                    writer.WriteAttributeString("Contents", dic.ElementAt(i).Value.ToString());
-                    writer.WriteEndElement();
-                }
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("spreadsheet");
+                    writer.WriteAttributeString("IsValid", this.rg.ToString());
+                    writer.WriteString("\n");
+                    for (int i = 0; i < dic.Count; i++)
+                    {
+                        if (!dic.ElementAt(i).ToString().Equals(""))
+                        {
+                            writer.WriteString("\t");
+                            writer.WriteStartElement("cell");
+                            writer.WriteAttributeString("name", dic.ElementAt(i).Key);
+                            writer.WriteAttributeString("contents", dic.ElementAt(i).Value.ToString());
 
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
+                            writer.WriteFullEndElement();
+                            writer.WriteString("\n");
+                        }
+                    }
+                    writer.WriteEndElement();
+                    writer.WriteEndDocument();
+                    writer.Close();
+                }
+                dest.Close();
             }
+        catch (Exception)
+        {
+            throw new IOException();
+        }
+            
         }
 
         public override object GetCellValue(string name)
@@ -288,8 +388,17 @@ namespace SS
             object j = new object();
             if (dic[name].variety == 3)
             {
-                Formula f = new Formula(dic[name].v);
-                return f.Evaluate(s => (double)(GetCellValue(s)));
+                try
+                {
+                    Formula f = new Formula(dic[name].v);
+                    return f.Evaluate(s => (double)(GetCellValue(s)));
+                }
+                catch (Exception e)
+                {
+                    object j1 = new object();
+                    j1 = new FormulaError(e.ToString());
+                    return j1;
+                }
             }
             else if (dic[name].variety == 1)
                 return Double.Parse(dic[name].v);
@@ -318,7 +427,7 @@ namespace SS
                 throw new InvalidNameException();
             if (content == null)
                 throw new ArgumentNullException();
-            Double d;
+            Double d; saved = true;
             if (Double.TryParse(content, out d)) {
                 ISet<string> iss = SetCellContents(name.ToUpper(), d);
                 return iss;

@@ -12,6 +12,7 @@ namespace UnitTestProject3
     using System.Collections.Generic;
     using Formulas;
     using System.Text.RegularExpressions;
+    using System.IO;
 
     namespace GradingTests
     {
@@ -21,6 +22,211 @@ namespace UnitTestProject3
         [TestClass()]
         public class SpreadsheetTest
         {
+
+
+            [TestMethod()]
+            public void TestSave()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                s.SetContentsOfCell("A1", "1");
+                TextWriter t = new StreamWriter("ss.xml");
+                s.Save(t);
+                Assert.IsTrue(s.Changed);
+            }
+            [TestMethod()]
+            public void TestSave1()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                Assert.IsFalse(s.Changed);
+            }
+            [TestMethod()]
+            public void TestChanged()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                
+                Assert.IsFalse(s.Changed);
+            }
+
+            [TestMethod()]
+            public void TestGetCellValue13()
+            {
+                int Sum = 0;
+                AbstractSpreadsheet s = new Spreadsheet();
+                for (int i = 1; i <= 500; i++)
+                {
+                    if (i == 100 || i == 200 || i == 300 || i == 400)
+                    {
+                        s.SetContentsOfCell("B" + i, "0");
+                    }
+                    else
+                    {
+                        s.SetContentsOfCell("B" + i, ("=B" + (i + 1)));
+                        Sum = Sum + i;
+                    }
+                }
+
+                s.SetContentsOfCell("B501", Sum.ToString());
+
+                Assert.AreEqual("124250", Convert.ToString(s.GetCellValue("B501")));
+                for (int i = 1; i <= 500; i++)
+                {
+                    if (i == 100 || i == 200 || i == 300 || i == 400)
+                    {
+                        Assert.AreEqual(0, Convert.ToInt32(s.GetCellValue("B" + i)));
+                    }
+                    else
+                    {
+                        Assert.AreNotEqual("0", Convert.ToInt32(s.GetCellValue("B" + i)));
+
+                    }
+                }
+            }
+
+            [TestMethod()]
+            public void TestGetCellValue10()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                for (int i = 1; i <= 500; i++)
+                {
+                    int m = i * 2;
+                    s.SetContentsOfCell("E" + i, m.ToString());
+                }
+
+                for (int i = 1; i <= 500; i++)
+                {
+                    Random rand = new Random();
+                    int no = rand.Next(1, 500);
+                    Assert.AreEqual(0, Convert.ToInt32(s.GetCellValue("E" + no)) % 2);
+                }
+            }
+
+            [TestMethod()]
+            public void TestGetCellValue11()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                for (int i = 1; i <= 500; i++)
+                {
+                    s.SetContentsOfCell("B" + i, ("=B" + (i + 1)));
+                }
+
+                ISet<string> sss = s.SetContentsOfCell("B250", "25.0");
+                for (int i = 1; i <= 500; i++)
+                {
+                    Random rand = new Random();
+                    int num = rand.Next(1, 250);
+                    Assert.IsTrue(sss.Contains("B" + num));
+                }
+            }
+
+
+
+            [TestMethod()]
+            public void TestGetCellValue15()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                s.SetContentsOfCell("A1", ("=E1"));
+                s.SetContentsOfCell("B2", ("=E1"));
+                s.SetContentsOfCell("C3", ("=E1"));
+                s.SetContentsOfCell("D4", ("=E1"));
+                s.SetContentsOfCell("E5", ("=E1"));
+                ISet<String> cells = s.SetContentsOfCell("F1", "0");
+                AssertSetEqualsIgnoreCase(new HashSet<string> {  "F1" }, cells);
+            }
+
+            [TestMethod()]
+            public void TestGetCellValue14()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                for (int i = 1; i < 500; i++)
+                {
+                    int val = i + 1;
+                    s.SetContentsOfCell("E" + i, val.ToString());
+
+                    s.SetContentsOfCell("F" + i, val.ToString());
+                }
+
+                for (int i = 1; i <= 6; i++)
+                {
+                    Random rand = new Random();
+                    int num = rand.Next(1, 250);
+
+                    Assert.AreEqual(Convert.ToString(s.GetCellValue("E" + num)), Convert.ToString(s.GetCellValue("F" + num)));
+                }
+            }
+            
+            /// <summary>
+            /// set path to null
+            /// </summary>
+            [ExpectedException(typeof(IOException))]
+            [TestMethod()]
+            public void TestSpreadsheet1()
+            {
+                TextReader source = null;
+                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
+                AbstractSpreadsheet s = new Spreadsheet(source, rg1);
+            }
+
+            /// <summary>
+            /// set path to jpg
+            /// </summary>
+            [TestMethod()]
+            public void TestSpreadsheet3a()
+            {
+                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
+                AbstractSpreadsheet s = new Spreadsheet(rg1);
+            }
+
+            /// <summary>
+            /// 
+            /// write 3 lines to xml
+            /// </summary>
+            [TestMethod()]
+            public void TestSS1()
+            {
+                AbstractSpreadsheet s = new Spreadsheet();
+                s.SetContentsOfCell("W2", "=E2+C2");
+                s.SetContentsOfCell("E2", "=D2+3");
+                s.SetContentsOfCell("D2", "=C2");
+                TextWriter t = new StreamWriter("ss.xml");
+                s.Save(t);
+                Assert.IsTrue(s.Changed);
+            }
+            /// <summary>
+            /// 
+            /// added duplicate entry to source 
+            /// </summary>
+            [TestMethod()]
+            public void TestSS2()
+            {
+                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
+                TextReader t = new StreamReader("ss.xml");
+                AbstractSpreadsheet s = new Spreadsheet(t,rg1);
+            }
+
+            /// <summary>
+            /// Test and invalid formatted xml
+            /// </summary>
+            [TestMethod()]
+            //[ExpectedException(typeof(SpreadsheetReadException))]
+            public void TestSS3()
+            {
+                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
+                TextReader t = new StreamReader("states3.xml");
+                AbstractSpreadsheet s = new Spreadsheet(t, rg1);
+            }
+
+            /// <summary>
+            /// Test the GetCellValues
+            /// </summary>
+            [TestMethod()]
+            [ExpectedException(typeof(SpreadsheetReadException))]
+            public void TestSSGetCellValues1()
+            {
+                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
+                TextReader t = new StreamReader("s12.xml");
+                AbstractSpreadsheet s = new Spreadsheet(t, rg1);
+            }
+
             /// <summary>
             /// Used to make assertions about set equality.  Everything is converted first to
             /// upper case.
