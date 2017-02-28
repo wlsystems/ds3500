@@ -26,20 +26,24 @@ namespace ConsoleApplication5
 
         static void Main(string[] args)
         {
-            
-            try
-            {
-                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
-                TextReader t = new StreamReader("ss.xml");
-                AbstractSpreadsheet s = new Spreadsheet(t, rg1);
-                IEnumerable<string> ieb = (s.GetNamesOfAllNonemptyCells());
-                foreach (string st in ieb)
-                    Console.WriteLine(st);
+            Func <double,int , string> v;
+            int[] n = new int[10];
+            n[0] = 1;
+            n[1] = 1;
+            n[2] = 2;
+            Func<int,int,int> func2 = (x, y) => (x + y*0);
+            v = Method;
+            Console.Write(v(2, 3));
+        }
+        public static string Method(double d, int n) { return (d * n).ToString(); }
+
+        public static int Choose(int[] numbers, Func<int, int, int> f)
+        {
+            int result = numbers[0];
+            for (int i = 1; i < numbers.Length; i++) {
+                result = f(result, numbers[i]);
             }
-            catch(Exception e)
-            {
-                Console.WriteLine((e.GetType().ToString()));
-            }          
+            return result;
         }
 
         static string replace(string s){
