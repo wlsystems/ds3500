@@ -11,11 +11,22 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication5
 {
+
+    public static class MyExtensions
+    {
+        public static int WordCount(this String str)
+        {
+            return str.Split(new char[] { ' ', '.', '?' },
+                             StringSplitOptions.RemoveEmptyEntries).Length;
+        }
+    }
     /// <summary>
     /// 
     /// </summary>
     class Program : TextWriter
     {
+        static int i;
+
         public override Encoding Encoding
         {
             get
@@ -24,8 +35,16 @@ namespace ConsoleApplication5
             }
         }
 
+
         static void Main(string[] args)
         {
+            Program p = new Program();
+            
+            string s = "Hello Extension Methods";
+            int i = s.WordCount();
+            Console.Write(i);
+            List<int> l = new List<int>();
+            
             Func <double,int , string> v;
             int[] n = new int[10];
             n[0] = 1;
@@ -33,7 +52,7 @@ namespace ConsoleApplication5
             n[2] = 2;
             Func<int,int,int> func2 = (x, y) => (x + y*0);
             v = Method;
-            Console.Write(v(2, 3));
+            Console.Write(v(2, 3).WordCount());
         }
         public static string Method(double d, int n) { return (d * n).ToString(); }
 
