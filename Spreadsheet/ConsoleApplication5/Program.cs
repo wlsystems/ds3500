@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication5
 {
-
+ 
     public static class MyExtensions
     {
         public static int WordCount(this String str)
@@ -19,6 +19,8 @@ namespace ConsoleApplication5
             return str.Split(new char[] { ' ', '.', '?' },
                              StringSplitOptions.RemoveEmptyEntries).Length;
         }
+
+        
     }
     /// <summary>
     /// 
@@ -38,24 +40,24 @@ namespace ConsoleApplication5
 
         static void Main(string[] args)
         {
-            Program p = new Program();
-            
-            string s = "Hello Extension Methods";
-            int i = s.WordCount();
-            Console.Write(i);
-            List<int> l = new List<int>();
-            
-            Func <double,int , string> v;
-            int[] n = new int[10];
-            n[0] = 1;
-            n[1] = 1;
-            n[2] = 2;
-            Func<int,int,int> func2 = (x, y) => (x + y*0);
-            v = Method;
-            Console.Write(v(2, 3).WordCount());
+            int a = 1;
+            int b = 2;
+            Console.WriteLine(Method(ref a, ref b));
         }
-        public static string Method(double d, int n) { return (d * n).ToString(); }
 
+        public static int Method(ref int d, ref int n)
+        {
+            d = 2;
+            return d + n;
+        }
+        public static string Method(double d, int n)
+        {
+            return (d * n).ToString();
+        }
+        public static Boolean Even(int x, int y)
+        {
+            return ((x + y) % 2 == 0);
+        }
         public static int Choose(int[] numbers, Func<int, int, int> f)
         {
             int result = numbers[0];
