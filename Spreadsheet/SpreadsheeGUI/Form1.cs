@@ -23,12 +23,23 @@ namespace SpreadsheeGUI
 
         public string CellValue
         {
-            set
+            get
             {
                 throw new NotImplementedException();
             }
         }
 
+        public string CellContents
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Not sure if we need this
+        /// </summary>
         public string Title
         {
             set
