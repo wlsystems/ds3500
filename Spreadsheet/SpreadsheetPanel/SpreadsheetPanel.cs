@@ -429,10 +429,15 @@ namespace SSGui
 
         private void SpreadsheetPanel_Load(object sender, EventArgs e)
         {
-
+            AutoSize = true;
         }
 
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
         }
