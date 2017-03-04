@@ -39,7 +39,7 @@ namespace SpreadsheeGUI
             }
             catch (Exception ex)
             {
-                //window.Message = "Unable to open file\n" + ex.Message;
+                window.Message = "Unable to open file\n" + ex.Message;
             }
         }
 
@@ -48,7 +48,7 @@ namespace SpreadsheeGUI
         /// </summary>
         private void HandleClose()
         {
-            //window.DoClose();
+            window.DoClose();
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace SpreadsheeGUI
         /// </summary>
         private void HandleNew()
         {
-            //window.OpenNew();
+            window.OpenNew();
         }
 
     }
