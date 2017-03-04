@@ -108,7 +108,7 @@ namespace SS
             else if (variety == 2)
                 return s;
             else
-                return f.ToString().Substring(1);
+                return "="+f.ToString();
         }
 
     }
@@ -166,77 +166,98 @@ namespace SS
         ///
         /// Else, create a Spreadsheet that is a duplicate of the one encoded in source except that
         /// the new Spreadsheet's IsValid regular expression should be newIsValid.
+        /// 
         public Spreadsheet(TextReader source, Regex newIsValid)
         {
-            this.dg = new DependencyGraph();
-            this.dic = new Dictionary<string, Cell>();
+
             if (source == null)
                 throw new IOException();
+            bool first = true;
             try
             {
-                // Create and load the XML document.
-                XmlDocument doc = new XmlDocument();
-                doc.Load(source);
-
-                // Create an XmlNodeReader using the XML document.
-                XmlNodeReader nodeReader = new XmlNodeReader(doc);
-
-                XmlSchemaSet schemas;
-                schemas = new XmlSchemaSet();
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.ValidationType = ValidationType.Schema;
-                settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
-                //settings.ValidationFlags |= XmlSchemaValidationFlags.AllowXmlAttributes;
-                //settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
-                //settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
-                settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
-                schemas = new XmlSchemaSet();
-                schemas.Add("SS", "../../Spreadsheet.xsd");
-                settings.Schemas = schemas;
-                XmlReader reader = XmlReader.Create(nodeReader, settings);
-                using (reader)
+                runthis(source, first);
+                first = false;
+                TextWriter tw = new StreamWriter("x.xml");
+                using (tw)
                 {
-                    while (reader.Read())
+                    Save(tw);
+                    source = new StreamReader("x.xml");
+                    using (source)
                     {
-                        if (reader.IsStartElement())
-                        {
-                            switch (reader.Name)
-                            {
-                                case "spreadsheet":
-                                    this.rg = new Regex(reader.GetAttribute("IsValid"));
-                                    break;
-
-                                case "cell":
-                                    if (dic.ContainsKey(reader.GetAttribute("name")))
-                                    {
-                                        throw new SpreadsheetReadException("duplicate name");
-                                    }
-                                    try
-                                    {
-                                        SetContentsOfCell(reader.GetAttribute("name"), reader.GetAttribute("contents"));
-                                        break;
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        throw new SpreadsheetReadException(e.ToString());
-                                    }
-
-                            }
-                        }
+                        this.rg = newIsValid;
+                        runthis(source, first);
                     }
-                    reader.Close();                   
-                    source.Close();
                 }
-                this.rg = newIsValid;
             }
             catch (Exception e)
             {
-                if (e.GetType().ToString().Equals("SS.SpreadsheetReadException"))
+                if (e.GetType().ToString().Equals("SS.SpreadsheetReadException") | e.GetType().ToString().Equals("System.ArgumentException"))
                     throw new SpreadsheetReadException(e.ToString());
                 else
                     throw e;
             }
             this.Changed = false;
+        }
+
+        public void runthis(TextReader source, bool first)
+        {
+            this.dg = new DependencyGraph();
+            this.dic = new Dictionary<string, Cell>();
+            // Create and load the XML document.
+            XmlDocument doc = new XmlDocument();
+            doc.Load(source);
+            XmlNodeReader nodeReader = new XmlNodeReader(doc);
+            XmlSchemaSet schemas;
+            schemas = new XmlSchemaSet();
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.Schema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
+            settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
+            schemas = new XmlSchemaSet();
+            schemas.Add(null, "../../Spreadsheet.xsd");
+            settings.Schemas = schemas;
+            XmlReader reader = XmlReader.Create(nodeReader, settings);
+            XmlReader reader2 = XmlReader.Create(nodeReader, settings);
+            using (reader)
+            {
+                while (reader.Read())
+                {
+                    if (reader.IsStartElement())
+                    {
+                        switch (reader.Name)
+                        {
+                            case "spreadsheet":
+                                if (first == true)
+                                {
+                                    this.rg = new Regex(reader.GetAttribute("IsValid"));
+                                    break;
+                                }
+                                else 
+                                    break;
+
+                            case "cell":
+                                if (dic.ContainsKey(reader.GetAttribute("name")))
+                                {
+                                    throw new SpreadsheetReadException("duplicate name");
+                                }
+                                try
+                                {
+                                    SetContentsOfCell(reader.GetAttribute("name"), reader.GetAttribute("contents"));
+                                    break;
+                                }
+                                catch (Exception e)
+                                {
+                                    if (first == true)
+                                        throw new SpreadsheetReadException(e.ToString());
+                                    else throw new SpreadsheetVersionException(e.ToString());
+                                }
+
+                        }
+                    }
+                }
+                reader.Close();
+            }
+            source.Close();
         }
         // Display any warnings or errors.
         private static void ValidationCallBack(object sender, ValidationEventArgs args)
@@ -275,12 +296,11 @@ namespace SS
         /// <returns></returns>
         /// 
    
-
-
         public override object GetCellContents(string name)
         {
             if (name == null | !validName(name, rg))
                 throw new InvalidNameException();
+            name = name.ToUpper();
             if (!dic.ContainsKey(name))
                 return "";
             else if (dic[name].variety == 1)
@@ -299,7 +319,7 @@ namespace SS
                 if (vals.Value.variety == 2)
                 {
                     if (vals.Value.s == "")
-                        yield break;
+                        continue;
                     else
                         yield return vals.Key;
                 }   
@@ -349,7 +369,7 @@ namespace SS
             settings.NewLineOnAttributes = true;
             settings.NewLineChars = "\r\n";
             settings.NewLineHandling = NewLineHandling.Replace;
-           try
+            try
             {
                 using (XmlWriter writer = XmlWriter.Create(dest, settings))
                 {
@@ -375,6 +395,7 @@ namespace SS
                     writer.Close();
                 }
                 dest.Close();
+                saved = false;
             }
         catch (Exception)
         {
@@ -385,25 +406,30 @@ namespace SS
 
         public override object GetCellValue(string name)
         {
+            name = name.ToUpper();
             object j = new object();
-            if (dic[name].variety == 3)
+            if (dic.ContainsKey(name))
             {
-                try
+                if (dic[name].variety == 3)
                 {
-                    Formula f = new Formula(dic[name].v);
-                    return f.Evaluate(s => (double)(GetCellValue(s)));
+                    try
+                    {
+                        Formula f = new Formula(dic[name].v);
+                        return f.Evaluate(s => (double)(GetCellValue(s)));
+                    }
+                    catch (Exception e)
+                    {
+                        object j1 = new object();
+                        j1 = new FormulaError(e.ToString());
+                        return j1;
+                    }
                 }
-                catch (Exception e)
-                {
-                    object j1 = new object();
-                    j1 = new FormulaError(e.ToString());
-                    return j1;
-                }
+                else if (dic[name].variety == 1)
+                    return Double.Parse(dic[name].v);
+                else
+                    return dic[name].v;
             }
-            else if (dic[name].variety == 1)
-                return Double.Parse(dic[name].v);
-            else
-                return dic[name].v;
+            else return "";
         }
 
         public string Lookup4(String v)
@@ -414,8 +440,7 @@ namespace SS
 
         public bool Lookup5(String v)
         {
-            Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
-            if (validName(v, rg1))
+            if (validName(v, rg))
                 return true;
             else
                 return false;
@@ -428,19 +453,22 @@ namespace SS
             if (content == null)
                 throw new ArgumentNullException();
             Double d; saved = true;
+            name = name.ToUpper();
             if (Double.TryParse(content, out d)) {
-                ISet<string> iss = SetCellContents(name.ToUpper(), d);
+                ISet<string> iss = SetCellContents(name, d);
                 return iss;
             }
-
             else if (!content.Equals("") && content.ElementAt<char>(0) == '=')
             {
                 Formula f = new Formula(content.Substring(1), Lookup4, Lookup5);
                 ISet<string> iss = SetCellContents(name, f);
                 return iss;
             }
-            ISet<string> iss1 = SetCellContents(name, content);
-            return iss1;
+            else
+            {
+                ISet<string> iss1 = SetCellContents(name, content);
+                return iss1;
+            }
         }
 
         protected override ISet<string> SetCellContents(string name, double number)
@@ -459,7 +487,9 @@ namespace SS
                 this.dic.Add(name, cl);
                 while (iet.MoveNext())
                     hs.Add(iet.Current);
-                UpdateCellValues(ib);
+                IEnumerable<string> ib1 = GetCellsToRecalculate(name);
+                if (ib.Count() > 0)
+                    UpdateCellValues(ib1);
                 return hs;
             }
         }
@@ -482,32 +512,39 @@ namespace SS
                 this.dic.Add(name, cl);
                 while (iet.MoveNext())
                     hs.Add(iet.Current);
-                UpdateCellValues(ib);
+                if (ib.Count() > 0)
+                    UpdateCellValues(ib);
                 return hs;
             }
         }
 
         protected override ISet<string> SetCellContents(string name, Formula formula)
         {
-            if (!validName(name, rg))
+            Regex rg1 = new Regex(@"[A-Z]+[1-9][0-9]*");
+            if (!validName(name, rg1))
                 throw new InvalidNameException();
             else
             {            
                 IEnumerable<string> tokens = formula.GetVariables();
                 foreach (string s in tokens)
-                    this.dg.AddDependency(name, s);
-                IEnumerable<string> ib = GetCellsToRecalculate(name);
-                if (this.dic.ContainsKey(name))
-                    this.dic.Remove(name);
-
-                Cell cl = new SS.Cell(3, formula, "");
-                this.dic.Add(name, cl);
+                {
+                    if (rg1.IsMatch(s)) { 
+                        this.dg.AddDependency(name, s);
+                    }
+                }          
                 HashSet<string> hs = new HashSet<string>();
                 hs.Add(name);
+                GetCellsToRecalculate(name);
+                if (this.dic.ContainsKey(name))
+                    this.dic.Remove(name);
+                Cell cl = new SS.Cell(3, formula, ""); 
+                this.dic.Add(name, cl);
+                IEnumerable<string> ib = GetCellsToRecalculate(name);
                 IEnumerator<string> iet = ib.GetEnumerator();
                 while (iet.MoveNext())
                     hs.Add(iet.Current);
-                UpdateCellValues(ib);
+                if (ib.Count() > 0)
+                    UpdateCellValues(ib);
                 return hs;
             }
         }
@@ -522,50 +559,51 @@ namespace SS
             foreach (string cell in cellnames)
             {
                 Formula f;
-                type = dic[cell].variety; //determine if it is string or double
-                if (type == 1)
-                    replacement = "" + dic[cell].d;
-                if (type == 2)
-                    replacement = dic[cell].s;
-                if (type == 3)
+                if (dic.ContainsKey(cell))
                 {
-                    f = dic[cell].f;
-                    string formula = f.ToString();
-                    IEnumerable<string> x = f.GetVariables();
-                    result = formula; 
-                    foreach (string str in x)
+                    type = dic[cell].variety; //determine if it is string or double
+                    if (type == 1)
+                        replacement = "" + dic[cell].d;
+                    if (type == 2)
+                        replacement = dic[cell].s;
+                    if (type == 3)
                     {
-                        if (dic.ContainsKey(str))
+                        f = dic[cell].f;
+                        string formula = f.ToString();
+                        IEnumerable<string> x = f.GetVariables();
+                        result = formula;
+                        foreach (string str in x)
                         {
-
-                            pattern = str + "+";                         
-                            rgx = new Regex(pattern);
-                            result = rgx.Replace(formula, dic[str].v);                         
+                            if (dic.ContainsKey(str))
+                            {
+                                pattern = str + "+";
+                                rgx = new Regex(pattern);
+                                result = rgx.Replace(formula, dic[str].v);
+                            }
                         }
-                        
+
+                        Formula f1 = dic[cell].f;
+                        Cell c0 = new Cell(3, f1, result);
+                        this.dic.Remove(cell);
+                        dic.Add(cell, c0);
                     }
-
-                    Formula f1 = dic[cell].f;
-                    Cell c0 = new Cell(3, f1, result);
-                    this.dic.Remove(cell);
-                    dic.Add(cell, c0);
+                    pattern = cell + "+";
+                    if (type == 1)
+                    {
+                        double d = dic[cell].d;
+                        Cell c0 = new Cell(1, d, replacement);
+                        this.dic.Remove(cell);
+                        dic.Add(cell, c0);
+                    }
+                    if (type == 2)
+                    {
+                        string s = dic[cell].s;
+                        Cell c0 = new Cell(2, s, replacement);
+                        this.dic.Remove(cell);
+                        dic.Add(cell, c0);
+                    }
                 }
-                pattern = cell + "+";
-
-                if (type == 1)
-                {
-                    double d = dic[cell].d;
-                    Cell c0 = new Cell(1, d, replacement);
-                    this.dic.Remove(cell);
-                    dic.Add(cell, c0);
-                }
-                if (type == 2)
-                {
-                    string s = dic[cell].s;
-                    Cell c0 = new Cell(2, s, replacement);
-                    this.dic.Remove(cell);
-                    dic.Add(cell, c0);
-                }
+                
             }
         }
     }

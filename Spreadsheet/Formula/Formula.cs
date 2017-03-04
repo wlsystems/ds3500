@@ -233,7 +233,7 @@ namespace Formulas
         /// this Formula, its value is returned.  Otherwise, throws a FormulaEvaluationException  
         /// with an explanatory Message.
         /// </summary>
-        public double Evaluate(Lookup lookup)
+        public double  Evaluate(Lookup lookup)
         {
             if (formula == null)
                 formula = "0";

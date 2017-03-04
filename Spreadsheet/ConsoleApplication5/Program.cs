@@ -7,11 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using System.Xml;
 
 namespace ConsoleApplication5
 {
- 
+
+
     public static class MyExtensions
     {
         public static int WordCount(this String str)
@@ -19,14 +20,26 @@ namespace ConsoleApplication5
             return str.Split(new char[] { ' ', '.', '?' },
                              StringSplitOptions.RemoveEmptyEntries).Length;
         }
+        public static bool ContainsDuplicates<T>(this IEnumerable<T> e)
+        {
+            var set = new HashSet<T>();
+            // ReSharper disable LoopCanBeConvertedToQuery
+            foreach (var item in e)
+            // ReSharper restore LoopCanBeConvertedToQuery
+            {
+                if (!set.Add(item))
+                    return true;
+            }
+            return false;
+        }
 
-        
     }
     /// <summary>
     /// 
     /// </summary>
     class Program : TextWriter
     {
+
         static int i;
 
         public override Encoding Encoding
@@ -36,15 +49,126 @@ namespace ConsoleApplication5
                 throw new NotImplementedException();
             }
         }
+        // Accepts all strings
+        private const string ALL = "^.*$";
 
-
-        static void Main(string[] args)
+        // Verifies cells and their values, which must alternate.
+        public void VV(AbstractSpreadsheet sheet, params object[] constraints)
         {
-            int a = 1;
-            int b = 2;
-            Console.WriteLine(Method(ref a, ref b));
+            for (int i = 0; i < constraints.Length; i += 2)
+            {
+                if (constraints[i + 1] is double)
+                {
+                    Console.WriteLine((double)constraints[i + 1] + " " + (double)sheet.GetCellValue((string)constraints[i]));
+                }
+                else
+                {
+                    Console.WriteLine(constraints[i + 1] + " " + sheet.GetCellValue((string)constraints[i]));
+                }
+            }
         }
 
+        // For setting a spreadsheet cell.
+        public IEnumerable<string> Set(AbstractSpreadsheet sheet, string name, string contents)
+        {
+            List<string> result = new List<string>(sheet.SetContentsOfCell(name, contents));
+            return result;
+        }
+
+
+        static void Main(string[] args)           
+        {
+            AbstractSpreadsheet s = new Spreadsheet();
+            s.SetContentsOfCell("sum1", "= a1 + a2");
+            int i;
+            int depth = 15;
+            for (i = 1; i <= depth * 2; i += 2)
+            {
+                s.SetContentsOfCell("a" + i, "= a" + (i + 2) + " + a" + (i + 3));
+                s.SetContentsOfCell("a" + (i + 1), "= a" + (i + 2) + "+ a" + (i + 3));
+            }
+            s.SetContentsOfCell("a" + i, "1");
+            s.SetContentsOfCell("a" + (i + 1), "1");
+            Console.WriteLine(Math.Pow(2, depth + 1)+ " " + (double)s.GetCellValue("sum1"));
+            s.SetContentsOfCell("a" + i, "0");
+            Console.WriteLine(Math.Pow(2, depth)+ " " + (double)s.GetCellValue("sum1"));
+            s.SetContentsOfCell("a" + (i + 1), "0");
+            Console.WriteLine(0.0+ " " + (double)s.GetCellValue("sum1"));
+        }
+        private String randomName(Random rand)
+        {
+            return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".Substring(rand.Next(26), 1) + (rand.Next(99) + 1);
+        }
+        private String randomFormula(Random rand)
+        {
+            String f = randomName(rand);
+            for (int i = 0; i < 10; i++)
+            {
+                switch (rand.Next(4))
+                {
+                    case 0:
+                        f += "+";
+                        break;
+                    case 1:
+                        f += "-";
+                        break;
+                    case 2:
+                        f += "*";
+                        break;
+                    case 3:
+                        f += "/";
+                        break;
+                }
+                switch (rand.Next(2))
+                {
+                    case 0:
+                        f += 7.2;
+                        break;
+                    case 1:
+                        f += randomName(rand);
+                        break;
+                }
+            }
+            return f;
+        }
+        public void Stress5()
+        {
+            int seed = 47;
+            int size = 831;
+            AbstractSpreadsheet s = new Spreadsheet();
+            Random rand = new Random(seed);
+            int j = 0;
+            List<string> hst = new List<string>();
+            for (int i = 0; i < 1; i++)
+            {
+               if (!hst.Contains(randomName(rand))){
+                    hst.Add(randomName(rand));
+                }
+                try
+                {
+                    switch (rand.Next(3))
+                    {                                               
+                        case 0:
+                            s.SetContentsOfCell(randomName(rand), "3.14");
+                            break;
+                        case 1:
+                            s.SetContentsOfCell(randomName(rand), "hello");
+                            break;
+                        case 2:
+                            s.SetContentsOfCell(randomName(rand), "=" + randomFormula(rand));
+                            break;
+                    }
+                }
+
+                catch (CircularException)
+                {
+                }
+            }
+            ISet<string> set = new HashSet<string>(s.GetNamesOfAllNonemptyCells());
+            Console.WriteLine(hst.Count);
+
+
+        }
         public static int Method(ref int d, ref int n)
         {
             d = 2;

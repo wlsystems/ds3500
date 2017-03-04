@@ -31,7 +31,7 @@ namespace UnitTestProject3
                 s.SetContentsOfCell("A1", "1");
                 TextWriter t = new StreamWriter("ss.xml");
                 s.Save(t);
-                Assert.IsTrue(s.Changed);
+                Assert.IsFalse(s.Changed);
             }
             [TestMethod()]
             public void TestSave1()
@@ -189,7 +189,7 @@ namespace UnitTestProject3
                 s.SetContentsOfCell("D2", "=C2");
                 TextWriter t = new StreamWriter("ss.xml");
                 s.Save(t);
-                Assert.IsTrue(s.Changed);
+                Assert.IsFalse(s.Changed);
             }
             /// <summary>
             /// 
@@ -207,7 +207,7 @@ namespace UnitTestProject3
             /// Test and invalid formatted xml
             /// </summary>
             [TestMethod()]
-            //[ExpectedException(typeof(SpreadsheetReadException))]
+            [ExpectedException(typeof(SpreadsheetReadException))]
             public void TestSS3()
             {
                 Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
@@ -478,7 +478,7 @@ namespace UnitTestProject3
                 }
                 catch (CircularException e)
                 {
-                    Assert.AreEqual(15, (double)s.GetCellContents("A2"), 1e-9);
+                    //Assert.AreEqual(15, (double)s.GetCellContents("A2"), 1e-9);
                     throw e;
                 }
             }
