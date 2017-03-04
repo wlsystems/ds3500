@@ -932,7 +932,7 @@ namespace PS6GradingTests
             AbstractSpreadsheet s = new Spreadsheet();
             s.SetContentsOfCell("sum1", "= a1 + a2");
             int i;
-            int depth = 10;
+            int depth = 15;
             for (i = 1; i <= depth * 2; i += 2)
             {
                 s.SetContentsOfCell("a" + i, "= a" + (i + 2) + " + a" + (i + 3));
