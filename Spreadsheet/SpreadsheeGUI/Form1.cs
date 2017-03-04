@@ -15,6 +15,7 @@ namespace SpreadsheeGUI
     {
         public Form1()
         {
+
             InitializeComponent();
         }
 
