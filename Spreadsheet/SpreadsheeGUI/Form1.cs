@@ -56,6 +56,14 @@ namespace SpreadsheeGUI
             }
         }
 
+        string Form1View.CellValue
+        {
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public Form1()
         {
 

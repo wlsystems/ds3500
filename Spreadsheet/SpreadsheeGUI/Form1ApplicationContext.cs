@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SSGui;
 
 namespace SpreadsheeGUI
-{/// <summary>
- /// Keeps track of how many top-level forms are running, shuts down
- /// the application when there are no more.
- /// </summary>
+{
+    /// <summary>
+    /// Keeps track of how many top-level forms are running, shuts down
+    /// the application when there are no more.
+    /// </summary>
     class Form1ApplicationContext : ApplicationContext
     {
         // Number of open forms
