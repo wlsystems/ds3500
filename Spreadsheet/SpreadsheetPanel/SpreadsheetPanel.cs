@@ -426,5 +426,15 @@ namespace SSGui
                 Invalidate();
             }
         }
+
+        private void SpreadsheetPanel_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
