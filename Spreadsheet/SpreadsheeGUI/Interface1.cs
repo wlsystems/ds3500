@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpreadsheeGUI
+namespace SpreadsheetGUI
 {
     /// <summary>
     /// Controllable interface of AnalysisWindow

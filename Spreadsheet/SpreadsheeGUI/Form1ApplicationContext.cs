@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SpreadsheeGUI
+namespace SpreadsheetGUI
 {
     /// <summary>
     /// Keeps track of how many top-level forms are running, shuts down
