@@ -104,5 +104,11 @@ namespace SpreadsheeGUI
         {
             throw new NotImplementedException();
         }
+
+        public void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form1ApplicationContext.GetContext().RunNew();
+        }
+
     }
 }
