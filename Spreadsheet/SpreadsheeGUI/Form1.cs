@@ -32,7 +32,11 @@ namespace SpreadsheetGUI
         {
             txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(CurrentCol+65)).ToString(), (CurrentRow+1).ToString());
         }
-        
+
+        /// <summary>
+        /// Fired when the cell contents is updated.
+        /// </summary>
+        public event Action SelectionChangedEvent;
 
         /// <summary>
         /// Fired when a file is chosen with a file dialog.  The
@@ -44,7 +48,7 @@ namespace SpreadsheetGUI
         /// Fired when a close action is requested.
         /// </summary>
         public event Action CloseEvent;
-
+        
         /// <summary>
         /// Fired when a new action is requested.
         /// </summary>
@@ -60,15 +64,16 @@ namespace SpreadsheetGUI
         
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         private void menuItem_Close_Click(object sender, EventArgs e)
         {
             if (CloseEvent != null)
             {
-                Close();
+                CloseEvent();
             }
+        }
 
         }
 
@@ -180,6 +185,19 @@ namespace SpreadsheetGUI
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
 
+        }
+
+        private void spreadsheetPanel1_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void spreadsheetPanel1_SelectionChanged(SpreadsheetPanel sender)
+        {
+            if (SelectionChangedEvent != null)
+            {
+                SelectionChangedEvent();
+            }
         }
     }
 }

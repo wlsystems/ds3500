@@ -38,11 +38,11 @@
             this.openfileDialog = new System.Windows.Forms.OpenFileDialog();
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.txtValue = new System.Windows.Forms.TextBox();
             this.txtCellName = new System.Windows.Forms.TextBox();
             this.txtCellContents = new System.Windows.Forms.TextBox();
             this.lblCellContents = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.txtValue = new System.Windows.Forms.TextBox();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -118,6 +118,8 @@
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
             this.spreadsheetPanel1.Size = new System.Drawing.Size(1350, 480);
             this.spreadsheetPanel1.TabIndex = 2;
+            this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
+            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load_1);
             // 
             // panel1
             // 
@@ -129,6 +131,14 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(910, 29);
             this.panel1.TabIndex = 3;
+            // 
+            // txtValue
+            // 
+            this.txtValue.Location = new System.Drawing.Point(516, 3);
+            this.txtValue.Name = "txtValue";
+            this.txtValue.ReadOnly = true;
+            this.txtValue.Size = new System.Drawing.Size(47, 20);
+            this.txtValue.TabIndex = 4;
             // 
             // txtCellName
             // 
@@ -162,14 +172,6 @@
             // 
             this.saveFileDialog.DefaultExt = "ss";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
-            // 
-            // txtValue
-            // 
-            this.txtValue.Location = new System.Drawing.Point(516, 3);
-            this.txtValue.Name = "txtValue";
-            this.txtValue.ReadOnly = true;
-            this.txtValue.Size = new System.Drawing.Size(47, 20);
-            this.txtValue.TabIndex = 4;
             // 
             // Form1
             // 

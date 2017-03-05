@@ -42,7 +42,6 @@
             this.ResumeLayout(false);
 
         }
-        #endregion
     }
 }
-
+#endregion
