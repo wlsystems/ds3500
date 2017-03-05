@@ -42,6 +42,7 @@
             this.txtCellContents = new System.Windows.Forms.TextBox();
             this.lblCellContents = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.txtValue = new System.Windows.Forms.TextBox();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -120,6 +121,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtValue);
             this.panel1.Controls.Add(this.txtCellName);
             this.panel1.Controls.Add(this.txtCellContents);
             this.panel1.Controls.Add(this.lblCellContents);
@@ -144,7 +146,7 @@
             // 
             this.txtCellContents.Location = new System.Drawing.Point(123, 3);
             this.txtCellContents.Name = "txtCellContents";
-            this.txtCellContents.Size = new System.Drawing.Size(407, 20);
+            this.txtCellContents.Size = new System.Drawing.Size(365, 20);
             this.txtCellContents.TabIndex = 1;
             // 
             // lblCellContents
@@ -160,6 +162,14 @@
             // 
             this.saveFileDialog.DefaultExt = "ss";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
+            // 
+            // txtValue
+            // 
+            this.txtValue.Location = new System.Drawing.Point(516, 3);
+            this.txtValue.Name = "txtValue";
+            this.txtValue.ReadOnly = true;
+            this.txtValue.Size = new System.Drawing.Size(47, 20);
+            this.txtValue.TabIndex = 4;
             // 
             // Form1
             // 
@@ -200,6 +210,7 @@
         private System.Windows.Forms.Label lblCellContents;
         private System.Windows.Forms.TextBox txtCellName;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.TextBox txtValue;
     }
 }
 
