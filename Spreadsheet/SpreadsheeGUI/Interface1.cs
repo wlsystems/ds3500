@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpreadsheeGUI
+namespace SpreadsheetGUI
 {
     /// <summary>
     /// Controllable interface of AnalysisWindow
@@ -18,8 +18,7 @@ namespace SpreadsheeGUI
         event Action CloseEvent;
 
         event Action NewEvent;
-
-        string SearchString { set; }
+        
 
         string CellValue { set; }
 

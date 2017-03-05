@@ -9,22 +9,127 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using SSGui;
 
-namespace SpreadsheeGUI
+namespace SpreadsheetGUI
 {
     public partial class Form1 : Form, Form1View
     {
-        public string SearchString
+
+
+        public Form1()
         {
-            set
+            InitializeComponent();
+            spreadsheetPanel1.SetSelection(0, 0);
+            UpdateCellNameTxtBox();
+        }
+
+
+        public int CurrentRow { get; set; }
+
+        public int CurrentCol { get; set; }
+
+
+        private void UpdateCellNameTxtBox()
+        {
+            txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(CurrentCol+65)).ToString(), (CurrentRow+1).ToString());
+        }
+        
+
+        /// <summary>
+        /// Fired when a file is chosen with a file dialog.  The
+        /// parameter is the chosen filename
+        /// </summary>
+        public event Action<string> FileChosenEvent;
+
+        /// <summary>
+        /// Fired when a close action is requested.
+        /// </summary>
+        public event Action CloseEvent;
+
+        /// <summary>
+        /// Fired when a new action is requested.
+        /// </summary>
+        public event Action NewEvent;
+
+        /// <summary>
+        /// Fired when a request is made to count occurrences of a string.
+        /// The parameter is the string.
+        /// </summary>
+        public event Action<string> CountEvent;
+
+
+        
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menuItem_Close_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+
+        public void DoClose()
+        {
+            Close();
+        }
+
+        public void OpenNew()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void menuItem_New_Click(object sender, EventArgs e)
+        {
+            Form1ApplicationContext.GetContext().RunNew();
+        }
+
+        private void menuItem_Open_Click(object sender, EventArgs e)
+        {
+            DialogResult result = openfileDialog.ShowDialog();
+            if (result == DialogResult.Yes || result == DialogResult.OK)
             {
-                throw new NotImplementedException();
+                if (FileChosenEvent != null)
+                {
+                    FileChosenEvent(openfileDialog.FileName);
+                }
             }
         }
+
+
+        private void menuItem_Save_Click(object sender, EventArgs e)
+        {
+            DialogResult result = saveFileDialog.ShowDialog();
+            if (result == DialogResult.Yes || result == DialogResult.OK)
+            {
+                if (FileChosenEvent != null)
+                {
+                    FileChosenEvent(saveFileDialog.FileName);
+                }
+
+            }
+        }
+
+        private void fileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void spreadsheetPanel1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtCellName_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
 
         public string CellValue
         {
             get
-            {
+          {
                 int col = 0;
                 int row = 0;
                 string str = "";
@@ -68,61 +173,9 @@ namespace SpreadsheeGUI
             }
         }
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        public event Action<string> FileChosenEvent;
-        public event Action CloseEvent;
-        public event Action NewEvent;
-        public event Action<string> CountEvent;
-
-        private void Form1_Load(object sender, EventArgs e)
+        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
 
         }
-
-        private void spreadsheetPanel1_Load(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void spreadsheetPanel2_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        public void DoClose()
-        {
-            Close();
-        }
-
-        public void OpenNew()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form1ApplicationContext.GetContext().RunNew();
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            String s = sender.ToString();
-            FileChosenEvent(s);
-        }
-
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
-
     }
 }
