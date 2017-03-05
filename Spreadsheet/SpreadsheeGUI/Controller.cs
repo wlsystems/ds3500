@@ -34,7 +34,6 @@ namespace SpreadsheeGUI
             try
             {
                 fileContents = File.ReadAllText(filename);
-
             }
             catch (Exception ex)
             {

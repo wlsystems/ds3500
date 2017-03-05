@@ -25,7 +25,11 @@ namespace SpreadsheeGUI
         {
             get
             {
-                throw new NotImplementedException();
+                int col = 0;
+                int row = 0;
+                string str = "";
+                SpreadsheetPanel.GetContext().GetValue(col, row, out str);
+                return str;
             }
         }
 
@@ -66,14 +70,13 @@ namespace SpreadsheeGUI
 
         public Form1()
         {
-
             InitializeComponent();
         }
 
         public event Action<string> FileChosenEvent;
-        public event Action<string> CountEvent;
         public event Action CloseEvent;
         public event Action NewEvent;
+        public event Action<string> CountEvent;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -87,8 +90,7 @@ namespace SpreadsheeGUI
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CloseEvent != null)
-                CloseEvent();
+            Close();
         }
 
         private void spreadsheetPanel2_Load(object sender, EventArgs e)
@@ -98,7 +100,7 @@ namespace SpreadsheeGUI
 
         public void DoClose()
         {
-            throw new NotImplementedException();
+            Close();
         }
 
         public void OpenNew()
@@ -113,14 +115,14 @@ namespace SpreadsheeGUI
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult result = fileDialog.ShowDialog();
-            if (result == DialogResult.Yes || result == DialogResult.OK)
-            {
-                if (FileChosenEvent != null)
-                {
-                    FileChosenEvent(fileDialog.FileName);
-                }
-            }
+            String s = sender.ToString();
+            FileChosenEvent(s);
         }
+
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
     }
 }

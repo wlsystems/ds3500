@@ -9,11 +9,21 @@ namespace DemoApp
 {
     class Program
     {
+        int x=3;
+        int y=3;
         static void Main(string[] args)
         {
-            Regex r = new Regex("[a-z]");
-            Regex r1 = new Regex("[a-z]");
-            Console.WriteLine(r.ToString());
+            int x = 3;
+            int y = 5;
+            GetSelection(out x, out y);
+            Console.Write(x + " " + y);
+        }
+
+        public static void GetSelection(out int col, out int row)
+        {
+
+            col = 1;
+            row = 1;
         }
     }
     /// <summary>

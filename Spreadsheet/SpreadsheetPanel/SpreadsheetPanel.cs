@@ -29,7 +29,6 @@ namespace SSGui
         private DrawingPanel drawingPanel;
         private HScrollBar hScroll;
         private VScrollBar vScroll;
-
         // These constants control the layout of the spreadsheet grid.  The height and
         // width measurements are in pixels.
         private const int DATA_COL_WIDTH = 80;
@@ -40,7 +39,7 @@ namespace SSGui
         private const int SCROLLBAR_WIDTH = 20;
         private const int COL_COUNT = 26;
         private const int ROW_COUNT = 99;
-
+        private static SpreadsheetPanel context;
         /// <summary>
         /// Creates an empty SpreadsheetPanel
         /// </summary>        
@@ -84,6 +83,18 @@ namespace SSGui
             drawingPanel.Clear();
         }
 
+        /// <summary>
+        /// test method
+        /// </summary>
+        /// <returns></returns>
+        public static SpreadsheetPanel GetContext()
+        {
+            if (context == null)
+            {
+                context = new SpreadsheetPanel();
+            }
+            return context;
+        }
         /// <summary>
         /// If the zero-based column and row are in range, sets the value of that
         /// cell and returns true.  Otherwise, returns false.
@@ -183,6 +194,8 @@ namespace SSGui
         /// </summary>      
         private class DrawingPanel : Panel
         {
+
+            private TextBox tb;
             // Columns and rows are numbered beginning with 0.  This is the coordinate
             // of the selected cell.
             private int _selectedCol;
@@ -411,6 +424,10 @@ namespace SSGui
             /// </summary>
             protected override void OnMouseClick(MouseEventArgs e)
             {
+                String s = "";
+                try {s = tb.Text; }
+                catch (Exception) {  };
+                this.Controls.Remove(tb);
                 base.OnClick(e);
                 int x = (e.X-LABEL_COL_WIDTH) / DATA_COL_WIDTH;
                 int y = (e.Y-LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
@@ -418,12 +435,38 @@ namespace SSGui
                 {
                     _selectedCol = x + _firstColumn;
                     _selectedRow = y + _firstRow;
+
                     if (_ssp.SelectionChanged != null)
                     {
                         _ssp.SelectionChanged(_ssp);
+                        _values.Add(new Address(x, y), s);
                     }
+                    Point p = new Point(DATA_COL_WIDTH * x + LABEL_COL_WIDTH, DATA_ROW_HEIGHT * y + LABEL_ROW_HEIGHT);
+                    tb = new TextBox();
+                    tb.Location = p;
+                    tb.Width = DATA_COL_WIDTH;
+                    this.Controls.Add(tb);
+                    tb.Focus();
+                    tb.KeyPress += Tb_KeyPress;
                 }
                 Invalidate();
+            }
+
+            private void Tb_KeyPress(object sender, KeyPressEventArgs e)
+            {
+                if (e.KeyChar == (char)13)
+                {
+                    e.Handled = true;
+                    String s = "";
+                    try { s = tb.Text; }
+                    catch (Exception) { };
+                    this.Controls.Remove(tb);
+                    if (_ssp.SelectionChanged != null)
+                    {
+                        _ssp.SelectionChanged(_ssp);
+                        _values.Add(new Address(_selectedCol, _selectedRow), s);
+                    }
+                } 
             }
         }
 
@@ -438,6 +481,26 @@ namespace SSGui
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Update(object sender, KeyPressEventArgs e)
+        {
+
+        }
+
+        private void Clicked(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }

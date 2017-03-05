@@ -28,28 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.spreadsheetPanel2 = new SSGui.SpreadsheetPanel();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // spreadsheetPanel1
-            // 
-            this.spreadsheetPanel1.AutoScroll = true;
-            this.spreadsheetPanel1.AutoSize = true;
-            this.spreadsheetPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.spreadsheetPanel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.spreadsheetPanel1.Location = new System.Drawing.Point(1855, 24);
-            this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(3, 717);
-            this.spreadsheetPanel1.TabIndex = 0;
-            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load);
             // 
             // menuStrip1
             // 
@@ -75,29 +63,34 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
             // spreadsheetPanel2
             // 
@@ -106,7 +99,7 @@
             this.spreadsheetPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.spreadsheetPanel2.Location = new System.Drawing.Point(0, 24);
             this.spreadsheetPanel2.Name = "spreadsheetPanel2";
-            this.spreadsheetPanel2.Size = new System.Drawing.Size(1855, 717);
+            this.spreadsheetPanel2.Size = new System.Drawing.Size(1858, 717);
             this.spreadsheetPanel2.TabIndex = 2;
             this.spreadsheetPanel2.Load += new System.EventHandler(this.spreadsheetPanel2_Load);
             // 
@@ -118,7 +111,6 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1858, 741);
             this.Controls.Add(this.spreadsheetPanel2);
-            this.Controls.Add(this.spreadsheetPanel1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
@@ -132,8 +124,6 @@
         }
 
         #endregion
-
-        private SSGui.SpreadsheetPanel spreadsheetPanel1;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
@@ -141,6 +131,7 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private SSGui.SpreadsheetPanel spreadsheetPanel2;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 
