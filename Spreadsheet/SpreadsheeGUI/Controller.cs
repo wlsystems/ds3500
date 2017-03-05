@@ -23,8 +23,16 @@ namespace SpreadsheetGUI
         public Controller(Form1 window)
         {
             this.window = window;
-            window.CloseEvent += HandleClose;         
-                     
+            window.CloseEvent += HandleClose;
+            window.SelectionChangedEvent += Window_SelectionChangedEvent;
+        }
+
+        /// <summary>
+        /// Fired when the contents is updated. 
+        /// </summary>
+        private void Window_SelectionChangedEvent()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
