@@ -129,8 +129,12 @@ namespace SpreadsheetGUI
         public string CellValue
         {
             get
-            {
-                throw new NotImplementedException();
+          {
+                int col = 0;
+                int row = 0;
+                string str = "";
+                SpreadsheetPanel.GetContext().GetValue(col, row, out str);
+                return str;
             }
         }
 
