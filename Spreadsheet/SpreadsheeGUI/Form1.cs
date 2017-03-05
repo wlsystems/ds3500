@@ -192,7 +192,10 @@ namespace SpreadsheetGUI
 
         private void spreadsheetPanel1_SelectionChanged(SpreadsheetPanel sender)
         {
-
+            if (SelectionChangedEvent != null)
+            {
+                SelectionChangedEvent();
+            }
         }
     }
 }
