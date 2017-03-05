@@ -35,12 +35,13 @@
             this.menuItem_Open = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItem_Close = new System.Windows.Forms.ToolStripMenuItem();
             this.menu_Help = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.openfileDialog = new System.Windows.Forms.OpenFileDialog();
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtCellName = new System.Windows.Forms.TextBox();
             this.txtCellContents = new System.Windows.Forms.TextBox();
             this.lblCellContents = new System.Windows.Forms.Label();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -70,27 +71,28 @@
             // menuItem_New
             // 
             this.menuItem_New.Name = "menuItem_New";
-            this.menuItem_New.Size = new System.Drawing.Size(103, 22);
+            this.menuItem_New.Size = new System.Drawing.Size(152, 22);
             this.menuItem_New.Text = "New";
             this.menuItem_New.Click += new System.EventHandler(this.menuItem_New_Click);
             // 
             // menuItem_Save
             // 
             this.menuItem_Save.Name = "menuItem_Save";
-            this.menuItem_Save.Size = new System.Drawing.Size(103, 22);
+            this.menuItem_Save.Size = new System.Drawing.Size(152, 22);
             this.menuItem_Save.Text = "Save";
+            this.menuItem_Save.Click += new System.EventHandler(this.menuItem_Save_Click);
             // 
             // menuItem_Open
             // 
             this.menuItem_Open.Name = "menuItem_Open";
-            this.menuItem_Open.Size = new System.Drawing.Size(103, 22);
+            this.menuItem_Open.Size = new System.Drawing.Size(152, 22);
             this.menuItem_Open.Text = "Open";
             this.menuItem_Open.Click += new System.EventHandler(this.menuItem_Open_Click);
             // 
             // menuItem_Close
             // 
             this.menuItem_Close.Name = "menuItem_Close";
-            this.menuItem_Close.Size = new System.Drawing.Size(103, 22);
+            this.menuItem_Close.Size = new System.Drawing.Size(152, 22);
             this.menuItem_Close.Text = "Close";
             this.menuItem_Close.Click += new System.EventHandler(this.menuItem_Close_Click);
             // 
@@ -100,10 +102,11 @@
             this.menu_Help.Size = new System.Drawing.Size(44, 20);
             this.menu_Help.Text = "Help";
             // 
-            // fileDialog
+            // openfileDialog
             // 
-            this.fileDialog.FileName = "fileDialog";
-            this.fileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.fileDialog1_FileOk);
+            this.openfileDialog.DefaultExt = "ss";
+            this.openfileDialog.FileName = "openfileDialog";
+            this.openfileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.fileDialog1_FileOk);
             // 
             // spreadsheetPanel1
             // 
@@ -153,6 +156,11 @@
             this.lblCellContents.TabIndex = 1;
             this.lblCellContents.Text = "Cell Contents:";
             // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.DefaultExt = "ss";
+            this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -184,13 +192,14 @@
         private System.Windows.Forms.ToolStripMenuItem menuItem_Save;
         private System.Windows.Forms.ToolStripMenuItem menuItem_Open;
         private System.Windows.Forms.ToolStripMenuItem menuItem_Close;
-        private System.Windows.Forms.OpenFileDialog fileDialog;
+        private System.Windows.Forms.OpenFileDialog openfileDialog;
         private System.Windows.Forms.ToolStripMenuItem menu_Help;
         private SSGui.SpreadsheetPanel spreadsheetPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox txtCellContents;
         private System.Windows.Forms.Label lblCellContents;
         private System.Windows.Forms.TextBox txtCellName;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog;
     }
 }
 

@@ -30,7 +30,7 @@ namespace SpreadsheetGUI
 
         private void UpdateCellNameTxtBox()
         {
-            txtCellName.Text = string.Format("{0}{1}", CurrentCol.ToString(), CurrentRow.ToString());
+            txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(CurrentCol+65)).ToString(), (CurrentRow+1).ToString());
         }
         
 
@@ -39,7 +39,6 @@ namespace SpreadsheetGUI
         /// parameter is the chosen filename
         /// </summary>
         public event Action<string> FileChosenEvent;
-
 
         /// <summary>
         /// Fired when a close action is requested.
@@ -87,13 +86,27 @@ namespace SpreadsheetGUI
 
         private void menuItem_Open_Click(object sender, EventArgs e)
         {
-            DialogResult result = fileDialog.ShowDialog();
+            DialogResult result = openfileDialog.ShowDialog();
             if (result == DialogResult.Yes || result == DialogResult.OK)
             {
                 if (FileChosenEvent != null)
                 {
-                    FileChosenEvent(fileDialog.FileName);
+                    FileChosenEvent(openfileDialog.FileName);
                 }
+            }
+        }
+
+
+        private void menuItem_Save_Click(object sender, EventArgs e)
+        {
+            DialogResult result = saveFileDialog.ShowDialog();
+            if (result == DialogResult.Yes || result == DialogResult.OK)
+            {
+                if (FileChosenEvent != null)
+                {
+                    FileChosenEvent(saveFileDialog.FileName);
+                }
+
             }
         }
 
@@ -156,5 +169,9 @@ namespace SpreadsheetGUI
             }
         }
 
+        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
     }
 }
