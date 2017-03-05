@@ -80,20 +80,12 @@ namespace SpreadsheeGUI
 
         }
 
-        private void spreadsheetPanel1_Load(object sender, EventArgs e)
-        {
-            
-        }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void spreadsheetPanel2_Load(object sender, EventArgs e)
-        {
-
-        }
 
         public void DoClose()
         {
@@ -108,7 +100,7 @@ namespace SpreadsheeGUI
         public void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form1ApplicationContext.GetContext().RunNew();
+        
         }
-
     }
 }
