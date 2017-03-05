@@ -194,7 +194,8 @@ namespace SSGui
         /// </summary>      
         private class DrawingPanel : Panel
         {
-
+            private Dictionary<TextBox, Address> cellValues;
+            //this is the textbox that captures the cellcontent
             private TextBox tb;
             // Columns and rows are numbered beginning with 0.  This is the coordinate
             // of the selected cell.
