@@ -87,7 +87,8 @@ namespace SpreadsheeGUI
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+            if (CloseEvent != null)
+                CloseEvent();
         }
 
         private void spreadsheetPanel2_Load(object sender, EventArgs e)
@@ -110,5 +111,16 @@ namespace SpreadsheeGUI
             Form1ApplicationContext.GetContext().RunNew();
         }
 
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = fileDialog.ShowDialog();
+            if (result == DialogResult.Yes || result == DialogResult.OK)
+            {
+                if (FileChosenEvent != null)
+                {
+                    FileChosenEvent(fileDialog.FileName);
+                }
+            }
+        }
     }
 }

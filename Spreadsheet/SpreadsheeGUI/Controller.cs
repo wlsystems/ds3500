@@ -23,8 +23,7 @@ namespace SpreadsheeGUI
         public Controller(Form1 window)
         {
             this.window = window;
-            window.CloseEvent += HandleClose;
-
+            window.CloseEvent += HandleClose;                  
         }
 
         /// <summary>
@@ -48,9 +47,17 @@ namespace SpreadsheeGUI
         /// </summary>
         private void HandleClose()
         {
+
             window.DoClose();
         }
 
+        /// <summary>
+        /// Handles a request to close the window
+        /// </summary>
+        private void HandleClick()
+        {
+            window.DoClose();
+        }
         /// <summary>
         /// Handles a request to open a new window.
         /// </summary>
