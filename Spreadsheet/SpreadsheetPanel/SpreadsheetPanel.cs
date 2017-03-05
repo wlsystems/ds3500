@@ -29,6 +29,7 @@ namespace SSGui
         private DrawingPanel drawingPanel;
         private HScrollBar hScroll;
         private VScrollBar vScroll;
+
         // These constants control the layout of the spreadsheet grid.  The height and
         // width measurements are in pixels.
         private const int DATA_COL_WIDTH = 80;
@@ -39,7 +40,7 @@ namespace SSGui
         private const int SCROLLBAR_WIDTH = 20;
         private const int COL_COUNT = 26;
         private const int ROW_COUNT = 99;
-        private static SpreadsheetPanel context;
+
         /// <summary>
         /// Creates an empty SpreadsheetPanel
         /// </summary>        
@@ -83,18 +84,6 @@ namespace SSGui
             drawingPanel.Clear();
         }
 
-        /// <summary>
-        /// test method
-        /// </summary>
-        /// <returns></returns>
-        public static SpreadsheetPanel GetContext()
-        {
-            if (context == null)
-            {
-                context = new SpreadsheetPanel();
-            }
-            return context;
-        }
         /// <summary>
         /// If the zero-based column and row are in range, sets the value of that
         /// cell and returns true.  Otherwise, returns false.
@@ -152,7 +141,7 @@ namespace SSGui
                 hScroll.LargeChange = (change < 0) ? 0 : change;
             }
         }
-             
+
         /// <summary>
         /// The event used to send notifications of a selection change
         /// </summary>
@@ -180,7 +169,8 @@ namespace SSGui
 
             public override bool Equals(object obj)
             {
- 	            if ((obj == null) || !(obj is Address)) {
+                if ((obj == null) || !(obj is Address))
+                {
                     return false;
                 }
                 Address a = (Address)obj;
@@ -194,8 +184,6 @@ namespace SSGui
         /// </summary>      
         private class DrawingPanel : Panel
         {
-
-            private TextBox tb;
             // Columns and rows are numbered beginning with 0.  This is the coordinate
             // of the selected cell.
             private int _selectedCol;
@@ -204,9 +192,9 @@ namespace SSGui
             // Coordinate of cell in upper-left corner of display
             private int _firstColumn = 0;
             private int _firstRow = 0;
-            
+
             // The strings contained by the spreadsheet
-            private Dictionary<Address,String> _values;
+            private Dictionary<Address, String> _values;
 
             // The containing panel
             private SpreadsheetPanel _ssp;
@@ -359,7 +347,7 @@ namespace SSGui
                                       DATA_COL_WIDTH - 2,
                                       DATA_ROW_HEIGHT - 2));
                 }
-                
+
                 // Draw the text
                 foreach (KeyValuePair<Address, String> address in _values)
                 {
@@ -372,7 +360,7 @@ namespace SSGui
                     {
                         Region cellClip = new Region(new Rectangle(LABEL_COL_WIDTH + x * DATA_COL_WIDTH + PADDING,
                                                                    LABEL_ROW_HEIGHT + y * DATA_ROW_HEIGHT,
-                                                                   DATA_COL_WIDTH - 2*PADDING,
+                                                                   DATA_COL_WIDTH - 2 * PADDING,
                                                                    DATA_ROW_HEIGHT));
                         cellClip.Intersect(clip);
                         e.Graphics.Clip = cellClip;
@@ -398,8 +386,8 @@ namespace SSGui
                       label,
                       f,
                       new SolidBrush(Color.Black),
-                      LABEL_COL_WIDTH + x*DATA_COL_WIDTH + (DATA_COL_WIDTH - width)/2,
-                      (LABEL_ROW_HEIGHT - height)/2);
+                      LABEL_COL_WIDTH + x * DATA_COL_WIDTH + (DATA_COL_WIDTH - width) / 2,
+                      (LABEL_ROW_HEIGHT - height) / 2);
             }
 
             /// <summary>
@@ -414,8 +402,8 @@ namespace SSGui
                     label,
                     f,
                     new SolidBrush(Color.Black),
-                    LABEL_COL_WIDTH - width- PADDING,
-                    LABEL_ROW_HEIGHT + y * DATA_ROW_HEIGHT + (DATA_ROW_HEIGHT-height)/2);
+                    LABEL_COL_WIDTH - width - PADDING,
+                    LABEL_ROW_HEIGHT + y * DATA_ROW_HEIGHT + (DATA_ROW_HEIGHT - height) / 2);
             }
 
             /// <summary>
@@ -424,85 +412,20 @@ namespace SSGui
             /// </summary>
             protected override void OnMouseClick(MouseEventArgs e)
             {
-                String s = "";
-                try {s = tb.Text; }
-                catch (Exception) {  };
-                this.Controls.Remove(tb);
                 base.OnClick(e);
-                int x = (e.X-LABEL_COL_WIDTH) / DATA_COL_WIDTH;
-                int y = (e.Y-LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
+                int x = (e.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
+                int y = (e.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
                 if (e.X > LABEL_COL_WIDTH && e.Y > LABEL_ROW_HEIGHT && (x + _firstColumn < COL_COUNT) && (y + _firstRow < ROW_COUNT))
                 {
                     _selectedCol = x + _firstColumn;
                     _selectedRow = y + _firstRow;
-
                     if (_ssp.SelectionChanged != null)
                     {
                         _ssp.SelectionChanged(_ssp);
-                        _values.Add(new Address(x, y), s);
                     }
-                    Point p = new Point(DATA_COL_WIDTH * x + LABEL_COL_WIDTH, DATA_ROW_HEIGHT * y + LABEL_ROW_HEIGHT);
-                    tb = new TextBox();
-                    tb.Location = p;
-                    tb.Width = DATA_COL_WIDTH;
-                    this.Controls.Add(tb);
-                    tb.Focus();
-                    tb.KeyPress += Tb_KeyPress;
                 }
                 Invalidate();
             }
-
-            private void Tb_KeyPress(object sender, KeyPressEventArgs e)
-            {
-                if (e.KeyChar == (char)13)
-                {
-                    e.Handled = true;
-                    String s = "";
-                    try { s = tb.Text; }
-                    catch (Exception) { };
-                    this.Controls.Remove(tb);
-                    if (_ssp.SelectionChanged != null)
-                    {
-                        _ssp.SelectionChanged(_ssp);
-                        _values.Add(new Address(_selectedCol, _selectedRow), s);
-                    }
-                } 
-            }
-        }
-
-        private void SpreadsheetPanel_Load(object sender, EventArgs e)
-        {
-            AutoSize = true;
-        }
-
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Update(object sender, KeyPressEventArgs e)
-        {
-
-        }
-
-        private void Clicked(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
