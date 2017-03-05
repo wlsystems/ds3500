@@ -19,7 +19,6 @@ namespace SpreadsheeGUI
 
         event Action NewEvent;
 
-
         string SearchString { set; }
 
         string CellValue { set; }
