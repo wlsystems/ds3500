@@ -65,7 +65,11 @@ namespace SpreadsheetGUI
 
         private void menuItem_Close_Click(object sender, EventArgs e)
         {
-            Close();
+            if (CloseEvent != null)
+            {
+                Close();
+            }
+
         }
 
 

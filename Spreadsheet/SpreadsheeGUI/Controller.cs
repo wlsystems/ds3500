@@ -10,6 +10,8 @@ namespace SpreadsheetGUI
 
     public class Controller
     {
+        
+
         // The window being controlled
         private Form1 window;
 
@@ -23,7 +25,7 @@ namespace SpreadsheetGUI
         public Controller(Form1 window)
         {
             this.window = window;
-            window.CloseEvent += HandleClose;                  
+            window.CloseEvent += HandleClose;
         }
 
         /// <summary>

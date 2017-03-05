@@ -18,7 +18,11 @@ namespace SpreadsheeGUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            // Get the application context and run one form inside it
+            var context = Form1ApplicationContext.GetContext();
+            Form1ApplicationContext.GetContext().RunNew();
+            Application.Run(context);
         }
     }
 }
