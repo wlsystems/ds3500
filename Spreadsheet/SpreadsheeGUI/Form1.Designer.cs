@@ -38,9 +38,9 @@
             this.fileDialog = new System.Windows.Forms.OpenFileDialog();
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblCellContents = new System.Windows.Forms.Label();
-            this.txtCellContents = new System.Windows.Forms.TextBox();
             this.txtCellName = new System.Windows.Forms.TextBox();
+            this.txtCellContents = new System.Windows.Forms.TextBox();
+            this.lblCellContents = new System.Windows.Forms.Label();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -92,7 +92,7 @@
             this.menuItem_Close.Name = "menuItem_Close";
             this.menuItem_Close.Size = new System.Drawing.Size(103, 22);
             this.menuItem_Close.Text = "Close";
-            this.menuItem_Close.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            this.menuItem_Close.Click += new System.EventHandler(this.menuItem_Close_Click);
             // 
             // menu_Help
             // 
@@ -125,22 +125,6 @@
             this.panel1.Size = new System.Drawing.Size(910, 29);
             this.panel1.TabIndex = 3;
             // 
-            // lblCellContents
-            // 
-            this.lblCellContents.AutoSize = true;
-            this.lblCellContents.Location = new System.Drawing.Point(45, 6);
-            this.lblCellContents.Name = "lblCellContents";
-            this.lblCellContents.Size = new System.Drawing.Size(72, 13);
-            this.lblCellContents.TabIndex = 1;
-            this.lblCellContents.Text = "Cell Contents:";
-            // 
-            // txtCellContents
-            // 
-            this.txtCellContents.Location = new System.Drawing.Point(123, 3);
-            this.txtCellContents.Name = "txtCellContents";
-            this.txtCellContents.Size = new System.Drawing.Size(407, 20);
-            this.txtCellContents.TabIndex = 1;
-            // 
             // txtCellName
             // 
             this.txtCellName.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -151,6 +135,23 @@
             this.txtCellName.TabIndex = 3;
             this.txtCellName.TabStop = false;
             this.txtCellName.Text = "A1";
+            this.txtCellName.TextChanged += new System.EventHandler(this.txtCellName_TextChanged);
+            // 
+            // txtCellContents
+            // 
+            this.txtCellContents.Location = new System.Drawing.Point(123, 3);
+            this.txtCellContents.Name = "txtCellContents";
+            this.txtCellContents.Size = new System.Drawing.Size(407, 20);
+            this.txtCellContents.TabIndex = 1;
+            // 
+            // lblCellContents
+            // 
+            this.lblCellContents.AutoSize = true;
+            this.lblCellContents.Location = new System.Drawing.Point(45, 6);
+            this.lblCellContents.Name = "lblCellContents";
+            this.lblCellContents.Size = new System.Drawing.Size(72, 13);
+            this.lblCellContents.TabIndex = 1;
+            this.lblCellContents.Text = "Cell Contents:";
             // 
             // Form1
             // 

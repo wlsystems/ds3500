@@ -18,8 +18,7 @@ namespace SpreadsheetGUI
         event Action CloseEvent;
 
         event Action NewEvent;
-
-        string SearchString { set; }
+        
 
         string CellValue { set; }
 

@@ -13,65 +13,27 @@ namespace SpreadsheetGUI
 {
     public partial class Form1 : Form, Form1View
     {
-        public string SearchString
-        {
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
 
-        public string CellValue
-        {
-            get
-            {
-                int col = 0;
-                int row = 0;
-                string str = "";
-                SpreadsheetPanel.GetContext().GetValue(col, row, out str);
-                return str;
-            }
-        }
-
-        public string CellContents
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// Not sure if we need this
-        /// </summary>
-        public string Title
-        {
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public string Message
-        {
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        string Form1View.CellValue
-        {
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
 
         public Form1()
         {
             InitializeComponent();
+            spreadsheetPanel1.SetSelection(0, 0);
+            UpdateCellNameTxtBox();
         }
+
+
+        public int CurrentRow { get; set; }
+
+        public int CurrentCol { get; set; }
+
+
+        private void UpdateCellNameTxtBox()
+        {
+            txtCellName.Text = string.Format("{0}{1}", CurrentCol.ToString(), CurrentRow.ToString());
+        }
+        
+
         /// <summary>
         /// Fired when a file is chosen with a file dialog.  The
         /// parameter is the chosen filename
@@ -95,12 +57,14 @@ namespace SpreadsheetGUI
         /// </summary>
         public event Action<string> CountEvent;
 
+
+        
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
 
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void menuItem_Close_Click(object sender, EventArgs e)
         {
             Close();
         }
@@ -142,6 +106,55 @@ namespace SpreadsheetGUI
         {
 
         }
-        
+
+        private void txtCellName_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+
+        public string CellValue
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public string CellContents
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Not sure if we need this
+        /// </summary>
+        public string Title
+        {
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public string Message
+        {
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        string Form1View.CellValue
+        {
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
     }
 }
