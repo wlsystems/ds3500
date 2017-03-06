@@ -13,7 +13,7 @@ namespace SpreadsheetGUI
 {
     public partial class Form1 : Form, Form1View
     {
-
+        private SpreadsheetPanel panel;
 
         public Form1()
         {
@@ -43,7 +43,7 @@ namespace SpreadsheetGUI
         public event SelectionChangedEventHandler SelectionChangedEvent;
 
 
-        public delegate void SelectionChangedEventHandler(String content);
+        public delegate void SelectionChangedEventHandler(SpreadsheetPanel sender);
 
         /// <summary>
         /// Handles the content
@@ -210,8 +210,7 @@ namespace SpreadsheetGUI
         {
             if (SelectionChangedEvent != null)
             {
-                SelectionChangedEvent(sender.cellContent);
-                sender.SetValue(4, 4, "Dog");
+                SelectionChangedEvent(sender);
             }
         }
 
@@ -239,7 +238,6 @@ namespace SpreadsheetGUI
                 if (TextChangedEvent != null)
                 {
                     e.Handled = true;
-                    SelectionChangedEvent(txtCellContents.Text);
                 }
             }
         }
