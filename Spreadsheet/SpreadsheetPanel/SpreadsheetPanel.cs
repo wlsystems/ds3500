@@ -312,8 +312,7 @@ namespace SSGui
                 if (InvalidAddress(col, row))
                 {
                     return false;
-                }
-
+                }             
                 Address a = new Address(col, row);
                 if (c == null || c == "")
                 {
