@@ -33,5 +33,6 @@ namespace SpreadsheetGUI
         public Model(TextReader source, Regex newIsValid)
         {
         }
+
     }
 }

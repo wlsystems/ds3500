@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SSGui;
+using System.Text.RegularExpressions;
 
 namespace SpreadsheetGUI
 {
@@ -68,7 +69,8 @@ namespace SpreadsheetGUI
         {
             try
             {
-                fileContents = File.ReadAllText(filename);
+                TextReader t = new StreamReader(filename);
+                Model m = new Model(t, new Regex(""));
             }
             catch (Exception ex)
             {

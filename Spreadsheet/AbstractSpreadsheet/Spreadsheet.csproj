@@ -55,7 +55,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SampleSavedSpreadsheet.xml" />
+    <Content Include="..\..\..\..\..\Desktop\SampleSavedSpreadsheet.xml">
+      <Link>SampleSavedSpreadsheet.xml</Link>
+    </Content>
     <None Include="Spreadsheet.xsd">
       <SubType>Designer</SubType>
     </None>
