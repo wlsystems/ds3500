@@ -74,8 +74,7 @@ namespace SpreadsheetGUI
                 CloseEvent();
             }
         }
-
-        }
+        
 
 
         public void DoClose()
