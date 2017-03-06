@@ -17,9 +17,13 @@ namespace SpreadsheetGUI
         {
             InitializeComponent();
             spreadsheetPanel1.SetSelection(0, 0);
+            spreadsheetPanel1.SelectionChanged += displaySelection;
             UpdateCellNameTxtBox();
         }
 
+        private void displaySelection(SpreadsheetPanel sender)
+        { 
+        }
 
         public int CurrentRow { get; set; }
 
@@ -82,6 +86,7 @@ namespace SpreadsheetGUI
                 CloseEvent();
             }
         }
+        
 
 
         public void DoClose()
@@ -136,8 +141,7 @@ namespace SpreadsheetGUI
         }
 
         private void txtCellName_TextChanged(object sender, EventArgs e)
-        {
-            
+        {   
         }
 
 
