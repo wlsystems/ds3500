@@ -39,9 +39,9 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Fired when the contents is updated. 
         /// </summary>
-        private void HandleSelectionChangedEvent()
+        private void HandleSelectionChangedEvent(String s)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(s);
         }
 
         /// <summary>
