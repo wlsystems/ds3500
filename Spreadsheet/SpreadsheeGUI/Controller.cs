@@ -18,6 +18,10 @@ namespace SpreadsheetGUI
         // empty string if no file is open.
         private string fileContents = "";
 
+        public delegate void UpdateValueEventHandler(String content);
+
+        public event UpdateValueEventHandler UpdateValueEvent;
+
         /// <summary>
         /// Begins controlling window.
         /// </summary>
@@ -42,8 +46,7 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandleSelectionChangedEvent(String s)
         {
-            Console.WriteLine(s);
-            
+            //UpdateValueEvent(s);
         }
 
         /// <summary>

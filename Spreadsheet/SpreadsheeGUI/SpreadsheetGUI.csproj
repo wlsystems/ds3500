@@ -56,6 +56,7 @@
     <Compile Include="Form1ApplicationContext.cs" />
     <Compile Include="Interface1.cs" />
     <Compile Include="Launch.cs" />
+    <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -83,6 +84,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AbstractSpreadsheet\Spreadsheet.csproj">
+      <Project>{59F2E5EB-A78B-4AA6-B30A-34D22450EE0E}</Project>
+      <Name>Spreadsheet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpreadsheetPanel\SpreadsheetPanel.csproj">
       <Project>{f31299dc-288f-4e46-a3af-6bf461b21c79}</Project>
       <Name>SpreadsheetPanel</Name>
