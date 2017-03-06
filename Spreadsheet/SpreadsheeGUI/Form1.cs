@@ -43,6 +43,14 @@ namespace SpreadsheetGUI
         public event Action SelectionChangedEvent;
 
         /// <summary>
+        /// Handles the content
+        /// </summary>
+        /// <param name="str"></param>
+        public delegate void TextChangedHandler(String content);
+
+
+
+        /// <summary>
         /// Fired when a file is chosen with a file dialog.  The
         /// parameter is the chosen filename
         /// </summary>
@@ -64,6 +72,7 @@ namespace SpreadsheetGUI
         /// </summary>
         public event Action<string> CountEvent;
 
+        public event Form1.TextChangedHandler TextChangedEvent;
 
         
         private void Form1_Load(object sender, EventArgs e)
@@ -198,8 +207,41 @@ namespace SpreadsheetGUI
         {
             if (SelectionChangedEvent != null)
             {
-                SelectionChangedEvent();
+                MessageBox.Show(sender.cellContent);
             }
+        }
+
+        /// <summary>
+        /// captures all keystrokes from user.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txtCellContents_TextChanged(object sender, EventArgs e)
+        {
+            string s = txtCellContents.Text;
+            txtCellContents.KeyPress += TxtCellContents_KeyPress;
+        }
+
+        /// <summary>
+        /// 
+        /// Detect if the enter key is pressed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TxtCellContents_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                if (TextChangedEvent != null)
+                {
+                    TextChangedEvent(txtCellContents.Text);
+                }
+            }
+        }
+
+        private void txtValue_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

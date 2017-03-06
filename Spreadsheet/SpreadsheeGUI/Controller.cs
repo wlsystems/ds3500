@@ -27,6 +27,15 @@ namespace SpreadsheetGUI
             this.window = window;
             window.CloseEvent += HandleClose;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
+            window.TextChangedEvent += HandletxtContentsChangedEvent;
+        }
+
+        /// <summary>
+        /// when the contents is changed.
+        /// </summary>
+        private void HandletxtContentsChangedEvent(String s)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

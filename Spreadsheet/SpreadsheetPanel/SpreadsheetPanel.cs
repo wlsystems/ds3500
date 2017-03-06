@@ -40,11 +40,21 @@ namespace SSGui
         private const int COL_COUNT = 26;
         private const int ROW_COUNT = 99;
         private static SpreadsheetPanel context;
+
+        /// <summary>
+        /// Set and get the cell contents.
+        /// </summary>
+        public string cellContent
+        {
+            get { return drawingPanel.cellContent; }
+            set { drawingPanel.cellContent = value; }
+        }
         /// <summary>
         /// Creates an empty SpreadsheetPanel
         /// </summary>        
         public SpreadsheetPanel()
         {
+            
             InitializeComponent();
 
             // The DrawingPanel is quite large, since it has 26 columns and 99 rows.  The
@@ -218,8 +228,22 @@ namespace SSGui
                 DoubleBuffered = true;
                 _values = new Dictionary<Address, String>();
                 _ssp = ss;
+                _values.Add(new Address(0, 3), "C");
+                _values.Add(new Address(0, 4), "Cat");
+                tb = new TextBox();
+                tb.Hide();
+                this.Controls.Add(tb);
             }
 
+            private string content;
+            /// <summary>
+            /// Set and get the cell contents.
+            /// </summary>
+            public string cellContent
+            {
+                get { return content; }
+                set { content = value; }
+            }
             private bool InvalidAddress(int col, int row)
             {
                 return col < 0 || row < 0 || col >= COL_COUNT || row >= ROW_COUNT;
@@ -260,6 +284,7 @@ namespace SSGui
                 }
                 if (!_values.TryGetValue(new Address(col, row), out c))
                 {
+                    
                     c = "";
                 }
                 return true;
@@ -426,10 +451,8 @@ namespace SSGui
             /// </summary>
             protected override void OnMouseClick(MouseEventArgs e)
             {
-                String s = "";
-                try { s = tb.Text; }
-                catch (Exception) { };
-                this.Controls.Remove(tb);
+                tb.Hide();
+                String s = tb.Text;
                 base.OnClick(e);
                 int x = (e.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
                 int y = (e.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
@@ -437,17 +460,17 @@ namespace SSGui
                 {
                     _selectedCol = x + _firstColumn;
                     _selectedRow = y + _firstRow;
-
                     if (_ssp.SelectionChanged != null)
                     {
+                        cellContent = s;
                         _ssp.SelectionChanged(_ssp);
-                        _values.Add(new Address(x, y), s);
                     }
-                    Point p = new Point(DATA_COL_WIDTH * x + LABEL_COL_WIDTH, DATA_ROW_HEIGHT * y + LABEL_ROW_HEIGHT);
                     tb = new TextBox();
+                    tb.Text = "";
+                    this.Controls.Add(tb);
+                    Point p = new Point(DATA_COL_WIDTH * x + LABEL_COL_WIDTH, DATA_ROW_HEIGHT * y + LABEL_ROW_HEIGHT);
                     tb.Location = p;
                     tb.Width = DATA_COL_WIDTH;
-                    this.Controls.Add(tb);
                     tb.Focus();
                     tb.KeyPress += Tb_KeyPress;
                 }
@@ -460,13 +483,13 @@ namespace SSGui
                 {
                     e.Handled = true;
                     String s = "";
-                    try { s = tb.Text; }
+                    try { s = tb.Text; this.Controls.Remove(tb); }
                     catch (Exception) { };
-                    this.Controls.Remove(tb);
+
                     if (_ssp.SelectionChanged != null)
                     {
+                        cellContent = s;
                         _ssp.SelectionChanged(_ssp);
-                        _values.Add(new Address(_selectedCol, _selectedRow), s);
                     }
                 }
             }
@@ -505,6 +528,11 @@ namespace SSGui
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(cellContent);
         }
     }
 }
