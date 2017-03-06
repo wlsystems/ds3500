@@ -92,5 +92,10 @@ namespace SpreadsheetGUI
             window.OpenNew();
         }
 
+        private string ConvertCellName(int x, int y)
+        {
+            return string.Format("{0}{1}", (Convert.ToChar(x + 65)).ToString(), (y + 1).ToString());
+        } 
+
     }
 }

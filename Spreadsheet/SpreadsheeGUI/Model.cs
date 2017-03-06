@@ -11,29 +11,31 @@ namespace SpreadsheetGUI
 {
     public class Model : Spreadsheet
     {
-        // The contents of the open file in the AnalysisWindow, or the
-        // empty string if no file is open.
-        private string contents;
-
         /// <summary>
         /// Constructs a Model with an empty contents
         /// </summary>
-        public Model() :base()
+        public Model() 
         {
-            contents = "";
-        }
-        /// <summary>
-        /// Constructs a Model with an empty contents
-        /// </summary>
-
-        /// <summary>
-        /// Makes the contents of the named file the new value of contents
-        /// </summary>
-        public void ReadFile(string filename)
-        {
-            contents = File.ReadAllText(filename);
+            Model m = new Model();
         }
 
-     
+
+        /// <summary>
+        /// Constructs a Model with a regex parameter
+        /// </summary>
+        public Model(Regex isValid) 
+        {
+            Model M = new Model();
+        }
+
+        /// <summary>
+        /// Constructs a Model with a regex parameter and source file 
+        /// </summary>
+        public Model(TextReader source, Regex newIsValid)
+        {
+            Model m = new Model();
+        }
+
+
     }
 }
