@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-
 namespace SpreadsheetGUI
 {
     public class Model : Spreadsheet
@@ -15,8 +14,9 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Constructs a Model with an empty contents
         /// </summary>
-        public Model() : base()
+        public Model() 
         {
+            Model m = new Model();
         }
 
 
@@ -25,6 +25,7 @@ namespace SpreadsheetGUI
         /// </summary>
         public Model(Regex isValid) 
         {
+            Model M = new Model();
         }
 
         /// <summary>
@@ -32,6 +33,7 @@ namespace SpreadsheetGUI
         /// </summary>
         public Model(TextReader source, Regex newIsValid)
         {
+            Model m = new Model();
         }
 
     }
