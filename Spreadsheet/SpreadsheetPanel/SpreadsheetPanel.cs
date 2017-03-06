@@ -43,9 +43,22 @@ namespace SSGui
         private static SpreadsheetPanel context;
 
 
-        
 
+        /// <summary>
+        /// Return Current Column
+        /// </summary>
+        public int cellCol
+        {
+            get { return drawingPanel.cellCol; }
+        }
 
+        /// <summary>
+        /// Return Current Column
+        /// </summary>
+        public int cellRow
+        {
+            get { return drawingPanel.cellRow; }
+        }
         /// <summary>
         /// Set and get the cell contents.
         /// </summary>
@@ -241,8 +254,27 @@ namespace SSGui
                 tb.Width = DATA_COL_WIDTH;
                 tb.Location = p;
                 tb.Focus();
-                tb.KeyPress += Tb_KeyPress;
+                tb.KeyPress += Tb_KeyPress2;
                 this.Controls.Add(tb);           
+            }
+
+            private void Tb_KeyPress2(object sender, KeyPressEventArgs e)
+            {
+                if (e.KeyChar == (char)13)
+                {
+                    e.Handled = true;
+                    String s = "";
+                    try { s = tb.Text; this.Controls.Remove(tb); }
+                    catch (Exception) { };
+
+                    if (_ssp.SelectionChanged != null)
+                    {
+                        _selectedCol = 0;
+                        _selectedRow = 0;
+                        cellContent = s;
+                        _ssp.SelectionChanged(_ssp);
+                    }
+                }
             }
 
             private string content;
@@ -253,6 +285,16 @@ namespace SSGui
             {
                 get { return content; }
                 set { content = value; }
+            }
+
+            public int cellCol
+            {
+                get { return _selectedCol; }
+            }
+
+            public int cellRow
+            {
+                get { return _selectedRow; }
             }
             private bool InvalidAddress(int col, int row)
             {
