@@ -35,7 +35,5 @@ namespace SpreadsheetGUI
         {
             Model m = new Model();
         }
-
-
     }
 }

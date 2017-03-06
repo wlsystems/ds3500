@@ -49,9 +49,8 @@ namespace SpreadsheetGUI
         private void HandleSelectionChangedEvent(SpreadsheetPanel sender)
         {
             panel = sender;
-            panel.SetValue(3, 3, "dog");
             if (panel.cellContent != "")
-                panel.SetValue(4, 4, panel.cellContent);
+                panel.SetValue(panel.cellCol, panel.cellRow, panel.cellContent);
         }
 
         /// <summary>

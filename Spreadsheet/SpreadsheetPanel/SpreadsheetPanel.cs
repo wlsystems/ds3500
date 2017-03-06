@@ -100,7 +100,6 @@ namespace SSGui
             // Arrange for the drawing panel to be notified when it needs to scroll itself.
             hScroll.Scroll += drawingPanel.HandleHScroll;
             vScroll.Scroll += drawingPanel.HandleVScroll;
-
         }
 
         /// <summary>
@@ -231,7 +230,8 @@ namespace SSGui
             // of the selected cell.
             private int _selectedCol;
             private int _selectedRow;
-
+            private int _selectedColNew;
+            private int _selectedRowNew;
             // Coordinate of cell in upper-left corner of display
             private int _firstColumn = 0;
             private int _firstRow = 0;
@@ -503,6 +503,8 @@ namespace SSGui
             /// </summary>
             protected override void OnMouseClick(MouseEventArgs e)
             {
+                _selectedCol = _selectedColNew;
+                _selectedRow = _selectedRowNew;
                 String s = tb.Text;
                 this.Controls.Remove(tb);
                 base.OnClick(e);
@@ -510,8 +512,8 @@ namespace SSGui
                 int y = (e.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
                 if (e.X > LABEL_COL_WIDTH && e.Y > LABEL_ROW_HEIGHT && (x + _firstColumn < COL_COUNT) && (y + _firstRow < ROW_COUNT))
                 {
-                    _selectedCol = x + _firstColumn;
-                    _selectedRow = y + _firstRow;
+                    _selectedColNew = x + _firstColumn;
+                    _selectedRowNew = y + _firstRow;
                     if (_ssp.SelectionChanged != null)
                     {
                         cellContent = s;

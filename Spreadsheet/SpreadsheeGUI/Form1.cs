@@ -217,9 +217,25 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         private void txtCellContents_TextChanged(object sender, EventArgs e)
         {
-            string s = txtCellContents.Text;
-            txtCellContents.KeyPress += TxtCellContents_KeyPress;
+            txtCellContents.KeyPress += TxtCellContents_KeyPress1;
         }
+
+        private void TxtCellContents_KeyPress1(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                e.Handled = true;
+                if (TextChangedEvent != null)
+                {
+                    spreadsheetPanel1.cellContent = txtCellContents.Text;
+                    if (SelectionChangedEvent != null)
+                    {
+                        SelectionChangedEvent(spreadsheetPanel1);
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -229,14 +245,7 @@ namespace SpreadsheetGUI
         /// <param name="e"></param>
         private void TxtCellContents_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)13)
-            {
-                if (TextChangedEvent != null)
-                {
-                    e.Handled = true;
-                    //spreadsheetPanel1
-                }
-            }
+
         }
 
         private void txtValue_TextChanged(object sender, EventArgs e)
