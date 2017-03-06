@@ -13,6 +13,7 @@ namespace SSGui
     /// </summary>
     public delegate void SelectionChangedHandler(SpreadsheetPanel sender);
 
+
     /// <summary>
     /// A panel that displays a spreadsheet with 26 columns (labeled A-Z) and 99 rows
     /// (labeled 1-99).  Each cell on the grid can display a non-editable string.  One 
@@ -41,6 +42,10 @@ namespace SSGui
         private const int ROW_COUNT = 99;
         private static SpreadsheetPanel context;
 
+
+        
+
+
         /// <summary>
         /// Set and get the cell contents.
         /// </summary>
@@ -54,9 +59,9 @@ namespace SSGui
         /// </summary>        
         public SpreadsheetPanel()
         {
-            
+                    
             InitializeComponent();
-
+            
             // The DrawingPanel is quite large, since it has 26 columns and 99 rows.  The
             // SpreadsheetPanel itself will usually be smaller, which is why scroll bars
             // are necessary.
@@ -163,6 +168,7 @@ namespace SSGui
             }
         }
 
+
         /// <summary>
         /// The event used to send notifications of a selection change
         /// </summary>
@@ -231,8 +237,12 @@ namespace SSGui
                 _values.Add(new Address(0, 3), "C");
                 _values.Add(new Address(0, 4), "Cat");
                 tb = new TextBox();
-                tb.Hide();
-                this.Controls.Add(tb);
+                Point p = new Point(30, 30);
+                tb.Width = DATA_COL_WIDTH;
+                tb.Location = p;
+                tb.Focus();
+                tb.KeyPress += Tb_KeyPress;
+                this.Controls.Add(tb);           
             }
 
             private string content;
@@ -451,8 +461,8 @@ namespace SSGui
             /// </summary>
             protected override void OnMouseClick(MouseEventArgs e)
             {
-                tb.Hide();
                 String s = tb.Text;
+                this.Controls.Remove(tb);
                 base.OnClick(e);
                 int x = (e.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
                 int y = (e.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;

@@ -38,7 +38,7 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandletxtContentsChangedEvent(String s)
         {
-            throw new NotImplementedException();
+            
         }
 
         /// <summary>

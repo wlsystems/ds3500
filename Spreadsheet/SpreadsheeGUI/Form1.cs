@@ -13,8 +13,6 @@ namespace SpreadsheetGUI
 {
     public partial class Form1 : Form, Form1View
     {
-        private SpreadsheetPanel panel;
-
         public Form1()
         {
             InitializeComponent();
@@ -47,7 +45,7 @@ namespace SpreadsheetGUI
         /// <param name="str"></param>
         public delegate void TextChangedHandler(String content);
 
-
+        public event TextChangedHandler TextChangedEvent;
 
         /// <summary>
         /// Fired when a file is chosen with a file dialog.  The
@@ -70,8 +68,6 @@ namespace SpreadsheetGUI
         /// The parameter is the string.
         /// </summary>
         public event Action<string> CountEvent;
-
-        public event Form1.TextChangedHandler TextChangedEvent;
 
         
         private void Form1_Load(object sender, EventArgs e)
@@ -234,6 +230,7 @@ namespace SpreadsheetGUI
                 if (TextChangedEvent != null)
                 {
                     e.Handled = true;
+                    //spreadsheetPanel1
                 }
             }
         }
