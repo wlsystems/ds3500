@@ -11,10 +11,11 @@ namespace SpreadsheetGUI
 
     public class Controller
     {
-        
+
 
         // The window being controlled
         private Form1 window;
+        private SpreadsheetPanel sender = new SpreadsheetPanel();
 
         // The contents of the open file in the AnalysisWindow, or the
         // empty string if no file is open.
@@ -48,7 +49,7 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandleSelectionChangedEvent(String s)
         {
-            //UpdateValueEvent(s);
+           sender.SetValue(4, 5,"god" );
         }
 
         /// <summary>
