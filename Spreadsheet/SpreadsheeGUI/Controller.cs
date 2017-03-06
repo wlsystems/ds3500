@@ -13,7 +13,7 @@ namespace SpreadsheetGUI
     {
         // The window being controlled
         private Form1 window;
-
+        private SpreadsheetPanel panel;
         // The contents of the open file in the AnalysisWindow, or the
         // empty string if no file is open.
         private string fileContents = "";
@@ -44,9 +44,11 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Fired when the contents is updated. 
         /// </summary>
-        private void HandleSelectionChangedEvent(String s)
+        private void HandleSelectionChangedEvent(SpreadsheetPanel sender)
         {
-            //UpdateValueEvent(s);
+            sender.SetValue(3, 3, "dog");
+
+            panel = sender;
         }
 
         /// <summary>
