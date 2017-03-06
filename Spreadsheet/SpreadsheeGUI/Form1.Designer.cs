@@ -36,13 +36,13 @@
             this.menuItem_Close = new System.Windows.Forms.ToolStripMenuItem();
             this.menu_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.openfileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtValue = new System.Windows.Forms.TextBox();
             this.txtCellName = new System.Windows.Forms.TextBox();
             this.txtCellContents = new System.Windows.Forms.TextBox();
             this.lblCellContents = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -72,28 +72,28 @@
             // menuItem_New
             // 
             this.menuItem_New.Name = "menuItem_New";
-            this.menuItem_New.Size = new System.Drawing.Size(152, 22);
+            this.menuItem_New.Size = new System.Drawing.Size(103, 22);
             this.menuItem_New.Text = "New";
             this.menuItem_New.Click += new System.EventHandler(this.menuItem_New_Click);
             // 
             // menuItem_Save
             // 
             this.menuItem_Save.Name = "menuItem_Save";
-            this.menuItem_Save.Size = new System.Drawing.Size(152, 22);
+            this.menuItem_Save.Size = new System.Drawing.Size(103, 22);
             this.menuItem_Save.Text = "Save";
             this.menuItem_Save.Click += new System.EventHandler(this.menuItem_Save_Click);
             // 
             // menuItem_Open
             // 
             this.menuItem_Open.Name = "menuItem_Open";
-            this.menuItem_Open.Size = new System.Drawing.Size(152, 22);
+            this.menuItem_Open.Size = new System.Drawing.Size(103, 22);
             this.menuItem_Open.Text = "Open";
             this.menuItem_Open.Click += new System.EventHandler(this.menuItem_Open_Click);
             // 
             // menuItem_Close
             // 
             this.menuItem_Close.Name = "menuItem_Close";
-            this.menuItem_Close.Size = new System.Drawing.Size(152, 22);
+            this.menuItem_Close.Size = new System.Drawing.Size(103, 22);
             this.menuItem_Close.Text = "Close";
             this.menuItem_Close.Click += new System.EventHandler(this.menuItem_Close_Click);
             // 
@@ -108,18 +108,6 @@
             this.openfileDialog.DefaultExt = "ss";
             this.openfileDialog.FileName = "openfileDialog";
             this.openfileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.fileDialog1_FileOk);
-            // 
-            // spreadsheetPanel1
-            // 
-            this.spreadsheetPanel1.AutoScroll = true;
-            this.spreadsheetPanel1.AutoSize = true;
-            this.spreadsheetPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
-            this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(1350, 480);
-            this.spreadsheetPanel1.TabIndex = 2;
-            this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
-            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load_1);
             // 
             // panel1
             // 
@@ -139,6 +127,7 @@
             this.txtValue.ReadOnly = true;
             this.txtValue.Size = new System.Drawing.Size(47, 20);
             this.txtValue.TabIndex = 4;
+            this.txtValue.TextChanged += new System.EventHandler(this.txtValue_TextChanged);
             // 
             // txtCellName
             // 
@@ -158,6 +147,7 @@
             this.txtCellContents.Name = "txtCellContents";
             this.txtCellContents.Size = new System.Drawing.Size(365, 20);
             this.txtCellContents.TabIndex = 1;
+            this.txtCellContents.TextChanged += new System.EventHandler(this.txtCellContents_TextChanged);
             // 
             // lblCellContents
             // 
@@ -172,6 +162,19 @@
             // 
             this.saveFileDialog.DefaultExt = "ss";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
+            // 
+            // spreadsheetPanel1
+            // 
+            this.spreadsheetPanel1.AutoScroll = true;
+            this.spreadsheetPanel1.AutoSize = true;
+            this.spreadsheetPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.spreadsheetPanel1.cellContent = null;
+            this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
+            this.spreadsheetPanel1.Name = "spreadsheetPanel1";
+            this.spreadsheetPanel1.Size = new System.Drawing.Size(1350, 480);
+            this.spreadsheetPanel1.TabIndex = 2;
+            this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
+            this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load_1);
             // 
             // Form1
             // 
