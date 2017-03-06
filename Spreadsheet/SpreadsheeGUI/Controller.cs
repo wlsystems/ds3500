@@ -16,6 +16,8 @@ namespace SpreadsheetGUI
         // The window being controlled
         private Form1 window;
         private SpreadsheetPanel panel;
+        private Model model;
+
         // The contents of the open file in the AnalysisWindow, or the
         // empty string if no file is open.
         private string fileContents = "";
@@ -30,6 +32,7 @@ namespace SpreadsheetGUI
         public Controller(Form1 window)
         {
             this.window = window;
+            this.model = new Model();
             window.CloseEvent += HandleClose;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
             window.TextChangedEvent += HandletxtContentsChangedEvent;
@@ -49,8 +52,13 @@ namespace SpreadsheetGUI
         private void HandleSelectionChangedEvent(SpreadsheetPanel sender)
         {
             panel = sender;
+            int x = panel.cellCol;
+            int y = panel.cellRow;
+            string cellName = ConvertCellName(x, y);
+
             if (panel.cellContent != "")
-                panel.SetValue(panel.cellCol, panel.cellRow, panel.cellContent);
+                model.SetContentsOfCell(cellName, panel.cellContent);
+                panel.SetValue(panel.cellCol, panel.cellRow, model.GetCellValue(cellName).ToString());
         }
 
         /// <summary>
