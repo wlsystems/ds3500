@@ -233,7 +233,8 @@ namespace SpreadsheetGUI
             {
                 if (TextChangedEvent != null)
                 {
-                    TextChangedEvent(txtCellContents.Text);
+                    e.Handled = true;
+                    SelectionChangedEvent(txtCellContents.Text);
                 }
             }
         }

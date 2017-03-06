@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SSGui;
 
 namespace SpreadsheetGUI
 {
@@ -42,6 +43,7 @@ namespace SpreadsheetGUI
         private void HandleSelectionChangedEvent(String s)
         {
             Console.WriteLine(s);
+            
         }
 
         /// <summary>
@@ -64,7 +66,6 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandleClose()
         {
-
             window.DoClose();
         }
 
