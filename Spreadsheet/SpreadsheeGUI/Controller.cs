@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SSGui;
 
 namespace SpreadsheetGUI
 {
@@ -18,6 +19,10 @@ namespace SpreadsheetGUI
         // The contents of the open file in the AnalysisWindow, or the
         // empty string if no file is open.
         private string fileContents = "";
+
+        public delegate void UpdateValueEventHandler(String content);
+
+        public event UpdateValueEventHandler UpdateValueEvent;
 
         /// <summary>
         /// Begins controlling window.
@@ -43,7 +48,7 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandleSelectionChangedEvent(String s)
         {
-            Console.WriteLine(s);
+            //UpdateValueEvent(s);
         }
 
         /// <summary>
@@ -66,7 +71,6 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandleClose()
         {
-
             window.DoClose();
         }
 

@@ -22,6 +22,7 @@ namespace SpreadsheeGUI
             var context = Form1ApplicationContext.GetContext();
             Form1ApplicationContext.GetContext().RunNew();
             Application.Run(context);
+
         }
     }
 }

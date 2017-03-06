@@ -211,6 +211,7 @@ namespace SpreadsheetGUI
             if (SelectionChangedEvent != null)
             {
                 SelectionChangedEvent(sender.cellContent);
+                //sender.SetValue(4, 4, "Dog");
             }
         }
 
@@ -237,7 +238,8 @@ namespace SpreadsheetGUI
             {
                 if (TextChangedEvent != null)
                 {
-                    TextChangedEvent(txtCellContents.Text);
+                    e.Handled = true;
+                    SelectionChangedEvent(txtCellContents.Text);
                 }
             }
         }
