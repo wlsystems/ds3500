@@ -40,7 +40,10 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Fired when the cell contents is updated.
         /// </summary>
-        public event Action SelectionChangedEvent;
+        public event SelectionChangedEventHandler SelectionChangedEvent;
+
+
+        public delegate void SelectionChangedEventHandler(String content);
 
         /// <summary>
         /// Handles the content
@@ -207,7 +210,7 @@ namespace SpreadsheetGUI
         {
             if (SelectionChangedEvent != null)
             {
-                MessageBox.Show(sender.cellContent);
+                SelectionChangedEvent(sender.cellContent);
             }
         }
 
