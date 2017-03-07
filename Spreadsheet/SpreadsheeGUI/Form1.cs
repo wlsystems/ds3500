@@ -34,6 +34,13 @@ namespace SpreadsheetGUI
             int currCol = spreadsheetPanel1.cellCol;
             txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(currCol+65)).ToString(), (currRow+1).ToString());
         }
+        /// <summary>
+        /// Fired when the cell contents is updated.
+        /// </summary>
+        public event SelectionChangedEventHandler2 SelectionChangedEvent2;
+
+
+        public delegate void SelectionChangedEventHandler2(SpreadsheetPanel sender);
 
         /// <summary>
         /// Fired when the cell contents is updated.
@@ -223,14 +230,12 @@ namespace SpreadsheetGUI
             if (e.KeyChar == (char)13)
             {
                 e.Handled = true;
-                if (TextChangedEvent != null)
+                if (SelectionChangedEvent2 != null)
                 {
                     spreadsheetPanel1.cellContent = txtCellContents.Text;
-                    if (SelectionChangedEvent != null)
-                    {
-                        SelectionChangedEvent(spreadsheetPanel1);
-                    }
+                    SelectionChangedEvent2(spreadsheetPanel1);
                 }
+
             }
         }
 

@@ -38,16 +38,23 @@ namespace SpreadsheetGUI
             this.model = new AbstractSpreadsheet();
             window.CloseEvent += HandleClose;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
-            window.TextChangedEvent += HandletxtContentsChangedEvent;
+            window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
         }
 
-        /// <summary>
-        /// when the contents is changed.
-        /// </summary>
-        private void HandletxtContentsChangedEvent(String s)
+        private void Window_SelectionChangedEvent2(SpreadsheetPanel sender)
         {
-            
+            panel = sender;
+            int x = panel.cellColCurrent;
+            int y = panel.cellRowCurrent;
+            string cellName = ConvertCellName(x, y);
+            if (panel.cellContent != "")
+            {
+                model.SetContentsOfCell(cellName, sender.cellContent);
+                panel.SetValue(x,y, panel.cellContent);
+                panel.HideTextBox();
+            }
         }
+
 
         /// <summary>
         /// Fired when the contents is updated. 
@@ -65,6 +72,7 @@ namespace SpreadsheetGUI
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
             }
         }
+
 
         /// <summary>
         /// Handles a request to open a file.

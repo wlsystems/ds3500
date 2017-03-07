@@ -42,7 +42,21 @@ namespace SSGui
         private const int ROW_COUNT = 99;
         private static SpreadsheetPanel context;
 
+        /// <summary>
+        /// Return Current Column Current 
+        /// </summary>
+        public int cellColCurrent
+        {
+            get { return drawingPanel.cellColCurrent; }
+        }
 
+        /// <summary>
+        /// Return Current Column Current
+        /// </summary>
+        public int cellRowCurrent
+        {
+            get { return drawingPanel.cellRowCurrent; }
+        }
 
         /// <summary>
         /// Return Current Column
@@ -101,7 +115,13 @@ namespace SSGui
             hScroll.Scroll += drawingPanel.HandleHScroll;
             vScroll.Scroll += drawingPanel.HandleVScroll;
         }
-
+        /// <summary>
+        /// Hide the textbox.
+        /// </summary>
+        public void HideTextBox()
+        {
+            drawingPanel.Controls.Remove(drawingPanel.tb);
+        }
         /// <summary>
         /// Clears the display.
         /// </summary>       
@@ -225,17 +245,17 @@ namespace SSGui
         {
             private Dictionary<TextBox, Address> cellValues;
             //this is the textbox that captures the cellcontent
-            private TextBox tb;
+            public TextBox tb;
             // Columns and rows are numbered beginning with 0.  This is the coordinate
             // of the selected cell.
             private int _selectedCol;
             private int _selectedRow;
-            private int _selectedColNew;
-            private int _selectedRowNew;
+            private int _selectedColOld;
+            private int _selectedRowOld;
             // Coordinate of cell in upper-left corner of display
             private int _firstColumn = 0;
             private int _firstRow = 0;
-
+            private Point _p;
             // The strings contained by the spreadsheet
             private Dictionary<Address, String> _values;
 
@@ -247,8 +267,6 @@ namespace SSGui
                 DoubleBuffered = true;
                 _values = new Dictionary<Address, String>();
                 _ssp = ss;
-                _values.Add(new Address(0, 3), "C");
-                _values.Add(new Address(0, 4), "Cat");
                 tb = new TextBox();
                 Point p = new Point(30, 30);
                 tb.Width = DATA_COL_WIDTH;
@@ -289,10 +307,20 @@ namespace SSGui
 
             public int cellCol
             {
-                get { return _selectedCol; }
+                get { return _selectedColOld; }
             }
 
             public int cellRow
+            {
+                get { return _selectedRowOld; }
+            }
+
+            public int cellColCurrent
+            {
+                get { return _selectedCol; }
+            }
+
+            public int cellRowCurrent
             {
                 get { return _selectedRow; }
             }
@@ -502,8 +530,8 @@ namespace SSGui
             /// </summary>
             protected override void OnMouseClick(MouseEventArgs e)
             {
-                _selectedCol = _selectedColNew;
-                _selectedRow = _selectedRowNew;
+                _selectedColOld = _selectedCol;
+                _selectedRowOld = _selectedRow;
                 String s = tb.Text;
                 this.Controls.Remove(tb);
                 base.OnClick(e);
@@ -511,8 +539,8 @@ namespace SSGui
                 int y = (e.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
                 if (e.X > LABEL_COL_WIDTH && e.Y > LABEL_ROW_HEIGHT && (x + _firstColumn < COL_COUNT) && (y + _firstRow < ROW_COUNT))
                 {
-                    _selectedColNew = x + _firstColumn;
-                    _selectedRowNew = y + _firstRow;
+                    _selectedCol = x + _firstColumn;
+                    _selectedRow = y + _firstRow;
                     if (_ssp.SelectionChanged != null)
                     {
                         cellContent = s;
@@ -523,6 +551,7 @@ namespace SSGui
                     this.Controls.Add(tb);
                     Point p = new Point(DATA_COL_WIDTH * x + LABEL_COL_WIDTH, DATA_ROW_HEIGHT * y + LABEL_ROW_HEIGHT);
                     tb.Location = p;
+                    _p = p; //save the position for the enter keypress event
                     tb.Width = DATA_COL_WIDTH;
                     tb.Focus();
                     tb.KeyPress += Tb_KeyPress;
@@ -535,15 +564,24 @@ namespace SSGui
                 if (e.KeyChar == (char)13)
                 {
                     e.Handled = true;
-                    String s = "";
-                    try { s = tb.Text; this.Controls.Remove(tb); }
-                    catch (Exception) { };
-
-                    if (_ssp.SelectionChanged != null)
+                    String s = tb.Text;
+                    this.Controls.Remove(tb);
+                    base.OnClick(e);
+                    int x = (_p.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
+                    int y = (_p.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
+                    if (_p.X > LABEL_COL_WIDTH && _p.Y > LABEL_ROW_HEIGHT && (x + _firstColumn < COL_COUNT) && (y + _firstRow < ROW_COUNT))
                     {
-                        cellContent = s;
-                        _ssp.SelectionChanged(_ssp);
+                        _selectedColOld = x + _firstColumn;
+                        _selectedRowOld = y + _firstRow;
+                        if (_ssp.SelectionChanged != null)
+                        {
+                            cellContent = s;
+                            _ssp.SelectionChanged(_ssp);
+                        }
+                        this.Controls.Remove(tb);
+                        tb.KeyPress += Tb_KeyPress;
                     }
+                    Invalidate();
                 }
             }
         }
