@@ -50,7 +50,7 @@ namespace SpreadsheetGUI
             if (panel.cellContent != "")
             {
                 model.SetContentsOfCell(cellName, sender.cellContent);
-                panel.SetValue(x,y, panel.cellContent);
+                panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
                 panel.HideTextBox();
             }
         }
@@ -64,12 +64,20 @@ namespace SpreadsheetGUI
             panel = sender;
             int x = panel.cellCol;
             int y = panel.cellRow;
+            int thisx = panel.cellColCurrent;
+            int thisy = panel.cellRowCurrent;
+            string cell = ConvertCellName(thisx, thisy);
             string cellName = ConvertCellName(x, y);
 
             if (panel.cellContent != "")
             {
                 model.SetContentsOfCell(cellName, panel.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
+                panel.SetTextBox(model.GetCellContents(cell).ToString());
+            }
+            else
+            {
+                panel.SetTextBox(model.GetCellContents(cell).ToString());
             }
         }
 

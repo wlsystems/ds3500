@@ -122,6 +122,17 @@ namespace SSGui
         {
             drawingPanel.Controls.Remove(drawingPanel.tb);
         }
+
+        /// <summary>
+        /// Set the text of the textbox.
+        /// </summary>
+        public void SetTextBox(String s)
+        {
+            drawingPanel.tb.Text = s;
+        }
+
+
+
         /// <summary>
         /// Clears the display.
         /// </summary>       
@@ -244,8 +255,6 @@ namespace SSGui
         private class DrawingPanel : Panel
         {
             private Dictionary<TextBox, Address> cellValues;
-            //this is the textbox that captures the cellcontent
-            public TextBox tb;
             // Columns and rows are numbered beginning with 0.  This is the coordinate
             // of the selected cell.
             private int _selectedCol;
@@ -258,9 +267,11 @@ namespace SSGui
             private Point _p;
             // The strings contained by the spreadsheet
             private Dictionary<Address, String> _values;
-
             // The containing panel
             private SpreadsheetPanel _ssp;
+
+            //this is the textbox that captures the cellcontent
+            public TextBox tb;
 
             public DrawingPanel(SpreadsheetPanel ss)
             {
@@ -294,7 +305,7 @@ namespace SSGui
                     }
                 }
             }
-
+            private string contentOld;
             private string content;
             /// <summary>
             /// Set and get the cell contents.
@@ -532,7 +543,6 @@ namespace SSGui
             {
                 _selectedColOld = _selectedCol;
                 _selectedRowOld = _selectedRow;
-                String s = tb.Text;
                 this.Controls.Remove(tb);
                 base.OnClick(e);
                 int x = (e.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
@@ -543,11 +553,9 @@ namespace SSGui
                     _selectedRow = y + _firstRow;
                     if (_ssp.SelectionChanged != null)
                     {
-                        cellContent = s;
+                        cellContent = tb.Text;
                         _ssp.SelectionChanged(_ssp);
                     }
-                    tb = new TextBox();
-                    tb.Text = "";
                     this.Controls.Add(tb);
                     Point p = new Point(DATA_COL_WIDTH * x + LABEL_COL_WIDTH, DATA_ROW_HEIGHT * y + LABEL_ROW_HEIGHT);
                     tb.Location = p;
@@ -561,25 +569,25 @@ namespace SSGui
 
             private void Tb_KeyPress(object sender, KeyPressEventArgs e)
             {
+                _selectedColOld = _selectedCol;
+                _selectedRowOld = _selectedRow;
                 if (e.KeyChar == (char)13)
                 {
                     e.Handled = true;
                     String s = tb.Text;
-                    this.Controls.Remove(tb);
+                    //this.Controls.Remove(tb);
                     base.OnClick(e);
                     int x = (_p.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
                     int y = (_p.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
                     if (_p.X > LABEL_COL_WIDTH && _p.Y > LABEL_ROW_HEIGHT && (x + _firstColumn < COL_COUNT) && (y + _firstRow < ROW_COUNT))
                     {
-                        _selectedColOld = x + _firstColumn;
-                        _selectedRowOld = y + _firstRow;
+                        _selectedCol = x + _firstColumn;
+                        _selectedRow = y + _firstRow;
                         if (_ssp.SelectionChanged != null)
                         {
                             cellContent = s;
                             _ssp.SelectionChanged(_ssp);
                         }
-                        this.Controls.Remove(tb);
-                        tb.KeyPress += Tb_KeyPress;
                     }
                     Invalidate();
                 }

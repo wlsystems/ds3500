@@ -30,8 +30,8 @@ namespace SpreadsheetGUI
 
         private void UpdateCellNameTxtBox()
         {
-            int currRow = spreadsheetPanel1.cellRow;
-            int currCol = spreadsheetPanel1.cellCol;
+            int currRow = spreadsheetPanel1.cellRowCurrent;
+            int currCol = spreadsheetPanel1.cellColCurrent;
             txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(currCol+65)).ToString(), (currRow+1).ToString());
         }
         /// <summary>

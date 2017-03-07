@@ -307,7 +307,8 @@ namespace SS
                 return dic[name].d;
             else if (dic[name].variety == 2)
                 return dic[name].s;
-            else return dic[name].f;
+            else return "="+dic[name].f;
+
         }
         /// <summary>
         /// Get an IEnumerableo of all cells in a dictionary that aren't empty.
