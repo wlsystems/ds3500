@@ -9,31 +9,28 @@ using System.Threading.Tasks;
 
 namespace SpreadsheetGUI
 {
-    public class Model : Spreadsheet
+    public class AbstractSpreadsheet : Spreadsheet
     {
         /// <summary>
         /// Constructs a Model with an empty contents
         /// </summary>
-        public Model() 
+        public AbstractSpreadsheet() :base()
         {
-            Model m = new Model();
         }
 
 
         /// <summary>
         /// Constructs a Model with a regex parameter
         /// </summary>
-        public Model(Regex isValid) 
+        public AbstractSpreadsheet(Regex isValid) 
         {
-            Model M = new Model();
         }
 
         /// <summary>
         /// Constructs a Model with a regex parameter and source file 
         /// </summary>
-        public Model(TextReader source, Regex newIsValid)
+        public AbstractSpreadsheet(TextReader source, Regex newIsValid)
         {
-            Model m = new Model();
         }
 
     }

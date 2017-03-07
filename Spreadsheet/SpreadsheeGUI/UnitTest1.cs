@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SS;
-using Formulas;
 using System.Collections.Generic;
 
 namespace UnitTestProject3
@@ -10,9 +9,9 @@ namespace UnitTestProject3
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Collections.Generic;
-    using Formulas;
     using System.Text.RegularExpressions;
     using System.IO;
+    using Formulas;
 
     namespace GradingTests
     {

@@ -22,17 +22,17 @@ namespace SpreadsheetGUI
         }
 
         private void displaySelection(SpreadsheetPanel sender)
-        { 
+        {
+            UpdateCellNameTxtBox();
         }
-
-        public int CurrentRow { get; set; }
-
-        public int CurrentCol { get; set; }
+     
 
 
         private void UpdateCellNameTxtBox()
         {
-            txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(CurrentCol+65)).ToString(), (CurrentRow+1).ToString());
+            int currRow = spreadsheetPanel1.cellRow;
+            int currCol = spreadsheetPanel1.cellCol;
+            txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(currCol+65)).ToString(), (currRow+1).ToString());
         }
 
         /// <summary>
@@ -170,10 +170,8 @@ namespace SpreadsheetGUI
         /// </summary>
         public string Title
         {
-            set
-            {
-                throw new NotImplementedException();
-            }
+           set { Text = value; }
+            
         }
 
         public string Message

@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -89,10 +90,17 @@
       <Project>{59F2E5EB-A78B-4AA6-B30A-34D22450EE0E}</Project>
       <Name>Spreadsheet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Formula\Formula.csproj">
+      <Project>{0ACBD443-106D-4597-827B-6A9247805221}</Project>
+      <Name>Formula</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpreadsheetPanel\SpreadsheetPanel.csproj">
       <Project>{f31299dc-288f-4e46-a3af-6bf461b21c79}</Project>
       <Name>SpreadsheetPanel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
