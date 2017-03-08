@@ -23,7 +23,6 @@ namespace SpreadsheetGUI
         private Spreadsheet model;
         // The contents of the open file in the AnalysisWindow, or the
         // empty string if no file is open.
-        private string fileContents = "";
 
         public delegate void UpdateValueEventHandler(String content);
 
@@ -35,8 +34,11 @@ namespace SpreadsheetGUI
         public Controller(Form1 window)
         {
             this.window = window;
-            this.model = new AbstractSpreadsheet();
+            this.model = new Spreadsheet();
+            this.panel = new SpreadsheetPanel();
             window.CloseEvent += HandleClose;
+            window.FileChosenEvent += HandleFileChosen;
+            window.FileSaveEvent += HandleFileSave;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
             window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
         }
@@ -82,28 +84,60 @@ namespace SpreadsheetGUI
         }
 
 
+        public void Window_FileChoosenDisplay()
+        {
+            panel = new SpreadsheetPanel();
+            IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
+            foreach (var cell in allCell)
+            {
+                int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
+                int y = Convert.ToInt16(cell.Substring(1)) - 1;
+                panel.SetValue(x, y, model.GetCellValue(cell).ToString());
+            }
+        }
+
         /// <summary>
         /// Handles a request to open a file.
         /// </summary>
-        private void HandleFileChosen(string filename)
+        public void HandleFileChosen(string filename)
         {
             try
             {
-               window.Title = filename;
-                TextReader t = new StreamReader(filename); 
-                Spreadsheet model = new AbstractSpreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
+                window.Title = filename;
+                TextReader t = new StreamReader(filename);
+                model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
+                panel.Clear();
                 IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
-                foreach (var cell in allCell)
+                foreach (string cell in allCell)
                 {
-                    int x = Convert.ToInt32(cell.Substring(0, 1));
-                    int y = Convert.ToInt32(cell.Substring(1))-1;
-                    Console.WriteLine(x.ToString(), y);
+                    int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
+                    int y = Convert.ToInt16(cell.Substring(1)) - 1;
                     panel.SetValue(x, y, model.GetCellValue(cell).ToString());
                 }
+
             }
             catch (Exception ex)
             {
                 window.Message = "Unable to open file\n" + ex.Message;
+            }
+           
+        }
+
+        /// <summary>
+        /// Handles a request to save a file.
+        /// </summary>
+        private void HandleFileSave(string filename)
+        {
+            try
+            {
+                window.Title = filename;
+                TextWriter t = new StreamWriter(filename);
+                model.Save(t);
+
+            }
+            catch (Exception ex)
+            {
+                window.Message = "Unable to save file\n" + ex.Message;
             }
         }
 
@@ -135,5 +169,9 @@ namespace SpreadsheetGUI
             return string.Format("{0}{1}", (Convert.ToChar(x + 65)).ToString(), (y + 1).ToString());
         } 
 
+        public Spreadsheet ReturnSS()
+        {
+            return model;
+        }
     }
 }
