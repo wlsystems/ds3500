@@ -98,10 +98,14 @@ namespace SpreadsheetGUI
                 model.SetContentsOfCell(cellName, panel.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
                 panel.SetTextBox(model.GetCellContents(cell).ToString());
+                window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
             }
             else
             {
                 panel.SetTextBox(model.GetCellContents(cell).ToString());
+                window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
             }
         }
 

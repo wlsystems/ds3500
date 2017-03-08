@@ -213,13 +213,33 @@ namespace SpreadsheetGUI
         {
 
         }
-
+        /// <summary>
+        /// Event fired when cell contents changed .
+        /// </summary>
+        /// <param name="sender"></param>
         private void spreadsheetPanel1_SelectionChanged(SpreadsheetPanel sender)
         {
             if (SelectionChangedEvent != null)
             {
                 SelectionChangedEvent(sender);
             }
+        }
+        /// <summary>
+        /// Update the valuebox when cell is clicked.
+        /// </summary>
+        /// <param name="s"></param>
+        public void SetTextBoxContent(String s)
+        {
+            txtCellContents.Text = s;
+        }
+
+        /// <summary>
+        /// Update the contents of the textbox when the cell is clicked.
+        /// </summary>
+        /// <param name="s"></param>
+        public void SetTextValueBoxContent(String s)
+        {
+            txtValue.Text = s;
         }
 
         /// <summary>
@@ -258,6 +278,11 @@ namespace SpreadsheetGUI
         }
 
         private void txtValue_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }

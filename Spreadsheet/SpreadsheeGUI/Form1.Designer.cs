@@ -43,6 +43,7 @@
             this.lblCellContents = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -111,6 +112,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.txtValue);
             this.panel1.Controls.Add(this.txtCellName);
             this.panel1.Controls.Add(this.txtCellContents);
@@ -122,10 +124,10 @@
             // 
             // txtValue
             // 
-            this.txtValue.Location = new System.Drawing.Point(516, 3);
+            this.txtValue.Location = new System.Drawing.Point(522, 3);
             this.txtValue.Name = "txtValue";
             this.txtValue.ReadOnly = true;
-            this.txtValue.Size = new System.Drawing.Size(47, 20);
+            this.txtValue.Size = new System.Drawing.Size(151, 20);
             this.txtValue.TabIndex = 4;
             this.txtValue.TextChanged += new System.EventHandler(this.txtValue_TextChanged);
             // 
@@ -176,6 +178,17 @@
             this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
             this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load_1);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(494, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(14, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "=";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -216,6 +229,7 @@
         private System.Windows.Forms.TextBox txtCellName;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.TextBox txtValue;
+        private System.Windows.Forms.Label label1;
     }
 }
 
