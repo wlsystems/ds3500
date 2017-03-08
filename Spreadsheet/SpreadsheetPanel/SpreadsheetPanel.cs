@@ -573,9 +573,10 @@ namespace SSGui
                 _selectedRowOld = _selectedRow;
                 if (e.KeyChar == (char)13)
                 {
+                    base.OnClick(e);
                     e.Handled = true;
                     String s = tb.Text;
-                    //this.Controls.Remove(tb);
+                    this.Controls.Remove(tb);
                     base.OnClick(e);
                     int x = (_p.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
                     int y = (_p.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
