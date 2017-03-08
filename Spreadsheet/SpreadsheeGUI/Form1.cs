@@ -50,6 +50,10 @@ namespace SpreadsheetGUI
 
         public delegate void SelectionChangedEventHandler(SpreadsheetPanel sender);
 
+        public delegate void FileChosenDisplayHandler(SpreadsheetPanel sender);
+
+        public event FileChosenDisplayHandler FileChosenDisplay;
+
         /// <summary>
         /// Handles the content
         /// </summary>
@@ -63,6 +67,12 @@ namespace SpreadsheetGUI
         /// parameter is the chosen filename
         /// </summary>
         public event Action<string> FileChosenEvent;
+
+        /// <summary>
+        /// Fired when a file is chosen for a save.  The parameter
+        /// is the chosen filename. 
+        /// </summary>
+        public event Action<string> FileSaveEvent;
 
         /// <summary>
         /// Fired when a close action is requested.
@@ -86,7 +96,7 @@ namespace SpreadsheetGUI
             
         }
 
-        private void menuItem_Close_Click(object sender, EventArgs e)
+        public void menuItem_Close_Click(object sender, EventArgs e)
         {
             if (CloseEvent != null)
             {
@@ -111,7 +121,7 @@ namespace SpreadsheetGUI
             Form1ApplicationContext.GetContext().RunNew();
         }
 
-        private void menuItem_Open_Click(object sender, EventArgs e)
+        public void menuItem_Open_Click(object sender, EventArgs e)
         {
             DialogResult result = openfileDialog.ShowDialog();
             if (result == DialogResult.Yes || result == DialogResult.OK)
@@ -119,6 +129,7 @@ namespace SpreadsheetGUI
                 if (FileChosenEvent != null)
                 {
                     FileChosenEvent(openfileDialog.FileName);
+
                 }
             }
         }
@@ -129,9 +140,9 @@ namespace SpreadsheetGUI
             DialogResult result = saveFileDialog.ShowDialog();
             if (result == DialogResult.Yes || result == DialogResult.OK)
             {
-                if (FileChosenEvent != null)
+                if (FileSaveEvent != null)
                 {
-                    FileChosenEvent(saveFileDialog.FileName);
+                    FileSaveEvent(saveFileDialog.FileName);
                 }
 
             }
@@ -183,10 +194,7 @@ namespace SpreadsheetGUI
 
         public string Message
         {
-            set
-            {
-                throw new NotImplementedException();
-            }
+            set { MessageBox.Show(value); }
         }
 
         string Form1View.CellValue
