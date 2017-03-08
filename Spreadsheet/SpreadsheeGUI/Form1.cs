@@ -235,7 +235,6 @@ namespace SpreadsheetGUI
                     spreadsheetPanel1.cellContent = txtCellContents.Text;
                     SelectionChangedEvent2(spreadsheetPanel1);
                 }
-
             }
         }
 
