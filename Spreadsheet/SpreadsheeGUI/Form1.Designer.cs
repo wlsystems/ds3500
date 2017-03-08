@@ -37,13 +37,13 @@
             this.menu_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.openfileDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.txtValue = new System.Windows.Forms.TextBox();
             this.txtCellName = new System.Windows.Forms.TextBox();
             this.txtCellContents = new System.Windows.Forms.TextBox();
             this.lblCellContents = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
-            this.label1 = new System.Windows.Forms.Label();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -122,6 +122,17 @@
             this.panel1.Size = new System.Drawing.Size(910, 29);
             this.panel1.TabIndex = 3;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(494, 6);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(14, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "=";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
             // txtValue
             // 
             this.txtValue.Location = new System.Drawing.Point(522, 3);
@@ -172,22 +183,12 @@
             this.spreadsheetPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.spreadsheetPanel1.cellContent = null;
             this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 57);
+            this.spreadsheetPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 3, 5);
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(1350, 480);
+            this.spreadsheetPanel1.Size = new System.Drawing.Size(1350, 645);
             this.spreadsheetPanel1.TabIndex = 2;
             this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
             this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load_1);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(494, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(14, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "=";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // Form1
             // 
