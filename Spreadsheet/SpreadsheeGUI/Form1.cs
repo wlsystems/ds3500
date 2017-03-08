@@ -50,7 +50,7 @@ namespace SpreadsheetGUI
 
         public delegate void SelectionChangedEventHandler(SpreadsheetPanel sender);
 
-        public delegate void FileChosenDisplayHandler(SpreadsheetPanel sender);
+        public delegate void FileChosenDisplayHandler(SpreadsheetPanel sender, string filename);
 
         public event FileChosenDisplayHandler FileChosenDisplay;
 
@@ -128,8 +128,7 @@ namespace SpreadsheetGUI
             {
                 if (FileChosenEvent != null)
                 {
-                    FileChosenEvent(openfileDialog.FileName);
-
+                    FileChosenDisplay(spreadsheetPanel1, openfileDialog.FileName);
                 }
             }
         }

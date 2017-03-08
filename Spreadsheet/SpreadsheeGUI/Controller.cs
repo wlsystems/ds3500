@@ -41,6 +41,29 @@ namespace SpreadsheetGUI
             window.FileSaveEvent += HandleFileSave;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
             window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
+            window.FileChosenDisplay += Window_FileChosenDisplay;
+        }
+
+        private void Window_FileChosenDisplay(SpreadsheetPanel sender, string filename)
+        {
+            try
+            {
+                window.Title = filename;
+                TextReader t = new StreamReader(filename);
+                model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
+                IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
+                foreach (string cell in allCell)
+                {
+                    int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
+                    int y = Convert.ToInt16(cell.Substring(1)) - 1;
+                    sender.SetValue(x, y, model.GetCellValue(cell).ToString());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                window.Message = "Unable to open file\n" + ex.Message;
+            }
         }
 
         private void Window_SelectionChangedEvent2(SpreadsheetPanel sender)
@@ -70,7 +93,6 @@ namespace SpreadsheetGUI
             int thisy = panel.cellRowCurrent;
             string cell = ConvertCellName(thisx, thisy);
             string cellName = ConvertCellName(x, y);
-
             if (panel.cellContent != "")
             {
                 model.SetContentsOfCell(cellName, panel.cellContent);
@@ -86,13 +108,12 @@ namespace SpreadsheetGUI
 
         public void Window_FileChoosenDisplay()
         {
-            panel = new SpreadsheetPanel();
             IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
             foreach (var cell in allCell)
             {
                 int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
                 int y = Convert.ToInt16(cell.Substring(1)) - 1;
-                panel.SetValue(x, y, model.GetCellValue(cell).ToString());
+                panel.SetValue(x, y, "8");
             }
         }
 
@@ -101,25 +122,7 @@ namespace SpreadsheetGUI
         /// </summary>
         public void HandleFileChosen(string filename)
         {
-            try
-            {
-                //window.Title = filename;
-                TextReader t = new StreamReader(filename);
-                model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
-                panel.Clear();
-                IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
-                foreach (string cell in allCell)
-                {
-                    int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
-                    int y = Convert.ToInt16(cell.Substring(1)) - 1;
-                    panel.SetValue(x, y, model.GetCellValue(cell).ToString());
-                }
-
-            }
-            catch (Exception ex)
-            {
-                window.Message = "Unable to open file\n" + ex.Message;
-            }
+            
            
         }
 
