@@ -103,7 +103,7 @@ namespace SpreadsheetGUI
         {
             try
             {
-                window.Title = filename;
+                //window.Title = filename;
                 TextReader t = new StreamReader(filename);
                 model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
                 panel.Clear();
