@@ -577,18 +577,15 @@ namespace SSGui
                     e.Handled = true;
                     String s = tb.Text;
                     this.Controls.Remove(tb);
-                    base.OnClick(e);
                     int x = (_p.X - LABEL_COL_WIDTH) / DATA_COL_WIDTH;
                     int y = (_p.Y - LABEL_ROW_HEIGHT) / DATA_ROW_HEIGHT;
-                    if (_p.X > LABEL_COL_WIDTH && _p.Y > LABEL_ROW_HEIGHT && (x + _firstColumn < COL_COUNT) && (y + _firstRow < ROW_COUNT))
+  
+                    _selectedCol = x + _firstColumn;
+                    _selectedRow = y + _firstRow;
+                    if (_ssp.SelectionChanged != null)
                     {
-                        _selectedCol = x + _firstColumn;
-                        _selectedRow = y + _firstRow;
-                        if (_ssp.SelectionChanged != null)
-                        {
-                            cellContent = s;
-                            _ssp.SelectionChanged(_ssp);
-                        }
+                        cellContent = s;
+                        _ssp.SelectionChanged(_ssp);
                     }
                     Invalidate();
                 }
