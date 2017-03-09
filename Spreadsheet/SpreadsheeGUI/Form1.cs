@@ -94,7 +94,6 @@ namespace SpreadsheetGUI
         public event Action NewEvent;
 
 
-        
         private void Form1_Load(object sender, EventArgs e)
         {
             
@@ -300,5 +299,6 @@ namespace SpreadsheetGUI
         {
             MessageBox.Show("Give us an A!");
         }
+
     }
 }
