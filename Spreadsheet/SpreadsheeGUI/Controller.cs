@@ -76,9 +76,20 @@ namespace SpreadsheetGUI
             string cellName = ConvertCellName(x, y);
             if (panel.cellContent != "")
             {
-                model.SetContentsOfCell(cellName, sender.cellContent);
+                ISet<string> recalculate = model.SetContentsOfCell(cellName, sender.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
+                UpdateDepCells(sender, recalculate);
                 panel.HideTextBox();
+            }
+        }
+
+        private void UpdateDepCells(SpreadsheetPanel sender, ISet<string> recalculate)
+        {
+            foreach (var cell in recalculate)
+            {
+                int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
+                int y = Convert.ToInt16(cell.Substring(1)) - 1;
+                sender.SetValue(x, y, model.GetCellValue(cell).ToString());
             }
         }
 
@@ -95,13 +106,16 @@ namespace SpreadsheetGUI
             int thisy = panel.cellRowCurrent;
             string cell = ConvertCellName(thisx, thisy);
             string cellName = ConvertCellName(x, y);
+            ISet<string> recalculate;
             if (panel.cellContent != "")
+            
             {
-                model.SetContentsOfCell(cellName, panel.cellContent);
+                recalculate= model.SetContentsOfCell(cellName, panel.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
                 panel.SetTextBox(model.GetCellContents(cell).ToString());
                 Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
                 Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
+                UpdateDepCells(sender, recalculate);
             }
             else
             {
