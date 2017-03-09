@@ -19,7 +19,7 @@ namespace SpreadsheetGUI
 
 
         // The window being controlled
-        private Form1 Window;
+        private Form1View Window;
         private SpreadsheetPanel panel;
         private Spreadsheet model;
         // The contents of the open file in the AnalysisWindow, or the
@@ -32,7 +32,7 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Begins controlling window.
         /// </summary>
-        public Controller(Form1 window)
+        public Controller(Form1View window)
         {
             this.Window = window;
             this.model = new Spreadsheet();
@@ -164,7 +164,7 @@ namespace SpreadsheetGUI
                 if (result == DialogResult.Yes || result == DialogResult.OK)
                 {
 
-                    Window.Close();
+                    Window.DoClose();
                 }
                 else 
                 {
@@ -174,7 +174,7 @@ namespace SpreadsheetGUI
             }
             else
             {
-                Window.Close();
+                Window.DoClose();
             }
         }
 
