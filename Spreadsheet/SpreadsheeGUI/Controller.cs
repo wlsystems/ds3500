@@ -41,30 +41,6 @@ namespace SpreadsheetGUI
             window.FileSaveEvent += HandleFileSave;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
             window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
-            window.FileChosenDisplay += Window_FileChosenDisplay;
-        }
-
-        private void Window_FileChosenDisplay(SpreadsheetPanel sender, string filename)
-        {
-            try
-            {
-                panel.Clear();
-                window.Title = filename;
-                TextReader t = new StreamReader(filename);
-                model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
-                IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
-                foreach (string cell in allCell)
-                {
-                    int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
-                    int y = Convert.ToInt16(cell.Substring(1)) - 1;
-                    sender.SetValue(x, y, model.GetCellValue(cell).ToString());
-                }
-
-            }
-            catch (Exception ex)
-            {
-                window.Message = "Unable to open file\n" + ex.Message;
-            }
         }
 
         private void Window_SelectionChangedEvent2(SpreadsheetPanel sender)

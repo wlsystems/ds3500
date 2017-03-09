@@ -44,6 +44,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -55,7 +56,7 @@
             this.menu_Help});
             this.menuBar.Location = new System.Drawing.Point(0, 0);
             this.menuBar.Name = "menuBar";
-            this.menuBar.Size = new System.Drawing.Size(1362, 24);
+            this.menuBar.Size = new System.Drawing.Size(1354, 24);
             this.menuBar.TabIndex = 1;
             this.menuBar.Text = "menuBar";
             // 
@@ -100,6 +101,8 @@
             // 
             // menu_Help
             // 
+            this.menu_Help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.helpToolStripMenuItem});
             this.menu_Help.Name = "menu_Help";
             this.menu_Help.Size = new System.Drawing.Size(44, 20);
             this.menu_Help.Text = "Help";
@@ -107,12 +110,14 @@
             // openfileDialog
             // 
             this.openfileDialog.DefaultExt = "ss";
-            this.openfileDialog.FileName = "openfileDialog";
+            this.openfileDialog.Filter = "Text files (*.ss)|*.ss|All files (*.*)|*.*";
+            this.openfileDialog.Tag = "";
             this.openfileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.fileDialog1_FileOk);
             // 
             // saveFileDialog
             // 
             this.saveFileDialog.DefaultExt = "ss";
+            this.saveFileDialog.Filter = "Text files (*.ss)|*.ss|All files (*.*)|*.*";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
             // lblCellContents
@@ -185,10 +190,17 @@
             this.spreadsheetPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 24);
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
-            this.spreadsheetPanel1.Size = new System.Drawing.Size(1362, 697);
+            this.spreadsheetPanel1.Size = new System.Drawing.Size(1354, 689);
             this.spreadsheetPanel1.TabIndex = 2;
             this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
             this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load_1);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.helpToolStripMenuItem.Text = "Help";
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -196,7 +208,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1362, 741);
+            this.ClientSize = new System.Drawing.Size(1354, 733);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.spreadsheetPanel1);
             this.Controls.Add(this.menuBar);
@@ -231,6 +243,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
         private SSGui.SpreadsheetPanel spreadsheetPanel1;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
     }
 }
 

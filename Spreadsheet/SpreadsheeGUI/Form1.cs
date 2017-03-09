@@ -16,30 +16,34 @@ namespace SpreadsheetGUI
         public Form1()
         {
             InitializeComponent();
-            spreadsheetPanel1.SetSelection(0, 0);
+            spreadsheetPanel1.SetSelection(0, 0);          //sets default to A1
             spreadsheetPanel1.SelectionChanged += displaySelection;
-            UpdateCellNameTxtBox();
+            UpdateCellNameTxtBox();                        //sets uneditable cellname text box 
         }
 
         private void displaySelection(SpreadsheetPanel sender)
         {
             UpdateCellNameTxtBox();
         }
-     
-
-
+    
+        /// <summary>
+        /// When a user clicks to a different cell it updates the name of the cell that has the focus. 
+        /// </summary>
         private void UpdateCellNameTxtBox()
         {
-            int currRow = spreadsheetPanel1.cellRowCurrent;
-            int currCol = spreadsheetPanel1.cellColCurrent;
-            txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(currCol+65)).ToString(), (currRow+1).ToString());
+
+            int currCol = spreadsheetPanel1.cellColCurrent; //looks up the current column 
+            int currRow = spreadsheetPanel1.cellRowCurrent; //looks the current row 
+            txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(currCol+65)).ToString(),   //converts to letter char
+                                                                (currRow+1).ToString());    //adds one to adjust from 0 index
         }
+
         /// <summary>
         /// Fired when the cell contents is updated.
         /// </summary>
         public event SelectionChangedEventHandler2 SelectionChangedEvent2;
 
-
+        /// <param name="sender"></param>
         public delegate void SelectionChangedEventHandler2(SpreadsheetPanel sender);
 
         /// <summary>
@@ -50,12 +54,17 @@ namespace SpreadsheetGUI
 
         public delegate void SelectionChangedEventHandler(SpreadsheetPanel sender);
 
+        /// <summary>
+        /// Fired when the open dialoug window is used and a file to open is selected. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="filename"></param>
         public delegate void FileChosenDisplayHandler(SpreadsheetPanel sender, string filename);
 
         public event FileChosenDisplayHandler FileChosenDisplay;
 
         /// <summary>
-        /// Handles the content
+        /// Handles the content. 
         /// </summary>
         /// <param name="str"></param>
         public delegate void TextChangedHandler(String content);
@@ -84,11 +93,6 @@ namespace SpreadsheetGUI
         /// </summary>
         public event Action NewEvent;
 
-        /// <summary>
-        /// Fired when a request is made to count occurrences of a string.
-        /// The parameter is the string.
-        /// </summary>
-        public event Action<string> CountEvent;
 
         
         private void Form1_Load(object sender, EventArgs e)
@@ -120,7 +124,12 @@ namespace SpreadsheetGUI
         {
             Form1ApplicationContext.GetContext().RunNew();
         }
-
+        /// <summary>
+        /// Open is selected from the file drop down menu, ask the user to select a file and then fires
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void menuItem_Open_Click(object sender, EventArgs e)
         {
             DialogResult result = openfileDialog.ShowDialog();
@@ -285,6 +294,11 @@ namespace SpreadsheetGUI
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Give us an A!");
         }
     }
 }

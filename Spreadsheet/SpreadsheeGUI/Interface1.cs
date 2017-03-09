@@ -13,8 +13,6 @@ namespace SpreadsheetGUI
     {
         event Action<string> FileChosenEvent;
 
-        event Action<string> CountEvent;
-
         event Action CloseEvent;
 
         event Action NewEvent;
