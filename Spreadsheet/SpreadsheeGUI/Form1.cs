@@ -92,8 +92,6 @@ namespace SpreadsheetGUI
         /// Fired when a new action is requested.
         /// </summary>
         public event Action NewEvent;
-        
-
 
 
         public void menuItem_Close_Click(object sender, EventArgs e)
@@ -300,6 +298,15 @@ namespace SpreadsheetGUI
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (CloseEvent != null)
+            {
+                CloseEvent();
+            }
 
         }
     }
