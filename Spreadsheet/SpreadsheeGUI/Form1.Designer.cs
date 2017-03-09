@@ -216,7 +216,6 @@
             this.Name = "Form1";
             this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 20);
             this.Text = "Spreadsheet";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuBar.ResumeLayout(false);
             this.menuBar.PerformLayout();

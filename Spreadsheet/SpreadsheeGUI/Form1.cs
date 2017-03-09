@@ -303,11 +303,7 @@ namespace SpreadsheetGUI
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (CloseEvent != null)
-            {
-                CloseEvent();
-            }
-
+            
         }
     }
 }
