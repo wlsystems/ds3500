@@ -92,12 +92,9 @@ namespace SpreadsheetGUI
         /// Fired when a new action is requested.
         /// </summary>
         public event Action NewEvent;
+        
 
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            
-        }
 
         public void menuItem_Close_Click(object sender, EventArgs e)
         {
@@ -196,6 +193,7 @@ namespace SpreadsheetGUI
         public string Title
         {
            set { Text = value; }
+           get { return Text; }
             
         }
 
@@ -300,5 +298,9 @@ namespace SpreadsheetGUI
             MessageBox.Show("Give us an A!");
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

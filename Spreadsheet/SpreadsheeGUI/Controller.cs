@@ -19,7 +19,7 @@ namespace SpreadsheetGUI
 
 
         // The window being controlled
-        private Form1 window;
+        private Form1 Window;
         private SpreadsheetPanel panel;
         private Spreadsheet model;
         // The contents of the open file in the AnalysisWindow, or the
@@ -34,7 +34,7 @@ namespace SpreadsheetGUI
         /// </summary>
         public Controller(Form1 window)
         {
-            this.window = window;
+            this.Window = window;
             this.model = new Spreadsheet();
             this.panel = new SpreadsheetPanel();
             window.CloseEvent += HandleClose;
@@ -50,7 +50,7 @@ namespace SpreadsheetGUI
             try
             {
                 panel.Clear();
-                window.Title = filename;
+                Window.Title = filename;
                 TextReader t = new StreamReader(filename);
                 model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
                 IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
@@ -64,7 +64,7 @@ namespace SpreadsheetGUI
             }
             catch (Exception ex)
             {
-                window.Message = "Unable to open file\n" + ex.Message;
+                Window.Message = "Unable to open file\n" + ex.Message;
             }
         }
 
@@ -100,28 +100,18 @@ namespace SpreadsheetGUI
                 model.SetContentsOfCell(cellName, panel.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
                 panel.SetTextBox(model.GetCellContents(cell).ToString());
-                window.SetTextBoxContent(model.GetCellContents(cell).ToString());
-                window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
+                Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
             }
             else
             {
                 panel.SetTextBox(model.GetCellContents(cell).ToString());
-                window.SetTextBoxContent(model.GetCellContents(cell).ToString());
-                window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
+                Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
             }
         }
 
 
-        public void Window_FileChoosenDisplay()
-        {
-            IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
-            foreach (var cell in allCell)
-            {
-                int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
-                int y = Convert.ToInt16(cell.Substring(1)) - 1;
-                panel.SetValue(x, y, "8");
-            }
-        }
 
         /// <summary>
         /// Handles a request to open a file.
@@ -138,14 +128,14 @@ namespace SpreadsheetGUI
         {
             try
             {
-                window.Title = filename;
+                Window.Title = filename;
                 TextWriter t = new StreamWriter(filename);
                 model.Save(t);
 
             }
             catch (Exception ex)
             {
-                window.Message = "Unable to save file\n" + ex.Message;
+                Window.Message = "Unable to save file\n" + ex.Message;
             }
         }
 
@@ -156,28 +146,41 @@ namespace SpreadsheetGUI
         {
             if (model.Changed == true)
             {
-                MessageBox.Show("Warning! You have unsaved changes.");
+                DialogResult result = MessageBox.Show("Warning! You have unsaved changes, click OK to close without saving changes.","Unsaved Changes!",MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes || result == DialogResult.OK)
+                {
+
+                    Window.Close();
+                }
+                else 
+                {
+                    //User canceled close. 
+                }
+                
             }
-            window.DoClose();
+            else
+            {
+                Window.Close();
+            }
         }
 
-        /// <summary>
-        /// Handles a request to close the window
-        /// </summary>
-        private void HandleClick()
-        {
-            if (model.Changed == true)
-            {
-                MessageBox.Show("Warning! You have unsaved changes.");
-            }
-            window.DoClose();
-        }
+        ///// <summary>
+        ///// Handles a request to close the window
+        ///// </summary>
+        //private void HandleClick()
+        //{
+        //    if (model.Changed == true)
+        //    {
+        //        MessageBox.Show("Warning! You have unsaved changes.");
+        //    }
+        //    window.Close();
+        //}
         /// <summary>
         /// Handles a request to open a new window.
         /// </summary>
         private void HandleNew()
         {
-            window.OpenNew();
+            Window.OpenNew();
         }
 
         private string ConvertCellName(int x, int y)

@@ -35,6 +35,7 @@
             this.menuItem_Open = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItem_Close = new System.Windows.Forms.ToolStripMenuItem();
             this.menu_Help = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openfileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.lblCellContents = new System.Windows.Forms.Label();
@@ -44,7 +45,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.spreadsheetPanel1 = new SSGui.SpreadsheetPanel();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -106,6 +106,13 @@
             this.menu_Help.Name = "menu_Help";
             this.menu_Help.Size = new System.Drawing.Size(44, 20);
             this.menu_Help.Text = "Help";
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
+            this.helpToolStripMenuItem.Text = "Help";
+            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // openfileDialog
             // 
@@ -194,13 +201,6 @@
             this.spreadsheetPanel1.TabIndex = 2;
             this.spreadsheetPanel1.SelectionChanged += new SSGui.SelectionChangedHandler(this.spreadsheetPanel1_SelectionChanged);
             this.spreadsheetPanel1.Load += new System.EventHandler(this.spreadsheetPanel1_Load_1);
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.helpToolStripMenuItem.Text = "Help";
-            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // Form1
             // 

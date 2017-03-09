@@ -62,6 +62,10 @@
       <Project>{59F2E5EB-A78B-4AA6-B30A-34D22450EE0E}</Project>
       <Name>Spreadsheet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DependencyGraph\DependencyGraph.csproj">
+      <Project>{862EAD85-346F-4D2B-A53C-98074FF813BA}</Project>
+      <Name>DependencyGraph</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Formula\Formula.csproj">
       <Project>{0ACBD443-106D-4597-827B-6A9247805221}</Project>
       <Name>Formula</Name>
