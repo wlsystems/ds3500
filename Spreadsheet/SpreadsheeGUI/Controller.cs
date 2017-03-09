@@ -161,7 +161,7 @@ namespace SpreadsheetGUI
             if (model.Changed == true)
             {
                 DialogResult result = MessageBox.Show("Warning! You have unsaved changes, click OK to close without saving changes.","Unsaved Changes!",MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
-                if (result == DialogResult.Yes || result == DialogResult.OK)
+                if ( result == DialogResult.OK)
                 {
 
                     Window.DoClose();
@@ -178,17 +178,7 @@ namespace SpreadsheetGUI
             }
         }
 
-        ///// <summary>
-        ///// Handles a request to close the window
-        ///// </summary>
-        //private void HandleClick()
-        //{
-        //    if (model.Changed == true)
-        //    {
-        //        MessageBox.Show("Warning! You have unsaved changes.");
-        //    }
-        //    window.Close();
-        //}
+    
         /// <summary>
         /// Handles a request to open a new window.
         /// </summary>
