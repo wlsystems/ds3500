@@ -117,14 +117,14 @@
             // openfileDialog
             // 
             this.openfileDialog.DefaultExt = "ss";
-            this.openfileDialog.Filter = "Text files (*.ss)|*.ss|All files (*.*)|*.*";
+            this.openfileDialog.Filter = "Spreadsheet File (*.ss)|*.ss|All files (*.*)|*.*";
             this.openfileDialog.Tag = "";
             this.openfileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.fileDialog1_FileOk);
             // 
             // saveFileDialog
             // 
             this.saveFileDialog.DefaultExt = "ss";
-            this.saveFileDialog.Filter = "Text files (*.ss)|*.ss|All files (*.*)|*.*";
+            this.saveFileDialog.Filter = "Spreadsheet Files (*.ss)|*.ss|All files (*.*)|*.*";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
             // lblCellContents

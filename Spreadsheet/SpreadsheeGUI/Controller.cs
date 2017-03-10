@@ -158,13 +158,14 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandleClose()
         {
-            if (model.Changed == true)
+             if (model.Changed == true)
             {
                 DialogResult result = MessageBox.Show("Warning! You have unsaved changes, click OK to close without saving changes.","Unsaved Changes!",MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
                 if ( result == DialogResult.OK)
                 {
-
+                    
                     Window.DoClose();
+                    
                 }
                 else 
                 {
