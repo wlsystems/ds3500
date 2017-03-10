@@ -112,15 +112,33 @@ namespace SpreadsheetGUI
             {
                 recalculate= model.SetContentsOfCell(cellName, panel.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
-                panel.SetTextBox(model.GetCellContents(cell).ToString());
-                Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                if (model.GetCellContents(cell).GetType().ToString().Equals("Formulas.Formula"))
+                {
+                    panel.SetTextBox("="+model.GetCellContents(cell).ToString());
+                    Window.SetTextBoxContent("="+model.GetCellContents(cell).ToString());
+                }
+                else
+                {
+                    panel.SetTextBox(model.GetCellContents(cell).ToString());
+                    Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                }
+                    
                 Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
                 UpdateDepCells(sender, recalculate);
             }
             else
             {
-                panel.SetTextBox(model.GetCellContents(cell).ToString());
-                Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                if (model.GetCellContents(cell).GetType().ToString().Equals("Formulas.Formula"))
+                {
+                    Window.SetTextBoxContent("=" + model.GetCellContents(cell).ToString());
+                    panel.SetTextBox("=" + model.GetCellContents(cell).ToString());
+                }
+
+                else
+                {
+                    Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                    panel.SetTextBox(model.GetCellContents(cell).ToString());
+                }
                 Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
             }
         }
