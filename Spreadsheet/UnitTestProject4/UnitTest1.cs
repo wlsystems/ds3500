@@ -47,5 +47,6 @@ namespace UnitTestProject4
             controller.HandleFileChosen("1.xml");
             Assert.IsTrue(stub.CalledOpenNew);
         }
+
     }
 }
