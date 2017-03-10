@@ -177,14 +177,6 @@ namespace SpreadsheetGUI
             }
         }
 
-        public string CellContents
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         /// <summary>
         /// Not sure if we need this
         /// </summary>
@@ -198,14 +190,6 @@ namespace SpreadsheetGUI
         public string Message
         {
             set { MessageBox.Show(value); }
-        }
-
-        string Form1View.CellValue
-        {
-            set
-            {
-                throw new NotImplementedException();
-            }
         }
 
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)

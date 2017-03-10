@@ -190,41 +190,6 @@ namespace UnitTestProject3
                 s.Save(t);
                 Assert.IsFalse(s.Changed);
             }
-            /// <summary>
-            /// 
-            /// added duplicate entry to source 
-            /// </summary>
-            [TestMethod()]
-            public void TestSS2()
-            {
-                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
-                TextReader t = new StreamReader("ss.xml");
-                AbstractSpreadsheet s = new Spreadsheet(t,rg1);
-            }
-
-            /// <summary>
-            /// Test and invalid formatted xml
-            /// </summary>
-            [TestMethod()]
-            [ExpectedException(typeof(SpreadsheetReadException))]
-            public void TestSS3()
-            {
-                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
-                TextReader t = new StreamReader("states3.xml");
-                AbstractSpreadsheet s = new Spreadsheet(t, rg1);
-            }
-
-            /// <summary>
-            /// Test the GetCellValues
-            /// </summary>
-            [TestMethod()]
-            [ExpectedException(typeof(SpreadsheetReadException))]
-            public void TestSSGetCellValues1()
-            {
-                Regex rg1 = new Regex(@"[A-Z]*[1-9][0-9]*");
-                TextReader t = new StreamReader("s12.xml");
-                AbstractSpreadsheet s = new Spreadsheet(t, rg1);
-            }
 
             /// <summary>
             /// Used to make assertions about set equality.  Everything is converted first to

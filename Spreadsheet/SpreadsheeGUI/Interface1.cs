@@ -21,8 +21,6 @@ namespace SpreadsheetGUI
         event Form1.FileChosenDisplayHandler FileChosenDisplay;
         event Action<string> FileSaveEvent;
 
-        string CellValue { set; }
-
         string Title { set; }
 
         string Message { set; }

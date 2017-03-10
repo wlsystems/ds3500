@@ -75,21 +75,8 @@ namespace ConsoleApplication5
         static void Main(string[] args)           
         {
             AbstractSpreadsheet s = new Spreadsheet();
-            s.SetContentsOfCell("sum1", "= a1 + a2");
-            int i;
-            int depth = 15;
-            for (i = 1; i <= depth * 2; i += 2)
-            {
-                s.SetContentsOfCell("a" + i, "= a" + (i + 2) + " + a" + (i + 3));
-                s.SetContentsOfCell("a" + (i + 1), "= a" + (i + 2) + "+ a" + (i + 3));
-            }
-            s.SetContentsOfCell("a" + i, "1");
-            s.SetContentsOfCell("a" + (i + 1), "1");
-            Console.WriteLine(Math.Pow(2, depth + 1)+ " " + (double)s.GetCellValue("sum1"));
-            s.SetContentsOfCell("a" + i, "0");
-            Console.WriteLine(Math.Pow(2, depth)+ " " + (double)s.GetCellValue("sum1"));
-            s.SetContentsOfCell("a" + (i + 1), "0");
-            Console.WriteLine(0.0+ " " + (double)s.GetCellValue("sum1"));
+            s.SetContentsOfCell("Z7", ("=a3"));
+            Console.Write(s.GetCellContents("Z7").ToString());
         }
         private String randomName(Random rand)
         {
