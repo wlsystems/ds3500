@@ -35,7 +35,14 @@ namespace ControllerTester
         public event Action NewEvent;
         public event Form1.SelectionChangedEventHandler SelectionChangedEvent;
         public event Form1.SelectionChangedEventHandler2 SelectionChangedEvent2;
+
+        
         // These two properties record whether a method has been called
+        public bool CalledFileChoose
+        {
+            get; private set;
+        }
+
         public bool CalledDoClose
         {
             get; private set;
