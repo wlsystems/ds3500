@@ -1,16 +1,17 @@
-﻿// Skeleton implementation written by Joe Zachary for CS 3500, January 2017.
-// Modified by Dustin Shiozaki 1/30/2017 u0054455
+﻿//Tracy King
+//u0040235
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Dependencies
 {
     /// <summary>
-    /// A DependencyGraph can be modeled as a set of dependencies, where a dependency is an ordered
-    /// pair of strings..  Two dependencies (s1,t1) and (s2,t2) are considered equal if and only if 
-    /// s1 equals s2 and t1 equals t2..
+    /// A DependencyGraph can be modeled as a set of dependencies, where a dependency is an ordered 
+    /// pair of strings.  Two dependencies (s1,t1) and (s2,t2) are considered equal if and only if 
+    /// s1 equals s2 and t1 equals t2.
     /// 
     /// Given a DependencyGraph DG:
     /// 
@@ -47,281 +48,261 @@ namespace Dependencies
     /// with as well acceptably efficient according to the guidelines in the PS3 writeup. Some of
     /// the test cases with which you will be graded will create massive DependencyGraphs.  If you
     /// build an inefficient DependencyGraph this week, you will be regretting it for the next month.
-    /// 
-    /// Uses two graphs to improve performance.  One is the reverse of the other.  So for every s,t in
-    /// graph there is a t,s in reverse graph.   Both dicitonaries have a hashset of strings which 
-    /// allows each key to have multiple dependents. 
-    /// Throws ArgumentNullException if any of their parameters are null.
     /// </summary>
-    /// 
-
-
-
     public class DependencyGraph
     {
-        private Dictionary<string, HashSet<string>> dd; //a dictionary going from dependents to dependees (s,t)
-        private Dictionary<string, HashSet<string>> de; //a dictionary going from  dependees todependents  (t, s)
-        private int count; //number of dependencies
+        private Dictionary<string, List<string>> dependents;
+        private Dictionary<string, List<string>> dependees;
+
 
         /// <summary>
         /// Creates a DependencyGraph containing no dependencies.
-        /// Throws ArgumentNullException if any of their parameters are null.
         /// </summary>
         public DependencyGraph()
         {
-            dd = new Dictionary<string, HashSet<string>>();
-            de = new Dictionary<string, HashSet<string>>();
-            count = 0;
+            dependents = new Dictionary<string, List<string>>();
+            dependees = new Dictionary<string, List<string>>();
         }
 
         /// <summary>
-        /// return the instance of this object
+        /// Creates a DependencyGraph that is a copy of an exisitng dependency. 
         /// </summary>
-        public Dictionary<string, HashSet<string>> getdd
+        public DependencyGraph(DependencyGraph dg1)
         {
-            get
+            dependents = new Dictionary<string, List<string>>();
+            dependees = new Dictionary<string, List<string>>();
+            foreach (var kvp in dg1.dependents)
             {
-                var copied = new Dictionary<string, HashSet<string>>(dd);
-                return copied;
+                string dep = kvp.Key;
+                foreach (var dee in dg1.dependents[kvp.Key].ToList())
+                {
+                    AddDependency(dep, dee);           //the AddDependency will add the dependency both ways
+                }
+
             }
+
         }
 
         /// <summary>
-        /// return the instance of this object
-        /// </summary>
-        public Dictionary<string, HashSet<string>> getde
-        {
-            get
-            {
-                var copied = new Dictionary<string, HashSet<string>>(de);
-                return copied;
-            }
-        }
-
-        public DependencyGraph(DependencyGraph dg)
-        {
-            if (dg == null)
-                throw new ArgumentNullException("null");
-            this.dd = dg.getdd;
-            this.de = dg.getde;
-            this.count = dg.count;
-        }
-        /// <summary>
-        /// The number of dependencies in the DependencyGraph.
-        /// Throws ArgumentNullException if any of their parameters are null.
+        /// The number of dependencies in the DependencyGraph.  This is a property.
         /// </summary>
         public int Size
         {
-            get {
-                return count;
+            get
+            {
+                int total = 0;
+                foreach (var kvp in dependents)
+                {
+                    total += dependents[kvp.Key].Count;
+                }
+                return total;
             }
         }
 
+
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
-        /// Reports whether dependents(s) is non-empty.  Requires s != null.
+        /// Reports whether dependents(s) is non-empty.  Requires s != null.  If is null
+        /// throw a ArgumentNullException. 
         /// </summary>
         public bool HasDependents(string s)
         {
             if (s == null)
-                throw new ArgumentNullException("null argument not allowed");     
-            if (dd.ContainsKey(s))
-                return true;
-            else
-                return false;  
+                throw new ArgumentNullException("The key was null.");
+            if (dependents.ContainsKey(s))
+            {
+                return dependents[s].Any();     //returns if any dependent are found
+            }
+            return false;
         }
 
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
-        /// Reports whether dependees(s) is non-empty.  Requires s != null.
+        /// Reports whether dependees(s) is non-empty.  Requires s != null. If s is null throws a 
+        /// ArgumentNullException. 
         /// </summary>
         public bool HasDependees(string s)
         {
             if (s == null)
-                throw new ArgumentNullException("null argument not allowed");
-            if (de.ContainsKey(s))
-                return true;
-            else
-                return false;
+                throw new ArgumentNullException("The key was null.");
+
+            if (dependees.ContainsKey(s))
+            {
+                return dependees[s].Any();   //returns if any dependees are found
+            }
+            return false;
+
         }
 
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
-        /// Enumerates dependents(s).  Requires s != null.
+        /// Enumerates dependents(s).  Requires s != null. If s is null throws a ArgumentNullException. 
         /// </summary>
-        public IEnumerable<string> GetDependents(string s) 
+        public IEnumerable<string> GetDependents(string s)
         {
             if (s == null)
-                throw new ArgumentNullException("null");
-            if  (HasDependents(s))
-            {
-                HashSet<string> hs = new HashSet<string>();
-                IEnumerator<string> iet = dd[s].GetEnumerator();
-                while (iet.MoveNext())
-                {
-                    yield return iet.Current;
-                }
-            }
+                throw new ArgumentNullException("The key was null.");
+
+            if (dependents.ContainsKey(s))
+                return dependents[s];
             else
-                yield break;
+                return new List<string>();      //no dependents are found, returns empty list
         }
 
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
-        /// Enumerates dependees(s).  Requires s != null.
+        ///  Creates a list of all dependents, direct and indirect, for a cell. 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public List<string> GetAllDependents(string name, int depth)
+        {
+            if (depth > 1000)
+                throw new IndexOutOfRangeException();
+            var allDependents = new List<string>();
+            if (dependents.ContainsKey(name))
+            {
+                foreach (var dependent in dependents[name])
+                {
+                    allDependents.Add(dependent);
+                    int myDepth = depth + 1;
+                    var subdep = GetAllDependents(dependent, myDepth);
+                    // discourage adding duplicate values
+                    foreach (var item in subdep)
+                    {
+                        if (!allDependents.Contains(item))
+                            allDependents.Add(item);
+                    }
+                }
+
+            }
+            return allDependents;
+        }
+
+        /// <summary>
+        /// Enumerates dependees(s).  Requires s != null. If s is null throws a ArgumentNullException. 
         /// </summary>
         public IEnumerable<string> GetDependees(string s)
         {
             if (s == null)
-                throw new ArgumentNullException("null argument not allowed");
-            if (HasDependees(s))
-            {
-                IEnumerator<string> iet = de[s].GetEnumerator();
-                
-                while (iet.MoveNext())
-                {
-                    yield return iet.Current;
-                }
-            }
+                throw new ArgumentNullException("The key was null.");
+
+            if (dependees.ContainsKey(s))
+                return dependees[s];
             else
-                yield break;
+                return new List<string>();     //no dependees are found, returns empty list
         }
 
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
         /// Adds the dependency (s,t) to this DependencyGraph.
         /// This has no effect if (s,t) already belongs to this DependencyGraph.
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null.  If s or t are null throws a ArgumentNullException. 
         /// </summary>
         public void AddDependency(string s, string t)
         {
-            if (s==null | t==null)
-                throw new ArgumentNullException("null argument not allowed");
-            HashSet<string> dependents; 
-            HashSet<string> dependees;
-            if (dd.ContainsKey(s)) //first check if the regular dictionary contains the key or dependent
+            if ((s == null) || (t == null))
             {
-                if (!dd[s].Contains(t))//only add the dependee it if it doesn't contain it. It doesn't really matter with hashsets but it would throw off the count. This way the count is incremented twice in the case that a duplicate was added.
-                {
-                    dd[s].Add(t); //add the dependee to the dependent graph
-                    if (de.ContainsKey(t)) //this is necessary because the key could already exist in the reverse graph even though the key in the regular graph may not exist (because there can be multiple instances of the same dependee under different keys)
-                        de[t].Add(s);
-                    else  //create a new hashset and add the string to the set and the set to the dictionary
-                    {
-                        dependees = new HashSet<string>();
-                        dependees.Add(s);
-                        de.Add(t, dependees);
-                    }
-                    count++;
-                }                            
+                throw new ArgumentNullException("One of the parts of the dependency was null.");
+            }
+
+            //we need to know if s exists and already has dependent of t
+            if (dependents.ContainsKey(s))
+            {
+                if (!dependents[s].Contains(t))       //s is found, checks to see if t is already an dependent
+                    dependents[s].Add(t);
             }
             else
+                dependents.Add(s, new List<string>() { t });
+
+            //we need to know if t exists and already has dependees of s
+            if (dependees.ContainsKey(t))
             {
-                //first create a new hashset of dependees and then add the new set to the dictionary
-                dependents = new HashSet<string>();
-                dependents.Add(t);
-                dd.Add(s, dependents);
-                if (de.ContainsKey(t))
-                    de[t].Add(s);
-                else
-                {
-                    dependees = new HashSet<string>(); //next add the dependees to the reverse dictionary
-                    dependees.Add(s);
-                    de.Add(t, dependees);
-                }
-                count++;
+                if (!dependees[t].Contains(s))
+                    dependees[t].Add(s);
             }
+            else
+                dependees.Add(t, new List<string>() { s });
+
         }
 
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
         /// Removes the dependency (s,t) from this DependencyGraph.
         /// Does nothing if (s,t) doesn't belong to this DependencyGraph.
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null.  If s or t are null throws an ArgumentNullException. 
         /// </summary>
         public void RemoveDependency(string s, string t)
         {
-            if (s==null | t==null)
-                throw new ArgumentNullException("null argument not allowed");
-            if(dd.ContainsKey(s))
+            if ((s == null) || (t == null))
+                throw new ArgumentNullException("One of the elements of the dependency was null.");
+            if (!DependencyExist(s, t))
+                return;
+            else
             {
-                if (dd[s].Contains(t))
-                {
-                    dd[s].Remove(t); //remove the dependee if it as no dependents
-                    if (dd[s].Count == 0)
-                        dd.Remove(s);
-                    de[t].Remove(s);
-                    if (de[t].Count == 0)  //remove the dependents from the reverse graph
-                        de.Remove(t);
-                    count--;
-                }              
+                dependents[s].Remove(t);
+                dependees[t].Remove(s);
             }
         }
 
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
+        ///Checks to see if s exists first as a key and if does, checks to see if t is a
+        ///dependent of s.  Returns true if that dependency is found, returns false
+        ///for any other case.  The driver method tests for nulls, so not checked here. 
+        private bool DependencyExist(string s, string t)
+        {
+            if (dependents.ContainsKey(s))
+                return dependents[s].Contains(t);
+            else
+                return false;
+
+        }
+
+        /// <summary>
         /// Removes all existing dependencies of the form (s,r).  Then, for each
         /// t in newDependents, adds the dependency (s,t).
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null.  If s or an element of newDependents is null, throws a ArgumentNullException. 
         /// </summary>
         public void ReplaceDependents(string s, IEnumerable<string> newDependents)
         {
-            if (newDependents == null)
-                throw new ArgumentNullException("null argument not allowed");
-            IEnumerator<string> test = newDependents.GetEnumerator();
-            while (test.MoveNext())
-                if (test.Current==null)
-                    throw new ArgumentNullException("null not allowed");
-            if (s==null)
-                throw new ArgumentNullException("null argument not allowed");
-            if (dd.ContainsKey(s))
+            if (s == null)
+                throw new ArgumentNullException("The key is null.");
+            if (dependents.ContainsKey(s))
             {
-                IEnumerator<string> iet = dd[s].GetEnumerator(); //get all dependents using the key s. must save them to remove from the reverse graph.
-                while (iet.MoveNext()) //iterate over the dependents
+                List<String> oldlist = new List<string>();
+                oldlist = GetDependents(s).ToList();
+                foreach (var olddep in oldlist)           //remove all dependencies of form (s,r)
                 {
-                    de[iet.Current].Remove(s); //remove the dependents from the reverse graph
-                    if (de[iet.Current].Count == 0) //remove the key from the reverse graph it it has no entries
-                        de.Remove(iet.Current);
-                    count--;
-                }                   
-                dd[s].Clear(); //clear the dependents from the regular graph.
-                foreach (string str in newDependents)
-                    AddDependency(s, str); //add the dependents to both graphs         
-            }              
+                    RemoveDependency(s, olddep);
+                }
+            }
+            foreach (var item in newDependents)         //adds all dependency, either all new or as a replacement
+            {
+                if (item == null)
+                    throw new ArgumentNullException("One of the new dependents was null.");
+                AddDependency(s, item);
+            }
+
         }
 
         /// <summary>
-        /// Throws ArgumentNullException if any of their parameters are null.
         /// Removes all existing dependencies of the form (r,t).  Then, for each 
         /// s in newDependees, adds the dependency (s,t).
-        /// Requires s != null and t != null.
+        /// Requires s != null and t != null. If s or an element in the newDependee list is null throws a ArgumentNullException. 
         /// </summary>
         public void ReplaceDependees(string t, IEnumerable<string> newDependees)
         {
-            if (newDependees == null)
-                throw new ArgumentNullException("null");
-            IEnumerator<string> test = newDependees.GetEnumerator();
-            while (test.MoveNext())
-                if (test.Current == null)
-                    throw new ArgumentNullException("Null encountered");
             if (t == null)
-                throw new ArgumentNullException("null");
-            if (de.ContainsKey(t))
+                throw new ArgumentNullException("The key was null.");
+            if (dependees.ContainsKey(t))
             {
-                IEnumerator<string> iet = de[t].GetEnumerator();
-                //get all dependees using the key t. must save them to remove from the reverse graph.
-                while (iet.MoveNext()) //iterate over the dependees
+                List<String> oldlist = new List<string>();
+                oldlist = GetDependees(t).ToList();
+                foreach (var olddep in oldlist)
                 {
-                    dd[iet.Current].Remove(t); //remove the dependents from the graph
-                    if (dd[iet.Current].Count == 0)
-                        dd.Remove(iet.Current);
-                    count--;
+                    RemoveDependency(olddep, t);              //removes all dependency of form (r,t)
                 }
-                de[t].Clear(); //clear the dependents from the reverse graph.
-                foreach (string str in newDependees)
-                    AddDependency(str, t); //add the dependents to both graphs                   
             }
-            else foreach (string s in newDependees) AddDependency(s, t);
+            foreach (var newdep in newDependees)             //adds all dependees, either new or as a replacement 
+            {
+                if (newdep == null)
+                    throw new ArgumentNullException("A new dependee was null.");
+                AddDependency(newdep, t);
+            }
         }
     }
 }

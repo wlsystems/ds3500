@@ -33,7 +33,7 @@ namespace SpreadsheetGUI
         public event UpdateValueEventHandler UpdateValueEvent;
 
         /// <summary>
-        /// Begins controlling window.
+        /// Begins controller, sets up event handlers.  
         /// </summary>
         public Controller(Form1View window)
         {
@@ -50,11 +50,15 @@ namespace SpreadsheetGUI
             lastKeyWasEnter = false;
         }
 
+        /// <summary>
+        /// Begins controller, when we are loading an existing spreadsheet from a file. 
+        /// </summary>
+        /// <param name="window"></param>
+        /// <param name="filename"></param>
         public Controller(Form1View window, string filename) 
         {
             this.panel = new SpreadsheetPanel();
-            object v = new object();
-            
+            object v = new object();  
             this.filename = filename;
             Window = window;
             this.model = new Spreadsheet();
@@ -69,6 +73,10 @@ namespace SpreadsheetGUI
             window.OpenThis();
         }
 
+        /// <summary>
+        /// This is the handler 
+        /// </summary>
+        /// <param name="obj"></param>
         private void Window_CloseClick2(FormClosingEventArgs obj)
         {
             if (model.Changed == true)
