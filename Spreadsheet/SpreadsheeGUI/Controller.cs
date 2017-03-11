@@ -49,18 +49,26 @@ namespace SpreadsheetGUI
             lastKeyWasEnter = false;
         }
 
-        public Controller(Form1View window, string filename) : this(window)
+        public Controller(Form1View window, string filename) 
         {
+            this.panel = new SpreadsheetPanel();
+            object v = new object();
+            
             this.filename = filename;
             Window = window;
             this.model = new Spreadsheet();
-            this.panel = new SpreadsheetPanel();
             window.CloseEvent += HandleClose;
             window.FileChosenEvent += HandleFileChosen;
             window.FileSaveEvent += HandleFileSave;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
             window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
+            window.OpenClick += Window_OpenClick;
             lastKeyWasEnter = false;
+            window.OpenThis();
+        }
+
+        private void Window_OpenClick(SpreadsheetPanel sender)
+        {
             try
             {
                 TextReader t = new StreamReader(filename);
@@ -71,16 +79,14 @@ namespace SpreadsheetGUI
                 {
                     int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
                     int y = Convert.ToInt16(cell.Substring(1)) - 1;
-                    panel.SetValue(x, y, model.GetCellValue(cell).ToString());
+                    sender.SetTextBox(model.GetCellContents(cell).ToString());
+                    sender.SetValue(x, y, model.GetCellValue(cell).ToString());
                 }
-
             }
-            
             catch (Exception ex)
             {
                 Window.Message = "Unable to open file\n" + ex.Message;
             }
-            
         }
 
         private void Window_FileChosenDisplay(SpreadsheetPanel sender, string filename)
@@ -95,6 +101,7 @@ namespace SpreadsheetGUI
                 {
                     int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
                     int y = Convert.ToInt16(cell.Substring(1)) - 1;
+                    panel.SetTextBox(model.GetCellContents(cell).ToString());
                     panel.SetValue(x, y, model.GetCellValue(cell).ToString());
                 }
             }

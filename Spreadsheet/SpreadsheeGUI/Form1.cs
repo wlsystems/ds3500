@@ -32,13 +32,13 @@ namespace SpreadsheetGUI
         /// </summary>
         private void UpdateCellNameTxtBox()
         {
-
             int currCol = spreadsheetPanel1.cellColCurrent; //looks up the current column 
             int currRow = spreadsheetPanel1.cellRowCurrent; //looks the current row 
             txtCellName.Text = string.Format("{0}{1}", (Convert.ToChar(currCol+65)).ToString(),   //converts to letter char
                                                                 (currRow+1).ToString());    //adds one to adjust from 0 index
         }
 
+        public event Action<SpreadsheetPanel> OpenClick;
         /// <summary>
         /// Fired when the cell contents is updated.
         /// </summary>
@@ -183,7 +183,10 @@ namespace SpreadsheetGUI
         {
             set { MessageBox.Show(value); }
         }
-
+        public void OpenThis()
+        {
+            OpenClick(spreadsheetPanel1);
+        }
 
         private void spreadsheetPanel1_Load_1(object sender, EventArgs e)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SSGui;
 
 namespace SpreadsheetGUI
 {
@@ -20,7 +21,7 @@ namespace SpreadsheetGUI
         event Form1.SelectionChangedEventHandler2 SelectionChangedEvent2;
         event Form1.FileChosenDisplayHandler FileChosenDisplay;
         event Action<string> FileSaveEvent;
-
+        event Action<SpreadsheetPanel> OpenClick;
         string Title { set; }
 
         string Message { set; }
@@ -30,5 +31,6 @@ namespace SpreadsheetGUI
         void OpenNew();
         void SetTextValueBoxContent(string v);
         void SetTextBoxContent(string v);
+        void OpenThis();
     }
 }

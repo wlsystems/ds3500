@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SpreadsheetGUI;
+using SSGui;
 
 namespace ControllerTester
 {
@@ -45,8 +46,9 @@ namespace ControllerTester
         public event Action NewEvent;
         public event Form1.SelectionChangedEventHandler SelectionChangedEvent;
         public event Form1.SelectionChangedEventHandler2 SelectionChangedEvent2;
+        public event Action<SpreadsheetPanel> OpenClick;
 
-        
+
         // These two properties record whether a method has been called
         public bool CalledFileChosen
         {
@@ -85,6 +87,16 @@ namespace ControllerTester
         public void SetTextValueBoxContent(string v)
         {
             SetTextValueBoxContent(v);
+        }
+
+        public void menuItem_Open_Click(object v1, string v2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OpenThis()
+        {
+            throw new NotImplementedException();
         }
 
         //public void FireSelectionChangeEvent(SpreadsheetPanel panel)
