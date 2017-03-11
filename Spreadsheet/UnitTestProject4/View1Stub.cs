@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpreadsheetGUI;
 using SSGui;
+using System.Windows.Forms;
 
 namespace ControllerTester
 {
@@ -47,6 +48,7 @@ namespace ControllerTester
         public event Form1.SelectionChangedEventHandler SelectionChangedEvent;
         public event Form1.SelectionChangedEventHandler2 SelectionChangedEvent2;
         public event Action<SpreadsheetPanel> OpenClick;
+        public event Action<FormClosingEventArgs> CloseClick2;
 
 
         // These two properties record whether a method has been called
