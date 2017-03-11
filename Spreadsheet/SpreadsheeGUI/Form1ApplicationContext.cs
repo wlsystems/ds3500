@@ -56,6 +56,8 @@ namespace SpreadsheetGUI
             // Run the form
             window.Show();
         }
+
+
     }
 
 }

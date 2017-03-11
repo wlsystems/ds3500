@@ -34,7 +34,7 @@ namespace SpreadsheetGUI
         /// </summary>
         public Controller(Form1View window)
         {
-            this.Window = window;
+            Window = window;
             this.model = new Spreadsheet();
             this.panel = new SpreadsheetPanel();
             window.CloseEvent += HandleClose;
@@ -49,10 +49,9 @@ namespace SpreadsheetGUI
         {
             try
             {
-                panel.Clear();
-                Window.Title = filename;
                 TextReader t = new StreamReader(filename);
                 model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
+                Window.Title = filename;
                 IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
                 foreach (string cell in allCell)
                 {
@@ -207,7 +206,7 @@ namespace SpreadsheetGUI
         }
 
         /// <summary>
-        /// Converts the row and columns from the spreadsheet panel into a string cellname. 
+        /// Converts the row and columns from the spreadsheet panel into a string cellname
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
