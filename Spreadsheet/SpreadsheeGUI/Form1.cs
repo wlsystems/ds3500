@@ -20,9 +20,6 @@ namespace SpreadsheetGUI
             spreadsheetPanel1.SetSelection(0, 0);          //sets default to A1
             spreadsheetPanel1.SelectionChanged += displaySelection;
             UpdateCellNameTxtBox();                        //sets uneditable cellname text box
-            
-            
-             
         }
 
         private void displaySelection(SpreadsheetPanel sender)
@@ -116,7 +113,7 @@ namespace SpreadsheetGUI
 
         public void OpenNew()
         {
-            throw new NotImplementedException();
+            Form1ApplicationContext.GetContext().RunNew();
         }
 
         public void menuItem_New_Click(object sender, EventArgs e)
@@ -144,6 +141,7 @@ namespace SpreadsheetGUI
 
         private void menuItem_Save_Click(object sender, EventArgs e)
         {
+
             DialogResult result = saveFileDialog.ShowDialog();
             if (result == DialogResult.Yes || result == DialogResult.OK)
             {

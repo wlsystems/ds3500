@@ -62,7 +62,6 @@ namespace SpreadsheetGUI
                     int y = Convert.ToInt16(cell.Substring(1)) - 1;
                     sender.SetValue(x, y, model.GetCellValue(cell).ToString());
                 }
-
             }
             catch (Exception ex)
             {
@@ -170,9 +169,7 @@ namespace SpreadsheetGUI
                         Window.SetTextBoxContent("=" + model.GetCellContents(cell).ToString());
                         panel.SetTextBox("=" + model.GetCellContents(cell).ToString());
                     }
-
                 }
-
                 else
                 {
                     if (lastKeyWasEnter)
