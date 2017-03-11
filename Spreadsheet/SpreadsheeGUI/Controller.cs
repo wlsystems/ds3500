@@ -220,13 +220,14 @@ namespace SpreadsheetGUI
         /// </summary>
         private void HandleClose()
         {
-            if (model.Changed == true)
+             if (model.Changed == true)
             {
                 DialogResult result = MessageBox.Show("Warning! You have unsaved changes, click OK to close without saving changes.","Unsaved Changes!",MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
                 if ( result == DialogResult.OK)
                 {
-
+                    
                     Window.DoClose();
+                    
                 }
                 else 
                 {
@@ -249,14 +250,16 @@ namespace SpreadsheetGUI
             Window.OpenNew();
         }
 
+        /// <summary>
+        /// Converts the row and columns from the spreadsheet panel into a string cellname. 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         private string ConvertCellName(int x, int y)
         {
             return string.Format("{0}{1}", (Convert.ToChar(x + 65)).ToString(), (y + 1).ToString());
         } 
 
-        public Spreadsheet ReturnSS()
-        {
-            return model;
-        }
     }
 }

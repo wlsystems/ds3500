@@ -13,12 +13,16 @@ namespace SpreadsheetGUI
 {
     public partial class Form1 : Form, Form1View
     {
+
         public Form1()
         {
             InitializeComponent();
             spreadsheetPanel1.SetSelection(0, 0);          //sets default to A1
             spreadsheetPanel1.SelectionChanged += displaySelection;
-            UpdateCellNameTxtBox();                        //sets uneditable cellname text box 
+            UpdateCellNameTxtBox();                        //sets uneditable cellname text box
+            
+            
+             
         }
 
         private void displaySelection(SpreadsheetPanel sender)
@@ -98,6 +102,7 @@ namespace SpreadsheetGUI
         {
             if (CloseEvent != null)
             {
+
                 CloseEvent();
             }
         }
@@ -277,7 +282,18 @@ namespace SpreadsheetGUI
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Give us an A!");
+            MessageBox.Show("This is an application to run a simple spreadsheet.  " 
+                + "Across the menu bar is File drop down menu that provides the user with the options to\n"
+                + "-open an existing file\n " 
+                + "-save the current spreadsheet\n "
+                + "-open a new window \n "
+                + "-close the current window, closing the final window will cause the application to exit. \n\n"
+                + " Also on the menu bar is  \n "
+                + "-the current cellname that is selected\n"
+                + "-the contents of that cell\n"
+                + "-and finally the value of that cell. \n\n"
+                + "  A cell in the grid can be updated either in the cell content bar or in a textbox that will float above the grid "
+                + "when the cell is selected.");
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -285,9 +301,5 @@ namespace SpreadsheetGUI
 
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            
-        }
     }
 }

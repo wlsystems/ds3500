@@ -47,5 +47,6 @@ namespace UnitTestProject4
             stub.FireFileChosenEvent();
             Assert.IsTrue(stub.CalledFileChosen);
         }
+
     }
 }
