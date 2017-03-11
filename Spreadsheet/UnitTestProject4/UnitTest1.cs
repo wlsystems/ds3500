@@ -44,8 +44,8 @@ namespace UnitTestProject4
         {
             View1Stub stub = new View1Stub();
             Controller controller = new Controller(stub);
-            controller.HandleFileChosen("1.xml");
-            Assert.IsTrue(stub.CalledOpenNew);
+            stub.FireFileChosenEvent();
+            Assert.IsTrue(stub.CalledFileChosen);
         }
     }
 }

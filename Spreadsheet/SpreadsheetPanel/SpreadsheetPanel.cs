@@ -301,6 +301,8 @@ namespace SSGui
                         _selectedCol = 0;
                         _selectedRow = 0;
                         cellContent = s;
+                        if (s == "")
+                            cellContent ="";
                         _ssp.SelectionChanged(_ssp);
                     }
                 }

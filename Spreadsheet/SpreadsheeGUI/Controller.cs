@@ -22,6 +22,7 @@ namespace SpreadsheetGUI
         private Form1View Window;
         private SpreadsheetPanel panel;
         private Spreadsheet model;
+        private bool lastKeyWasEnter;
         // The contents of the open file in the AnalysisWindow, or the
         // empty string if no file is open.
 
@@ -43,6 +44,7 @@ namespace SpreadsheetGUI
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
             window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
             window.FileChosenDisplay += Window_FileChosenDisplay;
+            lastKeyWasEnter = false;
         }
 
         private void Window_FileChosenDisplay(SpreadsheetPanel sender, string filename)
@@ -74,14 +76,29 @@ namespace SpreadsheetGUI
             int x = panel.cellColCurrent;
             int y = panel.cellRowCurrent;
             string cellName = ConvertCellName(x, y);
-            if (panel.cellContent != "")
-            {
+            int thisx = panel.cellColCurrent;
+            int thisy = panel.cellRowCurrent;
+            string cell = ConvertCellName(thisx, thisy);
+            lastKeyWasEnter = true;
                 ISet<string> recalculate = model.SetContentsOfCell(cellName, sender.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
                 UpdateDepCells(sender, recalculate);
                 panel.HideTextBox();
+                //must detect if there is a formula and add a = if not set the contents as is.
+                if (model.GetCellContents(cell).GetType().ToString().Equals("Formulas.Formula"))
+                {
+                    Window.SetTextBoxContent("=" + model.GetCellContents(cell).ToString());
+                    panel.SetTextBox("=" + model.GetCellContents(cell).ToString());
+                }
+
+                else
+                {
+                    Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                    panel.SetTextBox(model.GetCellContents(cell).ToString());
+                }
+                Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
+
             }
-        }
 
         private void UpdateDepCells(SpreadsheetPanel sender, ISet<string> recalculate)
         {
@@ -106,41 +123,68 @@ namespace SpreadsheetGUI
             int thisy = panel.cellRowCurrent;
             string cell = ConvertCellName(thisx, thisy);
             string cellName = ConvertCellName(x, y);
-            ISet<string> recalculate;
+            ISet<string> recalculate; 
             if (panel.cellContent != "")
-            
             {
-                recalculate= model.SetContentsOfCell(cellName, panel.cellContent);
+
+                recalculate = model.SetContentsOfCell(cellName, panel.cellContent);
                 panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
+
                 if (model.GetCellContents(cell).GetType().ToString().Equals("Formulas.Formula"))
                 {
+                    if (lastKeyWasEnter)
+                        Window.SetTextBoxContent("=" + model.GetCellContents(cellName).ToString());
+                    else
+                        Window.SetTextBoxContent("=" + model.GetCellContents(cell).ToString());
                     panel.SetTextBox("="+model.GetCellContents(cell).ToString());
-                    Window.SetTextBoxContent("="+model.GetCellContents(cell).ToString());
                 }
                 else
                 {
-                    panel.SetTextBox(model.GetCellContents(cell).ToString());
-                    Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                    if (lastKeyWasEnter)
+                        Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+
+                    else
+                        Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                    panel.SetTextBox( model.GetCellContents(cell).ToString());
                 }
-                    
+                
                 Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
                 UpdateDepCells(sender, recalculate);
             }
             else
             {
+                if (lastKeyWasEnter == true)
+                    recalculate = model.SetContentsOfCell(cell, panel.cellContent);
+                else 
+                    recalculate = model.SetContentsOfCell(cellName, panel.cellContent);
+                panel.SetValue(x, y, model.GetCellValue(cellName).ToString());
                 if (model.GetCellContents(cell).GetType().ToString().Equals("Formulas.Formula"))
                 {
-                    Window.SetTextBoxContent("=" + model.GetCellContents(cell).ToString());
-                    panel.SetTextBox("=" + model.GetCellContents(cell).ToString());
+                    if (lastKeyWasEnter)
+                    {
+                        Window.SetTextBoxContent("=" + model.GetCellContents(cellName).ToString());
+                        panel.SetTextBox("=" + model.GetCellContents(cell).ToString());
+                    }
+                    else
+                    {
+                        Window.SetTextBoxContent("=" + model.GetCellContents(cell).ToString());
+                        panel.SetTextBox("=" + model.GetCellContents(cell).ToString());
+                    }
+
                 }
 
                 else
                 {
-                    Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+                    if (lastKeyWasEnter)
+                        Window.SetTextBoxContent(model.GetCellContents(cellName).ToString());
+                    else
+                        Window.SetTextBoxContent(model.GetCellContents(cell).ToString());
+
                     panel.SetTextBox(model.GetCellContents(cell).ToString());
                 }
                 Window.SetTextValueBoxContent(model.GetCellValue(cell).ToString());
             }
+            lastKeyWasEnter = false;
         }
 
 

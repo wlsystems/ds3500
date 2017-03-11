@@ -246,7 +246,7 @@ namespace SpreadsheetGUI
             {
                 e.Handled = true;
                 if (SelectionChangedEvent2 != null)
-                {
+                {   
                     spreadsheetPanel1.cellContent = txtCellContents.Text;
                     SelectionChangedEvent2(spreadsheetPanel1);
                 }
