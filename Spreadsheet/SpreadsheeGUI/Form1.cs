@@ -133,9 +133,10 @@ namespace SpreadsheetGUI
             DialogResult result = openfileDialog.ShowDialog();
             if (result == DialogResult.Yes || result == DialogResult.OK)
             {
-
+                
                 if (FileChosenEvent != null)
                 {
+                    Form1ApplicationContext.GetContext().RunNew(openfileDialog.FileName);
                     FileChosenDisplay(spreadsheetPanel1, openfileDialog.FileName);
                 }
             }

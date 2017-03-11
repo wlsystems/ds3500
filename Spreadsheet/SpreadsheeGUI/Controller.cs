@@ -23,6 +23,8 @@ namespace SpreadsheetGUI
         private SpreadsheetPanel panel;
         private Spreadsheet model;
         private bool lastKeyWasEnter;
+        private string filename;
+
         // The contents of the open file in the AnalysisWindow, or the
         // empty string if no file is open.
 
@@ -47,6 +49,40 @@ namespace SpreadsheetGUI
             lastKeyWasEnter = false;
         }
 
+        public Controller(Form1View window, string filename) : this(window)
+        {
+            this.filename = filename;
+            Window = window;
+            this.model = new Spreadsheet();
+            this.panel = new SpreadsheetPanel();
+            window.CloseEvent += HandleClose;
+            window.FileChosenEvent += HandleFileChosen;
+            window.FileSaveEvent += HandleFileSave;
+            window.SelectionChangedEvent += HandleSelectionChangedEvent;
+            window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
+            lastKeyWasEnter = false;
+            try
+            {
+                TextReader t = new StreamReader(filename);
+                model = new Spreadsheet(t, new Regex(@"[A-Z]+[1-9][0-9]*"));
+                Window.Title = filename;
+                IEnumerable<string> allCell = model.GetNamesOfAllNonemptyCells();
+                foreach (string cell in allCell)
+                {
+                    int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
+                    int y = Convert.ToInt16(cell.Substring(1)) - 1;
+                    panel.SetValue(x, y, model.GetCellValue(cell).ToString());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Window.Message = "Unable to open file\n" + ex.Message;
+            }
+
+
+        }
+
         private void Window_FileChosenDisplay(SpreadsheetPanel sender, string filename)
         {
             try
@@ -59,7 +95,7 @@ namespace SpreadsheetGUI
                 {
                     int x = Convert.ToInt16(Convert.ToChar(cell.Substring(0, 1)) - 65);
                     int y = Convert.ToInt16(cell.Substring(1)) - 1;
-                    sender.SetValue(x, y, model.GetCellValue(cell).ToString());
+                    panel.SetValue(x, y, model.GetCellValue(cell).ToString());
                 }
 
             }
