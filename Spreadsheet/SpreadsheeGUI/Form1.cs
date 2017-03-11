@@ -38,6 +38,11 @@ namespace SpreadsheetGUI
                                                                 (currRow+1).ToString());    //adds one to adjust from 0 index
         }
 
+        /// <summary>
+        /// Sends event if x is clicked
+        /// </summary>
+        public event Action<FormClosingEventArgs> CloseClick2;
+
         public event Action<SpreadsheetPanel> OpenClick;
         /// <summary>
         /// Fired when the cell contents is updated.
@@ -287,5 +292,9 @@ namespace SpreadsheetGUI
 
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            CloseClick2(e);
+        }
     }
 }

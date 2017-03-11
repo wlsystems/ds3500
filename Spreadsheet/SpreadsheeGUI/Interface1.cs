@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SSGui;
+using System.Windows.Forms;
 
 namespace SpreadsheetGUI
 {
@@ -13,7 +14,7 @@ namespace SpreadsheetGUI
     public interface Form1View
     {
         event Action<string> FileChosenEvent;
-
+        event Action<FormClosingEventArgs> CloseClick2;
         event Action CloseEvent;
 
         event Action NewEvent;

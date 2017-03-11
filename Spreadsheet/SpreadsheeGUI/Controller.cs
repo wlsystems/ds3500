@@ -41,6 +41,7 @@ namespace SpreadsheetGUI
             this.model = new Spreadsheet();
             this.panel = new SpreadsheetPanel();
             window.CloseEvent += HandleClose;
+            window.CloseClick2 += Window_CloseClick2;
             window.FileChosenEvent += HandleFileChosen;
             window.FileSaveEvent += HandleFileSave;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
@@ -62,9 +63,23 @@ namespace SpreadsheetGUI
             window.FileSaveEvent += HandleFileSave;
             window.SelectionChangedEvent += HandleSelectionChangedEvent;
             window.SelectionChangedEvent2 += Window_SelectionChangedEvent2;
+            window.CloseClick2 += Window_CloseClick2;
             window.OpenClick += Window_OpenClick;
             lastKeyWasEnter = false;
             window.OpenThis();
+        }
+
+        private void Window_CloseClick2(FormClosingEventArgs obj)
+        {
+            if (model.Changed == true)
+            {
+                const string message = "Close and lose unsaved changes?";
+                const string caption = "Cancel";
+                var result = MessageBox.Show(message, caption,
+                                 MessageBoxButtons.YesNo,
+                                 MessageBoxIcon.Question);
+                obj.Cancel = (result == DialogResult.No);
+            }              
         }
 
         private void Window_OpenClick(SpreadsheetPanel sender)
@@ -262,17 +277,12 @@ namespace SpreadsheetGUI
              if (model.Changed == true)
             {
                 DialogResult result = MessageBox.Show("Warning! You have unsaved changes, click OK to close without saving changes.","Unsaved Changes!",MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
-                if ( result == DialogResult.OK)
+                if (result == DialogResult.OK)
                 {
-                    
                     Window.DoClose();
+                }
+                else { }
                     
-                }
-                else 
-                {
-                    //User canceled close. 
-                }
-                
             }
             else
             {
@@ -280,7 +290,14 @@ namespace SpreadsheetGUI
             }
         }
 
-    
+        /// <summary>
+        /// Handle if x is clicked
+        /// </summary>
+        private void HandleClose2()
+        {
+
+        }
+
         /// <summary>
         /// Handles a request to open a new window.
         /// </summary>
