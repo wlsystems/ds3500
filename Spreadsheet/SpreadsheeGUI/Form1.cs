@@ -107,6 +107,7 @@ namespace SpreadsheetGUI
 
         public void DoClose()
         {
+            
             Close();
         }
 
@@ -134,7 +135,6 @@ namespace SpreadsheetGUI
                 if (FileChosenEvent != null)
                 {
                     Form1ApplicationContext.GetContext().RunNew2(openfileDialog.FileName);
-                    //FileChosenDisplay(spreadsheetPanel1, openfileDialog.FileName);
                 }
             }
         }
@@ -287,5 +287,13 @@ namespace SpreadsheetGUI
 
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                CloseEvent();
+                e.CloseReason ;
+            }
+        }
     }
 }

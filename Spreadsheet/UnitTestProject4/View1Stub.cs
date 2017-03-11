@@ -99,10 +99,10 @@ namespace ControllerTester
             throw new NotImplementedException();
         }
 
-        //public void FireSelectionChangeEvent(SpreadsheetPanel panel)
-        //{
-        //    SSGui.SpreadsheetPanel sender = null;
-        //    SelectionChangedEvent(sender);
-        //}
+        public void FireSelectionChangeEvent(SpreadsheetPanel panel)
+        {
+            SSGui.SpreadsheetPanel sender = null;
+            SelectionChangedEvent(sender);
+        }
     }
 }

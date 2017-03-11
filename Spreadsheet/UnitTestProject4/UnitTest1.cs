@@ -49,21 +49,12 @@ namespace UnitTestProject4
             Assert.IsTrue(stub.CalledFileChosen);
         }
 
-        //[TestMethod]
-        //public void ControllerTestSetTitle()
-        //{
-        //    View1Stub stub = new View1Stub();
-        //    Controller controller = new Controller(stub);
-        //    controller.w("testfile.txt");
-        //    Assert.AreEqual("testfile.txt", stub.Title.ToString());
-
-        //}
-
         [TestMethod]
         public void ControllerTestSelectionChanged()
         {
             View1Stub stub = new View1Stub();
             Controller controller = new Controller(stub);
+
           
 
         }

@@ -264,7 +264,7 @@ namespace SpreadsheetGUI
                 DialogResult result = MessageBox.Show("Warning! You have unsaved changes, click OK to close without saving changes.","Unsaved Changes!",MessageBoxButtons.OKCancel,MessageBoxIcon.Warning);
                 if ( result == DialogResult.OK)
                 {
-                    
+
                     Window.DoClose();
                     
                 }
