@@ -75,12 +75,12 @@ namespace SpreadsheetGUI
                 }
 
             }
+            
             catch (Exception ex)
             {
                 Window.Message = "Unable to open file\n" + ex.Message;
             }
-
-
+            
         }
 
         private void Window_FileChosenDisplay(SpreadsheetPanel sender, string filename)

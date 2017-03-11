@@ -60,7 +60,7 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Runs a form in this application context
         /// </summary>
-        public void RunNew(string filename)
+        public void RunNew2(string filename)
         {
             // Create the window and the controller
             Form1 window = new Form1();

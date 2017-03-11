@@ -133,8 +133,8 @@ namespace SpreadsheetGUI
                 
                 if (FileChosenEvent != null)
                 {
-                    Form1ApplicationContext.GetContext().RunNew(openfileDialog.FileName);
-                    FileChosenDisplay(spreadsheetPanel1, openfileDialog.FileName);
+                    Form1ApplicationContext.GetContext().RunNew2(openfileDialog.FileName);
+                    //FileChosenDisplay(spreadsheetPanel1, openfileDialog.FileName);
                 }
             }
         }
