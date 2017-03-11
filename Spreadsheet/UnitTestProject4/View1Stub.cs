@@ -28,6 +28,16 @@ namespace ControllerTester
                 CloseEvent();
             }
         }
+
+        // These four methods cause events to be fired
+        public void FireFileChosenEvent()
+        {
+            if (FileChosenEvent != null)
+            {
+                FileChosenEvent("1.xml");
+            }
+        }
+
         public event Action CloseEvent;
         public event Form1.FileChosenDisplayHandler FileChosenDisplay;
         public event Action<string> FileChosenEvent;
@@ -38,7 +48,7 @@ namespace ControllerTester
 
         
         // These two properties record whether a method has been called
-        public bool CalledFileChoose
+        public bool CalledFileChosen
         {
             get; private set;
         }
@@ -60,6 +70,11 @@ namespace ControllerTester
         public void OpenNew()
         {
             CalledOpenNew = true;
+        }
+
+        public void FileChosen()
+        {
+            CalledFileChosen = true;
         }
 
         public void SetTextBoxContent(string v)
