@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ControllerTester;
 using SpreadsheetGUI;
+using SSGui;
 
 namespace UnitTestProject4
 {
@@ -46,6 +47,25 @@ namespace UnitTestProject4
             Controller controller = new Controller(stub);
             stub.FireFileChosenEvent();
             Assert.IsTrue(stub.CalledFileChosen);
+        }
+
+        //[TestMethod]
+        //public void ControllerTestSetTitle()
+        //{
+        //    View1Stub stub = new View1Stub();
+        //    Controller controller = new Controller(stub);
+        //    controller.w("testfile.txt");
+        //    Assert.AreEqual("testfile.txt", stub.Title.ToString());
+
+        //}
+
+        [TestMethod]
+        public void ControllerTestSelectionChanged()
+        {
+            View1Stub stub = new View1Stub();
+            Controller controller = new Controller(stub);
+          
+
         }
 
     }

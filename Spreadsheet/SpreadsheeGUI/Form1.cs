@@ -99,7 +99,6 @@ namespace SpreadsheetGUI
         {
             if (CloseEvent != null)
             {
-
                 CloseEvent();
             }
         }
@@ -127,12 +126,14 @@ namespace SpreadsheetGUI
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void menuItem_Open_Click(object sender, EventArgs e)
-        {
+        {   
             DialogResult result = openfileDialog.ShowDialog();
             if (result == DialogResult.Yes || result == DialogResult.OK)
             {
+                
                 if (FileChosenEvent != null)
                 {
+                    Form1ApplicationContext.GetContext().RunNew(openfileDialog.FileName);
                     FileChosenDisplay(spreadsheetPanel1, openfileDialog.FileName);
                 }
             }
@@ -168,18 +169,6 @@ namespace SpreadsheetGUI
         }
 
 
-        public string CellValue
-        {
-            get
-          {
-                int col = 0;
-                int row = 0;
-                string str = "";
-                SpreadsheetPanel.GetContext().GetValue(col, row, out str);
-                return str;
-            }
-        }
-
         /// <summary>
         /// Not sure if we need this
         /// </summary>
@@ -195,10 +184,6 @@ namespace SpreadsheetGUI
             set { MessageBox.Show(value); }
         }
 
-        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
 
         private void spreadsheetPanel1_Load_1(object sender, EventArgs e)
         {

@@ -125,7 +125,6 @@
             // 
             this.saveFileDialog.DefaultExt = "ss";
             this.saveFileDialog.Filter = "Spreadsheet Files (*.ss)|*.ss|All files (*.*)|*.*";
-            this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
             // lblCellContents
             // 

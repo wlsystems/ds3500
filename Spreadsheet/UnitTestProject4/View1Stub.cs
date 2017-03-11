@@ -86,5 +86,11 @@ namespace ControllerTester
         {
             SetTextValueBoxContent(v);
         }
+
+        //public void FireSelectionChangeEvent(SpreadsheetPanel panel)
+        //{
+        //    SSGui.SpreadsheetPanel sender = null;
+        //    SelectionChangedEvent(sender);
+        //}
     }
 }
