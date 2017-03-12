@@ -39,23 +39,28 @@
             this.cancelButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.wordPanel = new System.Windows.Forms.Panel();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gameBoard
             // 
             this.gameBoard.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.gameBoard.ColumnCount = 4;
+            this.gameBoard.ColumnCount = 5;
             this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 101F));
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 94F));
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 92F));
             this.gameBoard.Location = new System.Drawing.Point(298, 19);
             this.gameBoard.Name = "gameBoard";
-            this.gameBoard.RowCount = 4;
+            this.gameBoard.RowCount = 5;
             this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 51.72414F));
             this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.27586F));
             this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
+            this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 57F));
             this.gameBoard.Size = new System.Drawing.Size(380, 232);
             this.gameBoard.TabIndex = 0;
             // 
@@ -78,7 +83,7 @@
             // nameLabel
             // 
             this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(11, 19);
+            this.nameLabel.Location = new System.Drawing.Point(11, 42);
             this.nameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.nameLabel.Name = "nameLabel";
             this.nameLabel.Size = new System.Drawing.Size(35, 13);
@@ -87,7 +92,7 @@
             // 
             // nameBox
             // 
-            this.nameBox.Location = new System.Drawing.Point(63, 16);
+            this.nameBox.Location = new System.Drawing.Point(63, 39);
             this.nameBox.Margin = new System.Windows.Forms.Padding(2);
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(187, 20);
@@ -96,7 +101,7 @@
             // serverLabel
             // 
             this.serverLabel.AutoSize = true;
-            this.serverLabel.Location = new System.Drawing.Point(11, 57);
+            this.serverLabel.Location = new System.Drawing.Point(11, 82);
             this.serverLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.serverLabel.Name = "serverLabel";
             this.serverLabel.Size = new System.Drawing.Size(79, 13);
@@ -107,7 +112,7 @@
             // 
             this.serverBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.serverBox.Location = new System.Drawing.Point(94, 50);
+            this.serverBox.Location = new System.Drawing.Point(94, 75);
             this.serverBox.Margin = new System.Windows.Forms.Padding(2);
             this.serverBox.Name = "serverBox";
             this.serverBox.Size = new System.Drawing.Size(156, 20);
@@ -118,7 +123,7 @@
             this.registerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.registerButton.Enabled = false;
-            this.registerButton.Location = new System.Drawing.Point(38, 91);
+            this.registerButton.Location = new System.Drawing.Point(41, 123);
             this.registerButton.Margin = new System.Windows.Forms.Padding(2);
             this.registerButton.Name = "registerButton";
             this.registerButton.Size = new System.Drawing.Size(164, 41);
@@ -130,7 +135,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.Enabled = false;
-            this.cancelButton.Location = new System.Drawing.Point(94, 151);
+            this.cancelButton.Location = new System.Drawing.Point(94, 180);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 26);
@@ -155,6 +160,23 @@
             this.wordPanel.Size = new System.Drawing.Size(72, 220);
             this.wordPanel.TabIndex = 15;
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItem_Help});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(929, 24);
+            this.menuStrip1.TabIndex = 16;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // menuItem_Help
+            // 
+            this.menuItem_Help.Name = "menuItem_Help";
+            this.menuItem_Help.Size = new System.Drawing.Size(44, 20);
+            this.menuItem_Help.Text = "Help";
+            this.menuItem_Help.Click += new System.EventHandler(this.menuItem_Help_Click);
+            // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -171,8 +193,12 @@
             this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.wordBox);
             this.Controls.Add(this.wordButton);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "BoggleForm";
-            this.Text = "Form1";
+            this.Text = "BOGGLE";
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -191,6 +217,8 @@
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel wordPanel;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem menuItem_Help;
     }
 }
 
