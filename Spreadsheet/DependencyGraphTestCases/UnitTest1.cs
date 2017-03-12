@@ -12,7 +12,7 @@ namespace DependencyGraphTestCases
         DependencyGraph dg = new DependencyGraph();
 
         /// <summary>
-        /// simple test to add a dependency
+        /// simple test to add a dependency graph
         /// </summary>
 
         [TestMethod]
