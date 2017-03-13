@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PS8;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,11 @@ namespace PS8
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BoggleForm());
+            BoggleForm view = new BoggleForm();
+            //new Controller1(view);
+            //new Controller2(view);
+            new Controller1(view);
+            Application.Run(view);
         }
     }
 }

@@ -83,8 +83,7 @@ namespace PS8
 
         private void View_SetServerURL(string obj)
         {
-            MessageBox.Show("a");
-            url = obj;
+            //url = obj;
         }
 
         /// <summary>

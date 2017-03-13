@@ -74,6 +74,9 @@ namespace PS8
             wordPanel.Controls.Clear();
         }
 
+        /// <summary>
+        /// Fired when register button is pushed.
+        /// </summary>
         public event Action<string> SetServerURL;
         /// <summary>
         /// Fired when user must be registered.
