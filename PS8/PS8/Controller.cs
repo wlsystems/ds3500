@@ -78,13 +78,9 @@ namespace PS8
             view.SubmitPressed += SubmitWord;
             view.DonePressed += Done;
             view.FilterChanged += FilterListVisible;
-            view.SetServerURL += View_SetServerURL;
+            view.SetServerURL += Register;
         }
 
-        private void View_SetServerURL(string obj)
-        {
-            url = obj;
-        }
 
         /// <summary>
         /// Cancels the current operation (currently unimplemented)
@@ -100,6 +96,7 @@ namespace PS8
         {
             try
             {
+                url = server;
                 view.EnableControls(false);
                 using (HttpClient client = CreateClient())
                 {

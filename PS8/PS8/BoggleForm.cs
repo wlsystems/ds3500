@@ -77,7 +77,7 @@ namespace PS8
         /// <summary>
         /// Fired when register button is pushed.
         /// </summary>
-        public event Action<string> SetServerURL;
+        public event Action<string, string> SetServerURL;
         /// <summary>
         /// Fired when user must be registered.
         /// Parameters are name and requested client address. 
@@ -181,7 +181,7 @@ namespace PS8
 
         private void registerButton_Click_1(object sender, EventArgs e)
         {
-            SetServerURL(serverBox.Text);
+            SetServerURL(nameBox.Text, serverBox.Text);
         }
 
         private void nameBox_TextChanged(object sender, EventArgs e)
