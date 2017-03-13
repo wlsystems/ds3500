@@ -152,7 +152,7 @@ namespace PS8
 
         private void menuItem_Help_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This is how to play.");
+            MessageBox.Show("This is how to play Boogle.");
         }
     }
 }
