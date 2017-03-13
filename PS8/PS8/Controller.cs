@@ -83,7 +83,7 @@ namespace PS8
 
         private void View_SetServerURL(string obj)
         {
-            //url = obj;
+            url = obj;
         }
 
         /// <summary>
