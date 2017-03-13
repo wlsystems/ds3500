@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace PS8
 {
@@ -102,13 +104,13 @@ namespace PS8
                 {
                     // Create the parameter
                     dynamic user = new ExpandoObject();
-                    user.Name = name;
-                    user.server = server;
-
+                    user.Nickname = "name";
+                    Uri u = new Uri(server + "/BoggleService.svc/");
+                    client.BaseAddress = u;
                     // Compose and send the request.
                     StringContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync("RegisterUser", content).Result;
-
+                    HttpResponseMessage response = client.PostAsync("users", content).Result;
+                    MessageBox.Show(response.ToString());
                     // Deal with the response
                     if (response.IsSuccessStatusCode)
                     {
