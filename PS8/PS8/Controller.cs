@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Net.Http;
 using System.Text;
+using System.Windows.Forms;
 
 namespace PS8
 {
@@ -11,7 +12,12 @@ namespace PS8
     /// Controller for the Boggle Client
     /// </summary>
     class Controller1
-    {
+    {   
+        /// <summary>
+        /// Stores the url;
+        /// </summary>
+        private static string url;
+
         /// <summary>
         /// The view controlled by this Controller
         /// </summary>
@@ -72,6 +78,13 @@ namespace PS8
             view.SubmitPressed += SubmitWord;
             view.DonePressed += Done;
             view.FilterChanged += FilterListVisible;
+            view.SetServerURL += View_SetServerURL;
+        }
+
+        private void View_SetServerURL(string obj)
+        {
+            MessageBox.Show("a");
+            url = obj;
         }
 
         /// <summary>
@@ -232,7 +245,7 @@ namespace PS8
         {
             // Create a client whose base address is the GitHub server
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:50000/ToDo.svc/");   ///TODO NEED TO FIX
+            client.BaseAddress = new Uri(url);   ///TODO NEED TO FIX
 
             // Tell the server that the client will accept this particular type of response data
             client.DefaultRequestHeaders.Accept.Clear();

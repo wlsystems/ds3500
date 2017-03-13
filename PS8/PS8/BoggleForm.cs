@@ -34,6 +34,7 @@ namespace PS8
                 }
             }
             cancelButton.Enabled = !state;
+            
         }
 
         /// <summary>
@@ -72,6 +73,8 @@ namespace PS8
         {
             wordPanel.Controls.Clear();
         }
+
+        public event Action<string> SetServerURL;
         /// <summary>
         /// Fired when user must be registered.
         /// Parameters are name and requested client address. 
@@ -153,6 +156,37 @@ namespace PS8
         private void menuItem_Help_Click(object sender, EventArgs e)
         {
             MessageBox.Show("This is how to play Boogle.");
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        /// <summary>
+        /// Sets the URL of the server and fires the action.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void serverBox_TextChanged(object sender, EventArgs e)
+        {
+            if (nameBox.Text.Length > 0 && serverBox.Text.Length > 0)
+                registerButton.Enabled = true;
+            if (nameBox.Text.Length <= 0 | serverBox.Text.Length <= 0)
+                registerButton.Enabled = false;
+        }
+
+        private void registerButton_Click_1(object sender, EventArgs e)
+        {
+            SetServerURL(serverBox.Text);
+        }
+
+        private void nameBox_TextChanged(object sender, EventArgs e)
+        {
+            if (nameBox.Text.Length > 0 && serverBox.Text.Length > 0)
+                registerButton.Enabled = true;
+            if (nameBox.Text.Length <= 0 | serverBox.Text.Length <= 0)
+                registerButton.Enabled = false;
         }
     }
 }
