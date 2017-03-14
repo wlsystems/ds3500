@@ -78,6 +78,11 @@ namespace PS8
         }
 
         /// <summary>
+        /// Fired when the join game button is pushed
+        /// </summary>
+        public event Action<int> JoinGame;
+
+        /// <summary>
         /// Fired when register button is pushed.
         /// </summary>
         public event Action<string, string> SetServerURL;
@@ -211,6 +216,11 @@ namespace PS8
                 registerButton.Enabled = true;
             if (nameBox.Text.Length <= 0 | serverBox.Text.Length <= 0)
                 registerButton.Enabled = false;
+        }
+
+        private void BoggleForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
