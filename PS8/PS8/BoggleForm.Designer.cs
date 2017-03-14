@@ -456,6 +456,7 @@
             // 
             // timeBox
             // 
+            this.timeBox.Enabled = false;
             this.timeBox.Location = new System.Drawing.Point(31, 259);
             this.timeBox.Name = "timeBox";
             this.timeBox.Size = new System.Drawing.Size(100, 20);
@@ -465,7 +466,7 @@
             // timeButton
             // 
             this.timeButton.Enabled = false;
-            this.timeButton.Location = new System.Drawing.Point(175, 259);
+            this.timeButton.Location = new System.Drawing.Point(166, 256);
             this.timeButton.Name = "timeButton";
             this.timeButton.Size = new System.Drawing.Size(75, 23);
             this.timeButton.TabIndex = 19;
@@ -481,7 +482,6 @@
             this.label17.Size = new System.Drawing.Size(259, 13);
             this.label17.TabIndex = 20;
             this.label17.Text = "Enter a desired playing time between 5-120 seconds. ";
-            this.label17.Visible = false;
             // 
             // BoggleForm
             // 
