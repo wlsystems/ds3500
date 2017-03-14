@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="415d9873-e54b-4e29-abde-83b8f7a916f6" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="BoggleService.wsdl" MetadataType="Wsdl" ID="8e0a5968-659c-45e9-86f9-14b605925a01" SourceId="1" SourceUrl="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?wsdl" />
+    <MetadataFile FileName="BoggleService.xsd" MetadataType="Schema" ID="56a789d2-fa96-4cea-bad4-b54c017b6053" SourceId="1" SourceUrl="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd3" />
+    <MetadataFile FileName="BoggleService1.xsd" MetadataType="Schema" ID="11277e8d-4830-43a8-b911-e4649a3f578c" SourceId="1" SourceUrl="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd2" />
+    <MetadataFile FileName="BoggleService2.xsd" MetadataType="Schema" ID="d0c3aeae-ce96-4613-9b02-2ac4ed246acd" SourceId="1" SourceUrl="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd1" />
+    <MetadataFile FileName="BoggleService3.xsd" MetadataType="Schema" ID="ad2b4718-7eed-4649-ba19-6234a4458246" SourceId="1" SourceUrl="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd0" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

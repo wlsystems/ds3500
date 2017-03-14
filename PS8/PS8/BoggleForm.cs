@@ -109,20 +109,6 @@ namespace PS8
         public event Action CancelPressed;
 
 
-        private void registration_TextChanged(object sender, EventArgs e)
-        {
-            registerButton.Enabled = nameBox.Text.Trim().Length > 0 && serverBox.Text.Trim().Length > 0;
-        }
-
-
-        private void registerButton_Click(object sender, EventArgs e)
-        {
-            if (RegisterPressed != null)
-            {
-                RegisterPressed(nameBox.Text.Trim(), serverBox.Text.Trim());
-            }
-        }
-
         private void WordBox_TextChanged(object sender, EventArgs e)
         {
             wordButton.Enabled = UserRegistered && wordBox.Text.Trim().Length > 0;

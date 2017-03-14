@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="BoggleService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/Message" />
+      <xsd:import schemaLocation="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://cs3500-boggle-s17.azurewebsites.net/BoggleService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Boggle" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IBoggleService_API_InputMessage">
+    <wsdl:part name="parameters" element="tns:API" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_API_OutputMessage">
+    <wsdl:part name="parameters" element="tns:APIResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_MakeUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:MakeUser" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_MakeUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:MakeUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_JoinGame_InputMessage">
+    <wsdl:part name="parameters" element="tns:JoinGame" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_JoinGame_OutputMessage">
+    <wsdl:part name="parameters" element="tns:JoinGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_CancelGame_InputMessage">
+    <wsdl:part name="parameters" element="tns:CancelGame" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_CancelGame_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CancelGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_PlayWord_InputMessage">
+    <wsdl:part name="parameters" element="tns:PlayWord" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_PlayWord_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PlayWordResponse" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_Status_InputMessage">
+    <wsdl:part name="parameters" element="tns:Status" />
+  </wsdl:message>
+  <wsdl:message name="IBoggleService_Status_OutputMessage">
+    <wsdl:part name="parameters" element="tns:StatusResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IBoggleService">
+    <wsdl:operation name="API">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBoggleService/API" message="tns:IBoggleService_API_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBoggleService/APIResponse" message="tns:IBoggleService_API_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="MakeUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBoggleService/MakeUser" message="tns:IBoggleService_MakeUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBoggleService/MakeUserResponse" message="tns:IBoggleService_MakeUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="JoinGame">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBoggleService/JoinGame" message="tns:IBoggleService_JoinGame_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBoggleService/JoinGameResponse" message="tns:IBoggleService_JoinGame_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelGame">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBoggleService/CancelGame" message="tns:IBoggleService_CancelGame_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBoggleService/CancelGameResponse" message="tns:IBoggleService_CancelGame_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PlayWord">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBoggleService/PlayWord" message="tns:IBoggleService_PlayWord_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBoggleService/PlayWordResponse" message="tns:IBoggleService_PlayWord_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Status">
+      <wsdl:input wsaw:Action="http://tempuri.org/IBoggleService/Status" message="tns:IBoggleService_Status_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IBoggleService/StatusResponse" message="tns:IBoggleService_Status_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:service name="BoggleService" />
+</wsdl:definitions>

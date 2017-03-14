@@ -103,11 +103,13 @@ namespace PS8
                     // Create the parameter
                     dynamic user = new ExpandoObject();
                     user.Name = name;
-                    user.server = server;
+                    user.Server = server;
 
                     // Compose and send the request.
                     StringContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync("RegisterUser", content).Result;
+                    HttpResponseMessage response = client.PostAsync("MakeUsers", content).Result;
+                    MessageBox.Show(content.ToString());
+
 
                     // Deal with the response
                     if (response.IsSuccessStatusCode)
@@ -115,6 +117,8 @@ namespace PS8
                         String result = response.Content.ReadAsStringAsync().Result;
                         user1Token = (string)JsonConvert.DeserializeObject(result);
                         view.UserRegistered = true;
+
+                        MessageBox.Show("You did it!");
                     }
                     else
                     {
