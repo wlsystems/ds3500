@@ -6,6 +6,8 @@ using System.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -68,6 +70,12 @@ namespace PS8
         /// </summary>
         private int gameTime;
 
+        /// <summary>
+        /// For canceling the current operation
+        /// </summary>
+        private CancellationTokenSource tokenSource;
+
+
 
         /// <summary>/
         /// Creates a Controller for the provided view
@@ -119,16 +127,17 @@ namespace PS8
         /// </summary>
         private void Cancel()
         {
-            try
-            {
-                dynamic game = new ExpandoObject();
-                game.UserToken = user1Token;
-                game = Post(game, "games");
-            }
-            finally
-            {
+            tokenSource.Cancel();
+            //try
+            //{
+            //    dynamic game = new ExpandoObject();
+            //    game.UserToken = user1Token;
+            //    game = Post(game, "games");
+            //}
+            //finally
+            //{
 
-            }
+            //}
         }
 
         /// <summary>
@@ -161,8 +170,9 @@ namespace PS8
                     Uri u = new Uri(url + "/BoggleService.svc/");
                     client.BaseAddress = u;
                     // Compose and send the request.
+                    tokenSource = new CancellationTokenSource();
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync(Name, content).Result;
+                    HttpResponseMessage response = client.PostAsync(Name, content, tokenSource.Token).Result;
                     // Deal with the response
                     if (response.IsSuccessStatusCode)
                     {
@@ -178,6 +188,9 @@ namespace PS8
                         return null;
                     }
                 }
+            }
+            catch (TaskCanceledException)
+            {
             }
             finally
             {
