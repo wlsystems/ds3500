@@ -73,7 +73,7 @@ namespace PS8
         /// <summary>
         /// For canceling the current operation
         /// </summary>
-        private CancellationTokenSource tokenSource;
+        private static CancellationTokenSource tokenSource;
 
 
 
@@ -128,20 +128,20 @@ namespace PS8
         private void Cancel()
         {
             tokenSource.Cancel();
-            //try
-            //{
-            //    dynamic game = new ExpandoObject();
-            //    game.UserToken = user1Token;
-            //    game = Post(game, "games");
-            //}
-            //finally
-            //{
+            try
+            {
+                dynamic game = new ExpandoObject();
+                game.UserToken = user1Token;
+                game = Post(game, "games");
+            }
+            finally
+            {
 
-            //}
+            }
         }
 
         /// <summary>
-        /// Registers a user with the given name and email.
+        /// Registers a user with the given name and email..
         /// </summary>
         private void Register(string name, string server)
         {
@@ -156,6 +156,7 @@ namespace PS8
             }
             finally
             {
+                MessageBox.Show(user1Token);
                 view.UserRegistered = true;
             }   
         }
@@ -191,10 +192,7 @@ namespace PS8
             }
             catch (TaskCanceledException)
             {
-            }
-            finally
-            {
-
+                return null;
             }
         }
         /// <summary>
