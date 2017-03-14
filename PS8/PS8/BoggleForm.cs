@@ -121,7 +121,7 @@ namespace PS8
         /// <summary>
         /// Enables time box.
         /// </summary>
-        public void JoinGame(bool state)
+        public void TimeEnabled(bool state)
         {
             timeBox.Enabled = state;
 

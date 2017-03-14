@@ -184,7 +184,7 @@ namespace PS8
             }
             finally
             {
-                view.EnableControls(true);
+                view.TimeEnabled(true);
             }
         }
 
