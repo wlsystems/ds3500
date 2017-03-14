@@ -115,10 +115,20 @@ namespace PS8
 
 
         /// <summary>
-        /// Cancels the current operation 
+        /// Cancels the current operation.
         /// </summary>
         private void Cancel()
         {
+            try
+            {
+                dynamic game = new ExpandoObject();
+                game.UserToken = user1Token;
+                game = Post(game, "games");
+            }
+            finally
+            {
+
+            }
         }
 
         /// <summary>
@@ -138,7 +148,6 @@ namespace PS8
             finally
             {
                 view.UserRegistered = true;
-                view.TimeEnabled(true);
             }   
         }
 
@@ -172,7 +181,7 @@ namespace PS8
             }
             finally
             {
-                
+
             }
         }
         /// <summary>
