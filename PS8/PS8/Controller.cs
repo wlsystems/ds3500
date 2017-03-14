@@ -82,6 +82,52 @@ namespace PS8
             view.DonePressed += Done;
             view.FilterChanged += FilterListVisible;
             view.SetServerURL += Register;
+            view.JoinGame += View_JoinGame;
+        }
+
+        /// <summary>
+        /// Uses the token to add the user to a game.  
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        private void View_JoinGame(int time)
+        {
+            try
+            {
+                using (HttpClient client = CreateClient())
+                {
+                    // Create the parameter
+                    dynamic game = new ExpandoObject();
+                    game.TimeLimit = time;
+                    game.UserToken = user1Token;
+                    Uri u = new Uri(url + "/BoggleService.svc/");
+                    client.BaseAddress = u;
+                    // Compose and send the request.
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(game), Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = client.PostAsync("games", content).Result;
+
+                    // Deal with the response
+                    if (response.IsSuccessStatusCode)
+                    {
+                        String result = response.Content.ReadAsStringAsync().Result;
+                        dynamic token = new ExpandoObject();
+                        token.GameID = "0";
+                        var obj = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
+                        //token = JsonConvert.DeserializeObject(result);
+                        token = obj;
+                        MessageBox.Show(token.GameID);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error registering: " + response.StatusCode);
+                        MessageBox.Show(response.ReasonPhrase);
+                    }
+                }
+            }
+            finally
+            {
+                view.EnableControls(true);
+            }
         }
 
 
