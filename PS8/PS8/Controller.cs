@@ -138,6 +138,7 @@ namespace PS8
             finally
             {
                 view.UserRegistered = true;
+                view.TimeEnabled(true);
             }   
         }
 
@@ -171,7 +172,7 @@ namespace PS8
             }
             finally
             {
-                view.TimeEnabled(true);
+                
             }
         }
         /// <summary>
