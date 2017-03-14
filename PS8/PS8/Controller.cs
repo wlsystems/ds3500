@@ -73,7 +73,7 @@ namespace PS8
         /// <summary>
         /// For canceling the current operation
         /// </summary>
-        private CancellationTokenSource tokenSource;
+        private static CancellationTokenSource tokenSource;
 
 
 
@@ -191,11 +191,9 @@ namespace PS8
             }
             catch (TaskCanceledException)
             {
+                return null;
             }
-            finally
-            {
 
-            }
         }
         /// <summary>
         /// Submits a word during the game
