@@ -58,12 +58,17 @@ namespace PS8
         /// </summary>
         private bool showBothClientsFinalLists;
 
-        /// <summary>
+        // <summary>
         /// A string that is exactly 16 characters long and contents the conent of the board.    
         /// </summary>
         private string gameboardcontent;
 
-        /// <summary>
+        // <summary>
+        /// A string that is exactly 16 characters long and contents the conent of the board.    
+        /// </summary>
+        private int gameTime;
+
+        /// <summary>/
         /// Creates a Controller for the provided view
         /// </summary>
         public Controller1(BoggleForm view)
@@ -151,7 +156,7 @@ namespace PS8
                 {
                     // Create the parameter
                     dynamic user = new ExpandoObject();
-                    user.Nickname = "name";
+                    user.Nickname = name;
                     Uri u = new Uri(server + "/BoggleService.svc/");
                     client.BaseAddress = u;
                     // Compose and send the request.
