@@ -63,7 +63,7 @@ namespace PS8
         private string gameboardcontent;
 
         // <summary>
-        /// A string that is exactly 16 characters long and contents the conent of the board.    
+        /// The total game time.    
         /// </summary>
         private int gameTime;
 
@@ -120,7 +120,7 @@ namespace PS8
                     if (response.IsSuccessStatusCode)
                     {
                         String result = response.Content.ReadAsStringAsync().Result;
-                        user1Token = JsonConvert.DeserializeObject(result).ToString();
+                        user1Token = (string) JsonConvert.DeserializeObject(result);
                         view.UserRegistered = true;
                         MessageBox.Show("It worked! Token is " + user1Token);
                     }
