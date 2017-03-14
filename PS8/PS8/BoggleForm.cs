@@ -15,7 +15,7 @@ namespace PS8
         public BoggleForm()
         {
             InitializeComponent();
-            timeButton.Enabled = false;
+            
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace PS8
         public void EnableControls(bool state)
         {
             registerButton.Enabled = state;
-            wordButton.Enabled = state && UserRegistered && wordBox.Text.Length > 0;
+            wordButton.Enabled = state && UserRegistered && wordBox.Text.Length > 0 && timeBox.Text.Length > 0;
             timeButton.Enabled = UserRegistered;
 
             foreach (Control control in wordPanel.Controls)
@@ -129,12 +129,6 @@ namespace PS8
         }
 
 
-        private void TimeBox_TextChanged(object sender, EventArgs e)
-        {
-            timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
-        }
-
-
 
         private void WordBox_TextChanged(object sender, EventArgs e)
         {
@@ -210,10 +204,6 @@ namespace PS8
 
         }
 
-        private void timeBox_TextChanged_1(object sender, EventArgs e)
-        {
-            timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
-        }
 
         private void timeButton_Click(object sender, EventArgs e)
         {
@@ -229,6 +219,12 @@ namespace PS8
                     MessageBox.Show("Your time is not within the allowed limits of 5-120 seconds.");
 
             }
+        }
+
+        private void timeBox_TextChanged(object sender, EventArgs e)
+        {
+
+            timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
         }
     }
 }

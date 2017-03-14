@@ -329,6 +329,7 @@
             // 
             // wordButton
             // 
+            this.wordButton.Enabled = false;
             this.wordButton.Location = new System.Drawing.Point(388, 369);
             this.wordButton.Name = "wordButton";
             this.wordButton.Size = new System.Drawing.Size(129, 23);
@@ -411,6 +412,7 @@
             // 
             // button1
             // 
+            this.button1.Enabled = false;
             this.button1.Location = new System.Drawing.Point(63, 332);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(138, 41);
@@ -457,10 +459,11 @@
             this.timeBox.Name = "timeBox";
             this.timeBox.Size = new System.Drawing.Size(100, 20);
             this.timeBox.TabIndex = 18;
-            this.timeBox.TextChanged += new System.EventHandler(this.timeBox_TextChanged_1);
+            this.timeBox.TextChanged += new System.EventHandler(this.timeBox_TextChanged);
             // 
             // timeButton
             // 
+            this.timeButton.Enabled = false;
             this.timeButton.Location = new System.Drawing.Point(175, 259);
             this.timeButton.Name = "timeButton";
             this.timeButton.Size = new System.Drawing.Size(75, 23);
