@@ -111,6 +111,7 @@ namespace PS8
             {
                 dynamic game = new ExpandoObject();
                 game.TimeLimit = time;
+                game.UserToken = user1Token;
                 game.GameID = "";
                 game = Post(game, "games");
                 gameToken = game.GameID;
@@ -156,7 +157,7 @@ namespace PS8
             }
             finally
             {
-                MessageBox.Show(user1Token);
+                view.TimeEnabled(true);
                 view.UserRegistered = true;
             }   
         }
@@ -175,17 +176,17 @@ namespace PS8
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
                     HttpResponseMessage response = client.PostAsync(Name, content, tokenSource.Token).Result;
                     // Deal with the response
+                    MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)
                     {
-                        String result = response.Content.ReadAsStringAsync().Result;
+                        string result = response.Content.ReadAsStringAsync().Result;
                         var obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
                         return obj2;
-
                     }
                     else
                     {
-                        Console.WriteLine("Error registering: " + response.StatusCode);
-                        Console.WriteLine(response.ReasonPhrase);
+                        MessageBox.Show("Error registering: " + response.StatusCode);
+                        MessageBox.Show(response.ReasonPhrase);
                         return null;
                     }
                 }
