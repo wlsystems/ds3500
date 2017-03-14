@@ -64,7 +64,7 @@ namespace PS8
         private string gameboardcontent;
 
         // <summary>
-        /// A string that is exactly 16 characters long and contents the conent of the board.    
+        /// The total game time.    
         /// </summary>
         private int gameTime;
 
@@ -171,7 +171,7 @@ namespace PS8
             }
             finally
             {
-                
+                view.TimeEnabled(true);
             }
         }
         /// <summary>
