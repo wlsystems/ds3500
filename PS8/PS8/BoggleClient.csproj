@@ -59,6 +59,7 @@
     <Compile Include="BoggleForm.Designer.cs">
       <DependentUpon>BoggleForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="HelloClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\ServiceReference1\Reference.cs">
@@ -89,18 +90,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="Service References\ServiceReference1\BoggleService.wsdl" />
-    <None Include="Service References\ServiceReference1\BoggleService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference1\BoggleService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference1\BoggleService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference1\BoggleService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\ServiceReference1\PS8.ServiceReference1.Game.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
