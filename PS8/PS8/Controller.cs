@@ -68,6 +68,7 @@ namespace PS8
         /// </summary>
         private int gameTime;
 
+
         /// <summary>/
         /// Creates a Controller for the provided view
         /// </summary>
@@ -88,6 +89,7 @@ namespace PS8
             view.FilterChanged += FilterListVisible;
             view.SetServerURL += Register;
             view.JoinGame += View_JoinGame;
+            view.CancelPressed += Cancel;
         }
 
         /// <summary>
@@ -99,45 +101,21 @@ namespace PS8
         {
             try
             {
-                using (HttpClient client = CreateClient())
-                {
-                    // Create the parameter
-                    dynamic game = new ExpandoObject();
-                    game.TimeLimit = time;
-                    game.UserToken = user1Token;
-                    Uri u = new Uri(url + "/BoggleService.svc/");
-                    client.BaseAddress = u;
-                    // Compose and send the request.
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(game), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync("games", content).Result;
-
-                    // Deal with the response
-                    if (response.IsSuccessStatusCode)
-                    {
-                        String result = response.Content.ReadAsStringAsync().Result;
-                        dynamic token = new ExpandoObject();
-                        token.GameID = "0";
-                        var obj = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
-                        //token = JsonConvert.DeserializeObject(result);
-                        token = obj;
-                        MessageBox.Show(token.GameID);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Error registering: " + response.StatusCode);
-                        MessageBox.Show(response.ReasonPhrase);
-                    }
-                }
+                dynamic game = new ExpandoObject();
+                game.TimeLimit = time;
+                game.GameID = "";
+                game = Post(game, "games");
+                gameToken = game.GameID;
             }
             finally
             {
-                view.EnableControls(true);
+                view.UserRegistered = true;
             }
         }
 
 
         /// <summary>
-        /// Cancels the current operation (currently unimplemented)
+        /// Cancels the current operation 
         /// </summary>
         private void Cancel()
         {
@@ -151,43 +129,51 @@ namespace PS8
             try
             {
                 url = server;
-                view.EnableControls(false);
+                dynamic user = new ExpandoObject();
+                user.Nickname = name;
+                user.UserToken = "";
+                user = Post(user, "users");
+                user1Token = user.UserToken;
+            }
+            finally
+            {
+                view.UserRegistered = true;
+            }   
+        }
+
+        //a general helper method for post requests
+        private static ExpandoObject Post(ExpandoObject obj, string Name)
+        {
+            try
+            {
                 using (HttpClient client = CreateClient())
                 {
-                    // Create the parameter
-                    dynamic user = new ExpandoObject();
-                    user.Nickname = name;
-                    Uri u = new Uri(server + "/BoggleService.svc/");
+                    Uri u = new Uri(url + "/BoggleService.svc/");
                     client.BaseAddress = u;
                     // Compose and send the request.
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync("users", content).Result;
-                    
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = client.PostAsync(Name, content).Result;
                     // Deal with the response
                     if (response.IsSuccessStatusCode)
                     {
                         String result = response.Content.ReadAsStringAsync().Result;
-                        dynamic token = new ExpandoObject();
-                        token.UserToken = "";
-                        var obj = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
-                        //token = JsonConvert.DeserializeObject(result);
-                        view.UserRegistered = true;
-                        token = obj;
-                        MessageBox.Show(token.UserToken);
+                        var obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
+                        return obj2;
+
                     }
                     else
                     {
                         Console.WriteLine("Error registering: " + response.StatusCode);
                         Console.WriteLine(response.ReasonPhrase);
+                        return null;
                     }
                 }
             }
             finally
             {
-                view.EnableControls(true);
+                
             }
         }
-
         /// <summary>
         /// Submits a word during the game
         /// </summary>
