@@ -98,7 +98,36 @@ namespace PS8
             view.FilterChanged += FilterListVisible;
             view.SetServerURL += Register;
             view.JoinGame += View_JoinGame;
-            view.CancelPressed += Cancel;
+            //view.CancelPressed += Cancel;
+
+        }
+        public event EventHandler CancelPressed
+        {
+            add
+            {
+                CancelPressed -= value;
+                CancelPressed += value;
+            }
+            remove
+            {
+                CancelPressed -= value;
+            }
+        }
+
+        /// <summary>
+        /// Get the current status/state of the board.
+        /// </summary>
+        private void GameStatus()
+        {
+            try
+            {
+                dynamic game = new ExpandoObject();
+                game = Sync(game, "games/"+gameToken, 3); //1 is for type post
+            }
+            finally
+            {
+
+            }
         }
 
         /// <summary>
@@ -114,12 +143,13 @@ namespace PS8
                 game.TimeLimit = time;
                 game.UserToken = user1Token;
                 game.GameID = "";
-                game = Post(game, "games",1); //1 is for type post
+                game = Sync(game, "games",1); //1 is for type post
                 gameToken = game.GameID;
             }
             finally
             {
                 view.UserRegistered = true;
+                GameStatus();
             }
         }
 
@@ -137,11 +167,13 @@ namespace PS8
                 {
                     dynamic game = new ExpandoObject();
                     game.UserToken = user1Token;
-                    game = Post(game, "games", 2); //2 is for type PUT
+                    game = Sync(game, "games", 2); //2 is for type PUT
+                    //MessageBox.Show(game.toString());
                 }
                 finally
                 {
-                    tokenSource.Cancel();
+                    view.JoinEnabled(true);
+                    view.CancelJoinEnabled(false);
                 }
             }
 
@@ -158,7 +190,7 @@ namespace PS8
                 dynamic user = new ExpandoObject();
                 user.Nickname = name;
                 user.UserToken = "";
-                user = Post(user, "users",1); //1 is for type POST
+                user = Sync(user, "users",1); //1 is for type POST
                 user1Token = user.UserToken;
             }
             finally
@@ -169,7 +201,7 @@ namespace PS8
         }
 
         //a general helper method for post requests
-        private static ExpandoObject Post(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
+        private static ExpandoObject Sync(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
         {
             try
             {
@@ -191,8 +223,11 @@ namespace PS8
                     MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)
                     {
-                        string result = response.Content.ReadAsStringAsync().Result;
-                        var obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
+                        string result = "";
+                        var obj2 = new ExpandoObject();
+                        result = response.Content.ReadAsStringAsync().Result;
+                        if (result != "")
+                            obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
                         return obj2;
                     }
                     else

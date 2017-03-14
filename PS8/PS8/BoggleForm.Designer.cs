@@ -53,13 +53,13 @@
             this.serverBox = new System.Windows.Forms.TextBox();
             this.registerButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.cancelbutton1 = new System.Windows.Forms.Button();
             this.wordPanel = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.timeBox = new System.Windows.Forms.TextBox();
-            this.timeButton = new System.Windows.Forms.Button();
+            this.joinButton = new System.Windows.Forms.Button();
             this.label17 = new System.Windows.Forms.Label();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -411,17 +411,17 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click_1);
             // 
-            // button1
+            // cancelbutton1
             // 
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(63, 332);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(138, 41);
-            this.button1.TabIndex = 14;
-            this.button1.Tag = "doneButton";
-            this.button1.Text = "Exit Current Game";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.cancelbutton1.Enabled = false;
+            this.cancelbutton1.Location = new System.Drawing.Point(79, 296);
+            this.cancelbutton1.Name = "cancelbutton1";
+            this.cancelbutton1.Size = new System.Drawing.Size(116, 34);
+            this.cancelbutton1.TabIndex = 14;
+            this.cancelbutton1.Tag = "doneButton";
+            this.cancelbutton1.Text = "Cancel";
+            this.cancelbutton1.UseVisualStyleBackColor = true;
+            this.cancelbutton1.Click += new System.EventHandler(this.cancelbutton1_Click);
             // 
             // wordPanel
             // 
@@ -465,16 +465,16 @@
             this.timeBox.TabIndex = 18;
             this.timeBox.TextChanged += new System.EventHandler(this.timeBox_TextChanged);
             // 
-            // timeButton
+            // joinButton
             // 
-            this.timeButton.Enabled = false;
-            this.timeButton.Location = new System.Drawing.Point(166, 256);
-            this.timeButton.Name = "timeButton";
-            this.timeButton.Size = new System.Drawing.Size(75, 23);
-            this.timeButton.TabIndex = 19;
-            this.timeButton.Text = "Join Game";
-            this.timeButton.UseVisualStyleBackColor = true;
-            this.timeButton.Click += new System.EventHandler(this.timeButton_Click);
+            this.joinButton.Enabled = false;
+            this.joinButton.Location = new System.Drawing.Point(166, 256);
+            this.joinButton.Name = "joinButton";
+            this.joinButton.Size = new System.Drawing.Size(75, 23);
+            this.joinButton.TabIndex = 19;
+            this.joinButton.Text = "Join Game";
+            this.joinButton.UseVisualStyleBackColor = true;
+            this.joinButton.Click += new System.EventHandler(this.joinButton_Click);
             // 
             // label17
             // 
@@ -491,12 +491,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(929, 404);
             this.Controls.Add(this.label17);
-            this.Controls.Add(this.timeButton);
+            this.Controls.Add(this.joinButton);
             this.Controls.Add(this.timeBox);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.gameBoard);
             this.Controls.Add(this.wordPanel);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.cancelbutton1);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.registerButton);
             this.Controls.Add(this.serverBox);
@@ -530,7 +530,7 @@
         private System.Windows.Forms.TextBox serverBox;
         private System.Windows.Forms.Button registerButton;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button cancelbutton1;
         private System.Windows.Forms.Panel wordPanel;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuItem_Help;
@@ -552,7 +552,7 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox timeBox;
-        private System.Windows.Forms.Button timeButton;
+        private System.Windows.Forms.Button joinButton;
         private System.Windows.Forms.Label label17;
     }
 }

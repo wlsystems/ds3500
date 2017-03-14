@@ -15,7 +15,6 @@ namespace PS8
         public BoggleForm()
         {
             InitializeComponent();
-            
         }
 
         /// <summary>
@@ -26,7 +25,7 @@ namespace PS8
         {
             registerButton.Enabled = state;
             wordButton.Enabled = state && UserRegistered && wordBox.Text.Length > 0 && timeBox.Text.Length > 0;
-            timeButton.Enabled = UserRegistered;
+            joinButton.Enabled = UserRegistered;
 
             foreach (Control control in wordPanel.Controls)
             {
@@ -48,8 +47,6 @@ namespace PS8
         {
             int row = wordPanel.Controls.Count / 3;
             wordPanel.Controls.Add(new Label() { Text = wordplayed });
-
-
         }
 
 
@@ -77,6 +74,11 @@ namespace PS8
         {
             wordPanel.Controls.Clear();
         }
+
+        /// <summary>
+        /// Get the status of the game.
+        /// </summary>
+        public event Action GameStatus;
 
         /// <summary>
         /// Fired when the join game button is pushed
@@ -125,9 +127,23 @@ namespace PS8
         public void TimeEnabled(bool state)
         {
             timeBox.Enabled = state;
-
         }
 
+        /// <summary>
+        /// Enables time box.
+        /// </summary>
+        public void JoinEnabled(bool state)
+        {
+            joinButton.Enabled = state;
+        }
+
+        /// <summary>
+        /// Enables or disables the cancel-join box.
+        /// </summary>
+        public void CancelJoinEnabled(bool state)
+        {
+            cancelbutton1.Enabled = state;
+        }
 
 
         private void WordBox_TextChanged(object sender, EventArgs e)
@@ -198,33 +214,33 @@ namespace PS8
         }
 
 
-        private void timeButton_Click(object sender, EventArgs e)
+        private void joinButton_Click(object sender, EventArgs e)
         {
-
+            cancelbutton1.Enabled = true;
+            joinButton.Enabled = false;
             if (JoinGame != null)
             {
                 int time = int.Parse(timeBox.Text.Trim());
-                JoinGame(time);
-              
-
+                JoinGame(time);           
             }
         }
 
         private void timeBox_TextChanged(object sender, EventArgs e)
         {
-
-            timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
+            joinButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
         }
 
         private void cancelButton_Click_1(object sender, EventArgs e)
         {
             registerButton.Enabled = true;
-            CancelPressed(1);
+            if (CancelPressed != null)
+                CancelPressed(1);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void cancelbutton1_Click(object sender, EventArgs e)
         {
-
+            if (CancelPressed != null)
+                CancelPressed(2);
         }
     }
 }
