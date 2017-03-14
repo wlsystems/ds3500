@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -114,15 +115,19 @@ namespace PS8
                     client.BaseAddress = u;
                     // Compose and send the request.
                     StringContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync("Users", content).Result;
-                    MessageBox.Show(response.ToString());
+                    HttpResponseMessage response = client.PostAsync("users", content).Result;
+                    
                     // Deal with the response
                     if (response.IsSuccessStatusCode)
                     {
                         String result = response.Content.ReadAsStringAsync().Result;
-                        user1Token = (string) JsonConvert.DeserializeObject(result);
+                        dynamic token = new ExpandoObject();
+                        token.UserToken = "";
+                        var obj = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
+                        //token = JsonConvert.DeserializeObject(result);
                         view.UserRegistered = true;
-                        MessageBox.Show("It worked! Token is " + user1Token);
+                        token = obj;
+                        MessageBox.Show(token.UserToken);
                     }
                     else
                     {
@@ -160,6 +165,7 @@ namespace PS8
                     if (response.IsSuccessStatusCode)
                     {
                         String result = response.Content.ReadAsStringAsync().Result;
+                        MessageBox.Show(result);
                         dynamic wordToken = JsonConvert.DeserializeObject(result);
                     }
                     else
