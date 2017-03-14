@@ -17,7 +17,8 @@ namespace PS8
     /// Controller for the Boggle Client
     /// </summary>
     class Controller1
-    {   
+    {
+
         /// <summary>
         /// Stores the url;
         /// </summary>
@@ -113,7 +114,7 @@ namespace PS8
                 game.TimeLimit = time;
                 game.UserToken = user1Token;
                 game.GameID = "";
-                game = Post(game, "games");
+                game = Post(game, "games",1); //1 is for type post
                 gameToken = game.GameID;
             }
             finally
@@ -133,11 +134,11 @@ namespace PS8
             {
                 dynamic game = new ExpandoObject();
                 game.UserToken = user1Token;
-                game = Post(game, "games");
+                game = Post(game, "games",2); //2 is for type PUT
             }
             finally
             {
-
+                tokenSource.Cancel();
             }
         }
 
@@ -152,7 +153,7 @@ namespace PS8
                 dynamic user = new ExpandoObject();
                 user.Nickname = name;
                 user.UserToken = "";
-                user = Post(user, "users");
+                user = Post(user, "users",1); //1 is for type POST
                 user1Token = user.UserToken;
             }
             finally
@@ -163,7 +164,7 @@ namespace PS8
         }
 
         //a general helper method for post requests
-        private static ExpandoObject Post(ExpandoObject obj, string Name)
+        private static ExpandoObject Post(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
         {
             try
             {
@@ -174,7 +175,13 @@ namespace PS8
                     // Compose and send the request.
                     tokenSource = new CancellationTokenSource();
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync(Name, content, tokenSource.Token).Result;
+                    HttpResponseMessage response = null;
+                    if (type == 1)
+                        response = client.PostAsync(Name, content, tokenSource.Token).Result;
+                    else if (type == 2)
+                        response = client.PutAsync(Name, content, tokenSource.Token).Result;
+                    else if (type == 3)
+                        response = client.GetAsync(Name).Result;
                     // Deal with the response
                     MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)

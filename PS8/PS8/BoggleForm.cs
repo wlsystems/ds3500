@@ -189,6 +189,8 @@ namespace PS8
         private void registerButton_Click_1(object sender, EventArgs e)
         {
             SetServerURL(nameBox.Text, serverBox.Text);
+            registerButton.Enabled = false;
+            cancelButton.Enabled = true;  
         }
 
         private void nameBox_TextChanged(object sender, EventArgs e)
@@ -225,6 +227,11 @@ namespace PS8
         {
 
             timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
+        }
+
+        private void cancelButton_Click_1(object sender, EventArgs e)
+        {
+            registerButton.Enabled = true;
         }
     }
 }
