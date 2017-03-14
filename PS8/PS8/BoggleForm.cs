@@ -25,6 +25,7 @@ namespace PS8
         {
             registerButton.Enabled = state;
             wordButton.Enabled = state && UserRegistered && wordBox.Text.Length > 0;
+            timeButton.Enabled = UserRegistered;
 
             foreach (Control control in wordPanel.Controls)
             {
@@ -36,6 +37,8 @@ namespace PS8
             cancelButton.Enabled = !state;
             
         }
+
+
 
         /// <summary>
         /// Adds a row to the task display.
@@ -90,6 +93,8 @@ namespace PS8
         /// </summary>
         public event Action<string> SubmitPressed;
 
+       
+
         /// <summary>
         /// Fired when one of the filter has changed, at the end of the
         /// game the client will show both players' list, during the game it will show only the local player.
@@ -107,6 +112,36 @@ namespace PS8
         /// Fires when an ongoing action must be canceled.
         /// </summary>
         public event Action CancelPressed;
+
+        /// <summary>
+        /// Enables time box.
+        /// </summary>
+        public void JoinGame(bool state)
+        {
+            timeBox.Enabled = state;
+
+        }
+
+
+        private void TimeBox_TextChanged(object sender, EventArgs e)
+        {
+            timeButton.Enabled = UserRegistered &  timeBox.Text.Trim().Length > 0;
+        }
+
+        private void TimeButton_Click(object sender, EventArgs e)
+        {
+            if (JoinGame != null)
+            {
+                int time = int.Parse(timeBox.Text.Trim());
+                if ((time > 5) && (time < 120))
+                {
+                    JoinGame(time);
+                }
+                else
+                    MessageBox.Show("Your time is not within the allowed limits of 5-120 seconds.");
+                  
+            }
+        }
 
 
         private void WordBox_TextChanged(object sender, EventArgs e)

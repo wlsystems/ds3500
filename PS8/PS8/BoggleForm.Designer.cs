@@ -58,6 +58,9 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.timeBox = new System.Windows.Forms.TextBox();
+            this.timeButton = new System.Windows.Forms.Button();
+            this.label17 = new System.Windows.Forms.Label();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -408,7 +411,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(83, 243);
+            this.button1.Location = new System.Drawing.Point(41, 343);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(138, 41);
             this.button1.TabIndex = 14;
@@ -448,11 +451,40 @@
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 17;
             // 
+            // timeBox
+            // 
+            this.timeBox.Location = new System.Drawing.Point(31, 259);
+            this.timeBox.Name = "timeBox";
+            this.timeBox.Size = new System.Drawing.Size(100, 20);
+            this.timeBox.TabIndex = 18;
+            // 
+            // timeButton
+            // 
+            this.timeButton.Location = new System.Drawing.Point(175, 259);
+            this.timeButton.Name = "timeButton";
+            this.timeButton.Size = new System.Drawing.Size(75, 23);
+            this.timeButton.TabIndex = 19;
+            this.timeButton.Text = "Join Game";
+            this.timeButton.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(12, 217);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(259, 13);
+            this.label17.TabIndex = 20;
+            this.label17.Text = "Enter a desired playing time between 5-120 seconds. ";
+            this.label17.Visible = false;
+            // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(929, 404);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.timeButton);
+            this.Controls.Add(this.timeBox);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.gameBoard);
             this.Controls.Add(this.wordPanel);
@@ -510,6 +542,9 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox timeBox;
+        private System.Windows.Forms.Button timeButton;
+        private System.Windows.Forms.Label label17;
     }
 }
 
