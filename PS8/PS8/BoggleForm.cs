@@ -15,6 +15,7 @@ namespace PS8
         public BoggleForm()
         {
             InitializeComponent();
+            timeButton.Enabled = false;
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace PS8
                 }
             }
             cancelButton.Enabled = !state;
-            
+
         }
 
 
@@ -98,7 +99,7 @@ namespace PS8
         /// </summary>
         public event Action<string> SubmitPressed;
 
-       
+
 
         /// <summary>
         /// Fired when one of the filter has changed, at the end of the
@@ -130,23 +131,9 @@ namespace PS8
 
         private void TimeBox_TextChanged(object sender, EventArgs e)
         {
-            timeButton.Enabled = UserRegistered &  timeBox.Text.Trim().Length > 0;
+            timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
         }
 
-        private void TimeButton_Click(object sender, EventArgs e)
-        {
-            if (JoinGame != null)
-            {
-                int time = int.Parse(timeBox.Text.Trim());
-                if ((time > 5) && (time < 120))
-                {
-                    JoinGame(time);
-                }
-                else
-                    MessageBox.Show("Your time is not within the allowed limits of 5-120 seconds.");
-                  
-            }
-        }
 
 
         private void WordBox_TextChanged(object sender, EventArgs e)
@@ -189,7 +176,7 @@ namespace PS8
 
         private void label1_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         /// <summary>
@@ -221,6 +208,27 @@ namespace PS8
         private void BoggleForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void timeBox_TextChanged_1(object sender, EventArgs e)
+        {
+            timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
+        }
+
+        private void timeButton_Click(object sender, EventArgs e)
+        {
+
+            if (JoinGame != null)
+            {
+                int time = int.Parse(timeBox.Text.Trim());
+                if ((time >= 5) && (time <= 120))
+                {
+                    JoinGame(time);
+                }
+                else
+                    MessageBox.Show("Your time is not within the allowed limits of 5-120 seconds.");
+
+            }
         }
     }
 }
