@@ -57,12 +57,17 @@ namespace PS8
         /// </summary>
         private bool showBothClientsFinalLists;
 
-        /// <summary>
+        // <summary>
         /// A string that is exactly 16 characters long and contents the conent of the board.    
         /// </summary>
         private string gameboardcontent;
 
-        /// <summary>
+        // <summary>
+        /// A string that is exactly 16 characters long and contents the conent of the board.    
+        /// </summary>
+        private int gameTime;
+
+        /// <summary>/
         /// Creates a Controller for the provided view
         /// </summary>
         public Controller1(BoggleForm view)
@@ -104,19 +109,20 @@ namespace PS8
                 {
                     // Create the parameter
                     dynamic user = new ExpandoObject();
-                    user.Nickname = "name";
+                    user.Nickname = name;
                     Uri u = new Uri(server + "/BoggleService.svc/");
                     client.BaseAddress = u;
                     // Compose and send the request.
                     StringContent content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync("users", content).Result;
+                    HttpResponseMessage response = client.PostAsync("Users", content).Result;
                     MessageBox.Show(response.ToString());
                     // Deal with the response
                     if (response.IsSuccessStatusCode)
                     {
                         String result = response.Content.ReadAsStringAsync().Result;
-                        user1Token = (string)JsonConvert.DeserializeObject(result);
+                        user1Token = JsonConvert.DeserializeObject(result).ToString();
                         view.UserRegistered = true;
+                        MessageBox.Show("It worked! Token is " + user1Token);
                     }
                     else
                     {
