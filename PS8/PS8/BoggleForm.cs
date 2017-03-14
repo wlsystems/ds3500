@@ -117,7 +117,7 @@ namespace PS8
         /// <summary>
         /// Fires when an ongoing action must be canceled.
         /// </summary>
-        public event Action CancelPressed;
+        public event Action<int> CancelPressed;
 
         /// <summary>
         /// Enables time box.
@@ -154,15 +154,6 @@ namespace PS8
             }
         }
 
-        //The user wants to cancel registration.  
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            if (CancelPressed != null)
-            {
-                CancelPressed();
-            }
-        }
-
         private void menuItem_Help_Click(object sender, EventArgs e)
         {
             MessageBox.Show("This is how to play Boogle.");
@@ -188,9 +179,9 @@ namespace PS8
 
         private void registerButton_Click_1(object sender, EventArgs e)
         {
+            cancelButton.Enabled = true;
             SetServerURL(nameBox.Text, serverBox.Text);
             registerButton.Enabled = false;
-            cancelButton.Enabled = true;  
         }
 
         private void nameBox_TextChanged(object sender, EventArgs e)
@@ -228,6 +219,12 @@ namespace PS8
         private void cancelButton_Click_1(object sender, EventArgs e)
         {
             registerButton.Enabled = true;
+            CancelPressed(1);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

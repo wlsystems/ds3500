@@ -372,7 +372,6 @@
             this.serverLabel.Size = new System.Drawing.Size(79, 13);
             this.serverLabel.TabIndex = 5;
             this.serverLabel.Text = "Server Address";
-            this.serverLabel.Click += new System.EventHandler(this.serverLabel_Click);
             // 
             // serverBox
             // 
@@ -422,6 +421,7 @@
             this.button1.Tag = "doneButton";
             this.button1.Text = "Exit Current Game";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // wordPanel
             // 

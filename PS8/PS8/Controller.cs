@@ -127,19 +127,24 @@ namespace PS8
         /// <summary>
         /// Cancels the current operation.
         /// </summary>
-        private void Cancel()
+        private void Cancel(int cancelMode)
         {
-            tokenSource.Cancel();
-            try
-            {
-                dynamic game = new ExpandoObject();
-                game.UserToken = user1Token;
-                game = Post(game, "games",2); //2 is for type PUT
-            }
-            finally
-            {
+            if (cancelMode == 1)
                 tokenSource.Cancel();
+            else if (cancelMode == 2)
+            {
+                try
+                {
+                    dynamic game = new ExpandoObject();
+                    game.UserToken = user1Token;
+                    game = Post(game, "games", 2); //2 is for type PUT
+                }
+                finally
+                {
+                    tokenSource.Cancel();
+                }
             }
+
         }
 
         /// <summary>
