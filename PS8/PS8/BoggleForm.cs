@@ -211,12 +211,8 @@ namespace PS8
             if (JoinGame != null)
             {
                 int time = int.Parse(timeBox.Text.Trim());
-                if ((time >= 5) && (time <= 120))
-                {
-                    JoinGame(time);
-                }
-                else
-                    MessageBox.Show("Your time is not within the allowed limits of 5-120 seconds.");
+                JoinGame(time);
+              
 
             }
         }
@@ -225,6 +221,11 @@ namespace PS8
         {
 
             timeButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
+        }
+
+        private void serverLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -157,6 +157,7 @@ namespace PS8
             finally
             {
                 MessageBox.Show(user1Token);
+                view.TimeEnabled(true);
                 view.UserRegistered = true;
             }   
         }

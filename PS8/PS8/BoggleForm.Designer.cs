@@ -372,6 +372,7 @@
             this.serverLabel.Size = new System.Drawing.Size(79, 13);
             this.serverLabel.TabIndex = 5;
             this.serverLabel.Text = "Server Address";
+            this.serverLabel.Click += new System.EventHandler(this.serverLabel_Click);
             // 
             // serverBox
             // 
@@ -477,11 +478,11 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(12, 217);
+            this.label17.Location = new System.Drawing.Point(28, 229);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(259, 13);
+            this.label17.Size = new System.Drawing.Size(196, 13);
             this.label17.TabIndex = 20;
-            this.label17.Text = "Enter a desired playing time between 5-120 seconds. ";
+            this.label17.Text = "Enter a desired playing time in seconds. ";
             // 
             // BoggleForm
             // 
