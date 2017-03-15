@@ -23,6 +23,7 @@ namespace PS8
         /// </summary>
         public void EnableControls(bool state)
         {
+            textBox1.Enabled = state && UserRegistered && wordBox.Text.Length > 0 && timeBox.Text.Length > 0; 
             registerButton.Enabled = state;
             wordButton.Enabled = state && UserRegistered && wordBox.Text.Length > 0 && timeBox.Text.Length > 0;
             joinButton.Enabled = UserRegistered;
@@ -175,10 +176,7 @@ namespace PS8
             MessageBox.Show("This is how to play Boogle.");
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
 
-        }
 
         /// <summary>
         /// Sets the URL of the server and fires the action.
@@ -233,6 +231,7 @@ namespace PS8
         private void cancelButton_Click_1(object sender, EventArgs e)
         {
             registerButton.Enabled = true;
+            cancelButton.Enabled = false;
             if (CancelPressed != null)
                 CancelPressed(1);
         }
@@ -241,6 +240,64 @@ namespace PS8
         {
             if (CancelPressed != null)
                 CancelPressed(2);
+        }
+        public void SetLabel(string s)
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        label1.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 1:
+                        label2.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 2:
+                        label3.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 3:
+                        label4.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 4:
+                        label5.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 5:
+                        label6.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 6:
+                        label7.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 7:
+                        label8.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 8:
+                        label9.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 9:
+                        label10.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 10:
+                        label11.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 11:
+                        label12.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 12:
+                        label13.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 13:
+                        label14.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 14:
+                        label15.Text = s.ElementAt(i).ToString();
+                        break;
+                    case 15:
+                        label16.Text = s.ElementAt(i).ToString();
+                        break;
+                }
+            }
+
         }
     }
 }

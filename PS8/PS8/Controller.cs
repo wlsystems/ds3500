@@ -119,14 +119,28 @@ namespace PS8
         /// </summary>
         private void GameStatus()
         {
+            bool isActive = false;
+            dynamic game = new ExpandoObject();
             try
             {
-                dynamic game = new ExpandoObject();
                 game = Sync(game, "games/"+gameToken, 3); //1 is for type post
             }
             finally
             {
-
+                if (game.GameState == "pending")
+                {
+                    System.Threading.Thread.Sleep(5000);
+                    GameStatus();
+                }
+                else if (game.GameState == "active")
+                {
+                    System.Threading.Thread.Sleep(2000);
+                    if (isActive == false)
+                        view.EnableControls(true);
+                    isActive = true;
+                    view.SetLabel(game.Board);
+                    GameStatus();
+                }   
             }
         }
 
@@ -165,6 +179,7 @@ namespace PS8
             {
                 try
                 {
+                    tokenSource.Cancel();
                     dynamic game = new ExpandoObject();
                     game.UserToken = user1Token;
                     game = Sync(game, "games", 2); //2 is for type PUT
@@ -176,7 +191,6 @@ namespace PS8
                     view.CancelJoinEnabled(false);
                 }
             }
-
         }
 
         /// <summary>
@@ -220,7 +234,6 @@ namespace PS8
                     else if (type == 3)
                         response = client.GetAsync(Name).Result;
                     // Deal with the response
-                    MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)
                     {
                         string result = "";
