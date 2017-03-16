@@ -43,10 +43,9 @@ namespace PS8
         /// <summary>
         /// Adds a row to the task display.
         /// </summary>
-        public void AddWord(string wordplayed, int score, bool belongsToUser)
+        public void AddWord(string wordplayed)
         {
-            int row = wordPanel.Controls.Count / 3;
-            wordPanel.Controls.Add(new Label() { Text = wordplayed });
+            wordPanel.Controls.Add(new Label() { Text = wordplayed +" "+ 1 });
         }
 
 
@@ -145,6 +144,15 @@ namespace PS8
             cancelbutton1.Enabled = state;
         }
 
+        internal void Player2Update(dynamic nickname)
+        {
+            label_player2score.Text = nickname + "'s score";
+        }
+
+        internal void Player1Update(dynamic nickname)
+        {
+            label_player1score.Text = nickname + "'s score";
+        }
 
         private void WordBox_TextChanged(object sender, EventArgs e)
         {
@@ -297,6 +305,21 @@ namespace PS8
 
         }
 
+        internal void UpdateScore1(int score)
+        {
+            textBox_player1Score.Text = score.ToString();
+        }
+
+
+        internal void UpdateScore2(int score)
+        {
+            textBox1.Text = score.ToString();
+        }
+
+        internal void submitEnableControls(bool wordState)
+        {
+            wordButton.Enabled = wordState;
+        }
 
         private void wordBox_TextChanged_1(object sender, EventArgs e)
         {

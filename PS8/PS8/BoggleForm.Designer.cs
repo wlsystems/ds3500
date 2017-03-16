@@ -60,6 +60,10 @@
             this.timeBox = new System.Windows.Forms.TextBox();
             this.joinButton = new System.Windows.Forms.Button();
             this.label17 = new System.Windows.Forms.Label();
+            this.label_player1score = new System.Windows.Forms.Label();
+            this.textBox_player1Score = new System.Windows.Forms.TextBox();
+            this.label_player2score = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -417,10 +421,10 @@
             // 
             // wordPanel
             // 
-            this.wordPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.wordPanel.Location = new System.Drawing.Point(739, 30);
+            this.wordPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.wordPanel.Location = new System.Drawing.Point(622, 30);
             this.wordPanel.Name = "wordPanel";
-            this.wordPanel.Size = new System.Drawing.Size(72, 220);
+            this.wordPanel.Size = new System.Drawing.Size(142, 220);
             this.wordPanel.TabIndex = 15;
             // 
             // menuStrip1
@@ -478,11 +482,51 @@
             this.label17.TabIndex = 20;
             this.label17.Text = "Enter a desired playing time between 5-120 seconds.";
             // 
+            // label_player1score
+            // 
+            this.label_player1score.AutoSize = true;
+            this.label_player1score.Location = new System.Drawing.Point(645, 296);
+            this.label_player1score.Name = "label_player1score";
+            this.label_player1score.Size = new System.Drawing.Size(79, 13);
+            this.label_player1score.TabIndex = 21;
+            this.label_player1score.Text = "Player 1 Score:";
+            // 
+            // textBox_player1Score
+            // 
+            this.textBox_player1Score.Location = new System.Drawing.Point(730, 293);
+            this.textBox_player1Score.Name = "textBox_player1Score";
+            this.textBox_player1Score.ReadOnly = true;
+            this.textBox_player1Score.Size = new System.Drawing.Size(34, 20);
+            this.textBox_player1Score.TabIndex = 22;
+            this.textBox_player1Score.Text = "0";
+            // 
+            // label_player2score
+            // 
+            this.label_player2score.AutoSize = true;
+            this.label_player2score.Location = new System.Drawing.Point(645, 343);
+            this.label_player2score.Name = "label_player2score";
+            this.label_player2score.Size = new System.Drawing.Size(79, 13);
+            this.label_player2score.TabIndex = 23;
+            this.label_player2score.Text = "Player 2 Score:";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(730, 340);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(34, 20);
+            this.textBox1.TabIndex = 24;
+            this.textBox1.Text = "0";
+            // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(929, 425);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.label_player2score);
+            this.Controls.Add(this.textBox_player1Score);
+            this.Controls.Add(this.label_player1score);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.joinButton);
             this.Controls.Add(this.timeBox);
@@ -545,6 +589,10 @@
         private System.Windows.Forms.TextBox timeBox;
         private System.Windows.Forms.Button joinButton;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label_player1score;
+        private System.Windows.Forms.TextBox textBox_player1Score;
+        private System.Windows.Forms.Label label_player2score;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
