@@ -124,7 +124,10 @@ namespace PS8
             dynamic game = new ExpandoObject();
             game = Sync(game, "games/" + gameToken, 3); //1 is for type post
             while (game.GameState == "pending")
+            {
+                Thread.Sleep(1000);
                 GameStatus();
+            }
             while (game.GameState == "active")
             {
                 if (isActive == false)
@@ -132,6 +135,7 @@ namespace PS8
                 view.SetLabel(game.Board);
                 GameStatus();
                 isActive = true;
+                Thread.Sleep(500);
             }
         }
 
@@ -164,23 +168,28 @@ namespace PS8
         /// </summary>
         private void Cancel(int cancelMode)
         {
+            MessageBox.Show("h");
+            bool fired = false;
             if (cancelMode == 1)
                 tokenSource.Cancel();
             else if (cancelMode == 2)
             {
-                try
+                if (fired == false)
                 {
-                    tokenSource.Cancel();
-                    dynamic game = new ExpandoObject();
-                    game.UserToken = user1Token;
-                    game = Sync(game, "games", 2); //2 is for type PUT
-                    //MessageBox.Show(game.toString());
-                }
-                finally
-                {
-                    view.JoinEnabled(true);
-                    view.CancelJoinEnabled(false);
-                }
+                    try
+                    {
+                        tokenSource.Cancel();
+                        dynamic game = new ExpandoObject();
+                        fired = true;
+                        game.UserToken = user1Token;
+                        game = Sync(game, "games", 2); //2 is for type PUT
+                    }
+                    finally
+                    {
+                        //view.JoinEnabled(true);
+                        //view.CancelJoinEnabled(false);
+                    }
+                }    
             }
         }
 
@@ -206,7 +215,7 @@ namespace PS8
         }
 
         //a general helper method for post requests
-        private static ExpandoObject Sync(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
+        private ExpandoObject Sync(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
         {
             try
             {
@@ -225,6 +234,7 @@ namespace PS8
                     else if (type == 3)
                         response = client.GetAsync(Name).Result;
                     // Deal with the response
+                    MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)
                     {
                         string result = "";
