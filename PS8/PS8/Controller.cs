@@ -134,7 +134,6 @@ namespace PS8
                         view.EnableControls(true);
                     isActive = true;
                     view.SetLabel(game.Board);
-                    GameStatus();
                 }   
             }
         }
@@ -263,19 +262,18 @@ namespace PS8
                 {
                     // Create the parameter
                     dynamic WordsPlayed = new ExpandoObject();
-                    WordsPlayed.UserID = user1Token;
+                    WordsPlayed.UserToken = user1Token;
                     WordsPlayed.word= wordPlayed;
 
                     // Compose and send the request.
                     StringContent content = new StringContent(JsonConvert.SerializeObject(WordsPlayed), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PostAsync("AddWord", content).Result;
-
+                    HttpResponseMessage response = client.PutAsync("Games", content).Result;
+                    MessageBox.Show("This word was submitted.." + response);
                     // Deal with the response
                     if (response.IsSuccessStatusCode)
                     {
                         String result = response.Content.ReadAsStringAsync().Result;
                         MessageBox.Show(result);
-                        dynamic wordToken = JsonConvert.DeserializeObject(result);
                     }
                     else
                     {

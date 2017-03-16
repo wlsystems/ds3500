@@ -211,7 +211,12 @@ namespace PS8
             if (JoinGame != null)
             {
                 int time = int.Parse(timeBox.Text.Trim());
-                JoinGame(time);           
+                if ((time >= 5) && (time <= 120))
+                {
+                    JoinGame(time);
+                }
+                else
+                    MessageBox.Show("You did not enter a valid time.");         
             }
         }
 

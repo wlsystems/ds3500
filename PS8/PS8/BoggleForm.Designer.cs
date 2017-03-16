@@ -474,9 +474,9 @@
             this.label17.AutoSize = true;
             this.label17.Location = new System.Drawing.Point(28, 229);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(196, 13);
+            this.label17.Size = new System.Drawing.Size(256, 13);
             this.label17.TabIndex = 20;
-            this.label17.Text = "Enter a desired playing time in seconds. ";
+            this.label17.Text = "Enter a desired playing time between 5-120 seconds.";
             // 
             // BoggleForm
             // 
