@@ -261,7 +261,7 @@ namespace PS8
 
                 // Compose and send the request.
                 WordPlayed = Sync(WordPlayed, "games/" + gameToken, 2);
-                MessageBox.Show("This word was submitted.." + WordPlayed);
+                MessageBox.Show("This word was submitted.." + WordPlayed.Word);
                 Refresh();
             }
             finally
