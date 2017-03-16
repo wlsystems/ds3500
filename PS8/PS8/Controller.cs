@@ -66,11 +66,6 @@ namespace PS8
         /// </summary>
         private string gameboardcontent;
 
-        // <summary>
-        /// The total game time.    
-        /// </summary>
-        private int gameTime;
-
         /// <summary>
         /// For canceling the current operation
         /// </summary>
@@ -157,7 +152,7 @@ namespace PS8
                 game.TimeLimit = time;
                 game.UserToken = user1Token;
                 game.GameID = "";
-                game = Sync(game, "games",1); //1 is for type post
+                game = Sync(game, "games", 1); //1 is for type post
                 gameToken = game.GameID;
             }
             finally
@@ -329,23 +324,13 @@ namespace PS8
         {
             using (HttpClient client = CreateClient())
             {
-                // Compose and send the request
-                String url;
-                if (showBothClientsFinalLists)
-                {
-                    url = String.Format("GetAllItems?completed={0}");
-                }
-                else
-                {
-                    url = String.Format("GetAllItems?completed={0}&user={1}", user1Token);
-                }
                 HttpResponseMessage response = client.GetAsync(url).Result;
 
                 // Deal with the response
                 if (response.IsSuccessStatusCode)
                 {
                     String result = response.Content.ReadAsStringAsync().Result;
-                    dynamic items = JsonConvert.DeserializeObject(result);
+                    dynamic words = JsonConvert.DeserializeObject(result);
                     view.Clear();
                     wordList.Clear();
                     foreach (dynamic word in wordList)

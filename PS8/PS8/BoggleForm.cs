@@ -22,10 +22,9 @@ namespace PS8
         /// If state == false, disables all controls; enables Cancel.
         /// </summary>
         public void EnableControls(bool state)
-        {
-            textBox1.Enabled = state && UserRegistered && wordBox.Text.Length > 0 && timeBox.Text.Length > 0; 
+        { 
             registerButton.Enabled = state;
-            wordButton.Enabled = state && UserRegistered && wordBox.Text.Length > 0 && timeBox.Text.Length > 0;
+            wordBox.Enabled = state && UserRegistered && timeBox.Text.Length > 0;
             joinButton.Enabled = UserRegistered;
 
             foreach (Control control in wordPanel.Controls)
@@ -152,13 +151,6 @@ namespace PS8
             wordButton.Enabled = UserRegistered && wordBox.Text.Trim().Length > 0;
         }
 
-        private void WordButton_Click(object sender, EventArgs e)
-        {
-            if (SubmitPressed != null)
-            {
-                SubmitPressed(wordBox.Text.Trim());
-            }
-        }
 
         /// <summary>
         /// Player wants to end a current game seesion. 
@@ -299,5 +291,17 @@ namespace PS8
             }
 
         }
+
+
+        private void wordBox_TextChanged_1(object sender, EventArgs e)
+        {
+            wordButton.Enabled = true;
+        }
+
+        private void wordButton_Click(object sender, EventArgs e)
+        {
+            SubmitPressed(wordBox.Text.Trim());
+        }
+
     }
 }

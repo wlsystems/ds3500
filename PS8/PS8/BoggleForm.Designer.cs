@@ -46,7 +46,6 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.wordButton = new System.Windows.Forms.Button();
-            this.wordBox = new System.Windows.Forms.TextBox();
             this.nameLabel = new System.Windows.Forms.Label();
             this.nameBox = new System.Windows.Forms.TextBox();
             this.serverLabel = new System.Windows.Forms.Label();
@@ -57,7 +56,7 @@
             this.wordPanel = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.wordBox = new System.Windows.Forms.TextBox();
             this.timeBox = new System.Windows.Forms.TextBox();
             this.joinButton = new System.Windows.Forms.Button();
             this.label17 = new System.Windows.Forms.Label();
@@ -335,13 +334,7 @@
             this.wordButton.TabIndex = 1;
             this.wordButton.Text = "Submit Word";
             this.wordButton.UseVisualStyleBackColor = true;
-            // 
-            // wordBox
-            // 
-            this.wordBox.Location = new System.Drawing.Point(362, 277);
-            this.wordBox.Name = "wordBox";
-            this.wordBox.Size = new System.Drawing.Size(209, 20);
-            this.wordBox.TabIndex = 2;
+            this.wordButton.Click += new System.EventHandler(this.wordButton_Click);
             // 
             // nameLabel
             // 
@@ -447,13 +440,14 @@
             this.menuItem_Help.Text = "Help";
             this.menuItem_Help.Click += new System.EventHandler(this.menuItem_Help_Click);
             // 
-            // textBox1
+            // wordBox
             // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(401, 343);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 17;
+            this.wordBox.Enabled = false;
+            this.wordBox.Location = new System.Drawing.Point(401, 343);
+            this.wordBox.Name = "wordBox";
+            this.wordBox.Size = new System.Drawing.Size(100, 20);
+            this.wordBox.TabIndex = 17;
+            this.wordBox.TextChanged += new System.EventHandler(this.wordBox_TextChanged_1);
             // 
             // timeBox
             // 
@@ -488,11 +482,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 404);
+            this.ClientSize = new System.Drawing.Size(929, 425);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.joinButton);
             this.Controls.Add(this.timeBox);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.wordBox);
             this.Controls.Add(this.gameBoard);
             this.Controls.Add(this.wordPanel);
             this.Controls.Add(this.cancelbutton1);
@@ -502,7 +496,6 @@
             this.Controls.Add(this.serverLabel);
             this.Controls.Add(this.nameBox);
             this.Controls.Add(this.nameLabel);
-            this.Controls.Add(this.wordBox);
             this.Controls.Add(this.wordButton);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -522,7 +515,6 @@
 
         private System.Windows.Forms.TableLayoutPanel gameBoard;
         private System.Windows.Forms.Button wordButton;
-        private System.Windows.Forms.TextBox wordBox;
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.TextBox nameBox;
         private System.Windows.Forms.Label serverLabel;
@@ -549,7 +541,7 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox wordBox;
         private System.Windows.Forms.TextBox timeBox;
         private System.Windows.Forms.Button joinButton;
         private System.Windows.Forms.Label label17;
