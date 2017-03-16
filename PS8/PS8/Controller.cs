@@ -108,6 +108,12 @@ namespace PS8
                 CancelPressed -= value;
             }
         }
+        private void GameStatusStart()
+        {
+            Task task = new Task(delegate { GameStatus(); });
+            task.Start();
+        }
+            
 
         /// <summary>
         /// Get the current status/state of the board.
@@ -116,25 +122,16 @@ namespace PS8
         {
             bool isActive = false;
             dynamic game = new ExpandoObject();
-            try
+            game = Sync(game, "games/" + gameToken, 3); //1 is for type post
+            while (game.GameState == "pending")
+                GameStatus();
+            while (game.GameState == "active")
             {
-                game = Sync(game, "games/"+gameToken, 3); //1 is for type post
-            }
-            finally
-            {
-                if (game.GameState == "pending")
-                {
-                    System.Threading.Thread.Sleep(5000);
-                    GameStatus();
-                }
-                else if (game.GameState == "active")
-                {
-                    System.Threading.Thread.Sleep(2000);
-                    if (isActive == false)
-                        view.EnableControls(true);
-                    isActive = true;
-                    view.SetLabel(game.Board);
-                }   
+                if (isActive == false)
+                    view.EnableControls(true);
+                view.SetLabel(game.Board);
+                GameStatus();
+                isActive = true;
             }
         }
 
@@ -157,7 +154,7 @@ namespace PS8
             finally
             {
                 view.UserRegistered = true;
-                GameStatus();
+                GameStatusStart();
             }
         }
 
