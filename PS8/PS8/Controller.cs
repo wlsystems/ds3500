@@ -62,9 +62,9 @@ namespace PS8
         private bool showBothClientsFinalLists;
 
         // <summary>
-        /// A string that is exactly 16 characters long and contents the conent of the board.    
+        /// The current score provided by the game    
         /// </summary>
-        private string gameboardcontent;
+        private int score;
 
         /// <summary>
         /// For canceling the current operation
@@ -85,8 +85,8 @@ namespace PS8
             gameToken = "0";
             user1Token = "0";
             user2Token = "0";
-            gameActive= false;  //true is game is active, false if it has ended.
-            gameboardcontent = null;
+            gameActive = false;  //true is game is active, false if it has ended.
+            score = 0;
             wordList = new List<string>();
             showBothClientsFinalLists = false;
             view.CancelPressed += Cancel;
@@ -96,7 +96,6 @@ namespace PS8
             view.FilterChanged += FilterListVisible;
             view.SetServerURL += Register;
             view.JoinGame += View_JoinGame;
-            //view.CancelPressed += Cancel;
 
         }
         public event EventHandler CancelPressed
@@ -111,35 +110,34 @@ namespace PS8
                 CancelPressed -= value;
             }
         }
-        private void GameStatusStart()
-        {
-            Task task = new Task(delegate { GameStatus(); });
-            task.Start();
-
-        }
-            
 
         /// <summary>
         /// Get the current status/state of the board.
         /// </summary>
         private void GameStatus()
         {
-            MessageBox.Show("A");
-            tokenSource2 = new CancellationTokenSource();
             bool isActive = false;
             dynamic game = new ExpandoObject();
-            game = Sync(game, "games/" + gameToken, 3);
-            while (game.GameState == "pending")
-                GameStatus();
-            while (game.GameState == "active")
+            try
             {
-                if (isActive == false)
-                    view.EnableControls(true);
-                view.SetLabel(game.Board);
-                GameStatus();
-                isActive = true;
-                Thread.Sleep(2000);
-                MessageBox.Show("A");
+                game = Sync(game, "games/" + gameToken, 3); //1 is for type post
+            }
+            finally
+            {
+                while (game.GameState == "pending")
+                {
+                    System.Threading.Thread.Sleep(500);
+                }
+                 if (game.GameState == "active")
+                {
+                    if (isActive == false)
+                        view.EnableControls(true);
+                    isActive = true;
+                    view.SetLabel(game.Board);
+                    view.Player1Update(game.Player1.Nickname);
+                    view.Player2Update(game.Player2.Nickname);
+
+                }
             }
         }
 
@@ -162,7 +160,7 @@ namespace PS8
             finally
             {
                 view.UserRegistered = true;
-                GameStatusStart();
+                GameStatus();
             }
         }
 
@@ -176,12 +174,20 @@ namespace PS8
                 tokenSource.Cancel();
             else if (cancelMode == 2)
             {
-                if (tokenSource != null)
-                    tokenSource2.Cancel();
-                dynamic cancelToken = new ExpandoObject();
-                cancelToken.UserToken = user1Token;
-                Sync(cancelToken, "games", 2);
-            }               
+                try
+                {
+                    tokenSource.Cancel();
+                    dynamic game = new ExpandoObject();
+                    game.UserToken = user1Token;
+                    game = Sync(game, "games", 2); //2 is for type PUT
+                    //MessageBox.Show(game.toString());
+                }
+                finally
+                {
+                    view.JoinEnabled(true);
+                    view.CancelJoinEnabled(false);
+                }
+            }
         }
 
         /// <summary>
@@ -195,14 +201,14 @@ namespace PS8
                 dynamic user = new ExpandoObject();
                 user.Nickname = name;
                 user.UserToken = "";
-                user = Sync(user, "users",1); //1 is for type POST
+                user = Sync(user, "users", 1); //1 is for type POST
                 user1Token = user.UserToken;
             }
             finally
             {
                 view.TimeEnabled(true);
                 view.UserRegistered = true;
-            }   
+            }
         }
 
         //a general helper method for post requests
@@ -252,6 +258,7 @@ namespace PS8
         /// </summary>
         private void SubmitWord(string wordPlayed)
         {
+            view.submitEnableControls(false);
             try
             {
                 // Create the parameter
@@ -260,13 +267,22 @@ namespace PS8
                 WordPlayed.Word = wordPlayed;
 
                 // Compose and send the request.
-                WordPlayed = Sync(WordPlayed, "games/" + gameToken, 2);
-                MessageBox.Show("This word was submitted.." + WordPlayed.Score);
-                Refresh();
+                WordPlayed.Score = 0;
+                WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);
+                view.AddWord(WordPlayed.Word);
+                wordList.Add(wordPlayed);
+
+                dynamic game = new ExpandoObject();
+                game = Sync(game, "games/" + gameToken, 3);
+                score = (int)game.Player1.Score;
+                view.UpdateScore1(score);
+                score = (int)game.Player2.Score;
+                view.UpdateScore2(score);
             }
+
             finally
             {
-                view.EnableControls(true);
+                view.submitEnableControls(true);
             }
         }
 
@@ -312,9 +328,9 @@ namespace PS8
                     dynamic words = JsonConvert.DeserializeObject(result);
                     view.Clear();
                     wordList.Clear();
-                    foreach (dynamic word in wordList)
+                    foreach (dynamic word in words)
                     {
-                        view.AddWord((string)word.Description, (int) word.score, word.UserID == user1Token);
+                        view.AddWord((string)word.Description);
                         wordList.Add((string)word.WordID);
                     }
                 }
@@ -333,7 +349,7 @@ namespace PS8
         {
             // Create a client whose base address is the GitHub server
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(url);   ///TODO NEED TO FIX
+            client.BaseAddress = new Uri(url); 
 
             // Tell the server that the client will accept this particular type of response data
             client.DefaultRequestHeaders.Accept.Clear();
@@ -344,4 +360,3 @@ namespace PS8
         }
     }
 }
-
