@@ -257,30 +257,14 @@ namespace PS8
         {
             try
             {
-                view.EnableControls(false);
-                using (HttpClient client = CreateClient())
-                {
-                    // Create the parameter
-                    dynamic WordsPlayed = new ExpandoObject();
-                    WordsPlayed.UserToken = user1Token;
-                    WordsPlayed.word= wordPlayed;
+                // Create the parameter
+                dynamic WordPlayed = new ExpandoObject();
+                WordPlayed.UserToken = user1Token;
+                WordPlayed.Word = wordPlayed;
 
-                    // Compose and send the request.
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(WordsPlayed), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = client.PutAsync("Games", content).Result;
-                    MessageBox.Show("This word was submitted.." + response);
-                    // Deal with the response
-                    if (response.IsSuccessStatusCode)
-                    {
-                        String result = response.Content.ReadAsStringAsync().Result;
-                        MessageBox.Show(result);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error submitting: " + response.StatusCode);
-                        Console.WriteLine(response.ReasonPhrase);
-                    }
-                }
+                // Compose and send the request.
+                WordPlayed = Sync(WordPlayed, "games/" + gameToken, 2);
+                MessageBox.Show("This word was submitted.." + WordPlayed);
                 Refresh();
             }
             finally
@@ -288,7 +272,7 @@ namespace PS8
                 view.EnableControls(true);
             }
         }
-  
+
 
         /// <summary>
         /// Ends the current game immediately. 
