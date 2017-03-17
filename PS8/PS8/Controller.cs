@@ -73,6 +73,11 @@ namespace PS8
         /// </summary>
         private static CancellationTokenSource tokenSource2;
 
+        /// <summary>
+        /// For canceling the join button operation.
+        /// </summary>
+        private static CancellationTokenSource tokenSource3;
+
         /// <summary>/
         /// Creates a Controller for the provided view
         /// </summary>
@@ -120,32 +125,39 @@ namespace PS8
         /// </summary>
         private async void GameStatus()
         {
-
             tokenSource2 = new CancellationTokenSource();
-            bool isActive = false;
-            dynamic game = new ExpandoObject();
-            try
+            CancellationToken token2 = tokenSource2.Token;
+            while (true)
             {
-                game = Sync(game, "games/" + gameToken, 3); //1 is for type post
-            }
-            finally
-            {
-                while (game.GameState == "pending")
+                bool isActive = false;
+                dynamic game = new ExpandoObject();
+                try
                 {
-                    await Task.Delay(1000);
                     game = Sync(game, "games/" + gameToken, 3); //1 is for type post
                 }
-                view.CancelJoinEnabled(false);
-                if (game.GameState == "active")
+                finally
                 {
-                    if (isActive == false)
-                        view.EnableControls(true);
-                    isActive = true;
-                    view.SetLabel(game.Board);
-                    view.Player1Update(game.Player1.Nickname);
-                    view.Player2Update(game.Player2.Nickname);
-                    Timer();
+                    while (game.GameState == "pending")
+                    {
+                        await Task.Delay(1000);
+                        if (token2.IsCancellationRequested)
+                            break;
+                        game = Sync(game, "games/" + gameToken, 3); //1 is for type post
+                    }
+                    view.CancelJoinEnabled(false);
+                    if (game.GameState == "active")
+                    {
+                        if (isActive == false)
+                            view.EnableControls(true);
+                        isActive = true;
+                        view.SetLabel(game.Board);
+                        view.Player1Update(game.Player1.Nickname);
+                        view.Player2Update(game.Player2.Nickname);
+                        Timer();
+                    }
                 }
+                if (token2.IsCancellationRequested)
+                    break;
             }
         }
 
@@ -185,6 +197,7 @@ namespace PS8
         /// <param name="arg2"></param>
         private void View_JoinGame(int time)
         {
+            tokenSource3 = new CancellationTokenSource();
             try
             {
                 dynamic game = new ExpandoObject();
@@ -213,12 +226,10 @@ namespace PS8
             {
                 try
                 {
-                    tokenSource.Cancel();
-                    tokenSource2.Cancel();
                     dynamic game = new ExpandoObject();
                     game.UserToken = user1Token;
                     game = Sync(game, "games", 2); //2 is for type PUT
-                    MessageBox.Show(""+game);
+                    tokenSource2.Cancel();
                 }
                 finally
                 {
@@ -243,15 +254,20 @@ namespace PS8
                 user = Sync(user, "users", 1); //1 is for type POST
                 user1Token = user.UserToken;
             }
+            catch
+            {
+                MessageBox.Show("Invalid URL");
+            }
             finally
             {
                 view.TimeEnabled(true);
                 view.UserRegistered = true;
             }
+            
         }
 
         //a general helper method for post requests
-        private static ExpandoObject Sync(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
+        private ExpandoObject Sync(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
         {
             try
             {
@@ -268,7 +284,6 @@ namespace PS8
                     else if (type == 2)
                     {
                         response = client.PutAsync(Name, content, tokenSource.Token).Result;
-                        //MessageBox.Show(response.ToString());
                     }
                         
                     else if (type == 3)
@@ -321,8 +336,6 @@ namespace PS8
                 WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);
                 view.AddWord(WordPlayed.Word);
                 wordList.Add(wordPlayed);
-                
-
             }
 
             finally

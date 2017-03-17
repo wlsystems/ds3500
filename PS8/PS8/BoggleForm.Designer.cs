@@ -120,7 +120,6 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 74);
             this.label2.TabIndex = 1;
-            this.label2.Text = "A";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
@@ -135,7 +134,6 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(74, 74);
             this.label1.TabIndex = 0;
-            this.label1.Text = "A";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label3
@@ -149,7 +147,6 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(72, 74);
             this.label3.TabIndex = 2;
-            this.label3.Text = "A";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
@@ -163,7 +160,6 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(80, 74);
             this.label4.TabIndex = 3;
-            this.label4.Text = "A";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label5
@@ -177,7 +173,6 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(74, 75);
             this.label5.TabIndex = 3;
-            this.label5.Text = "A";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label6
@@ -191,7 +186,6 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(74, 75);
             this.label6.TabIndex = 3;
-            this.label6.Text = "A";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label7
@@ -205,7 +199,6 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(72, 75);
             this.label7.TabIndex = 3;
-            this.label7.Text = "A";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label8
@@ -219,7 +212,6 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(80, 75);
             this.label8.TabIndex = 3;
-            this.label8.Text = "A";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label9
@@ -233,7 +225,6 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(74, 74);
             this.label9.TabIndex = 3;
-            this.label9.Text = "A";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label10
@@ -247,7 +238,6 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(74, 74);
             this.label10.TabIndex = 3;
-            this.label10.Text = "A";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label11
@@ -261,7 +251,6 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(72, 74);
             this.label11.TabIndex = 3;
-            this.label11.Text = "A";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label12
@@ -275,7 +264,6 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(80, 74);
             this.label12.TabIndex = 3;
-            this.label12.Text = "A";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label13
@@ -289,7 +277,6 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(74, 77);
             this.label13.TabIndex = 3;
-            this.label13.Text = "A";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label14
@@ -303,7 +290,6 @@
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(74, 77);
             this.label14.TabIndex = 3;
-            this.label14.Text = "A";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label15
@@ -317,7 +303,6 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(72, 77);
             this.label15.TabIndex = 3;
-            this.label15.Text = "A";
             this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label16
@@ -331,7 +316,6 @@
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(80, 77);
             this.label16.TabIndex = 3;
-            this.label16.Text = "A";
             this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // wordButton
@@ -558,6 +542,7 @@
             this.label_WordsPlayed.TabIndex = 29;
             this.label_WordsPlayed.Text = "Words Played";
             this.label_WordsPlayed.Visible = false;
+
             // 
             // label_wordPlayed2
             // 
@@ -591,6 +576,7 @@
             this.Controls.Add(this.label_wordPlayed2);
             this.Controls.Add(this.label_WordsPlayed);
             this.Controls.Add(this.wordPanel);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox_Timer);
             this.Controls.Add(this.label_Timer);
             this.Controls.Add(this.textBox1);
@@ -667,6 +653,7 @@
         private System.Windows.Forms.Label label_WordsPlayed;
         private System.Windows.Forms.Label label_wordPlayed2;
         private System.Windows.Forms.RichTextBox wordPanel2;
+        private System.Windows.Forms.Button button1;
     }
 }
 
