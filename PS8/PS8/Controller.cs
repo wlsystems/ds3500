@@ -127,8 +127,6 @@ namespace PS8
         {
             tokenSource2 = new CancellationTokenSource();
             CancellationToken token2 = tokenSource2.Token;
-            while (true)
-            {
                 bool isActive = false;
                 dynamic game = new ExpandoObject();
                 try
@@ -159,36 +157,28 @@ namespace PS8
                         Timer();
                     }
                 }
-                if (token2.IsCancellationRequested)
-                {
-                    tokenSource3.Cancel();
-                    break;
-                }
-                    
-            }
         }
 
         private async void Timer()
         {
             tokenSource3 = new CancellationTokenSource();
             CancellationToken ct = tokenSource3.Token;
-            while (true)
-            {
-                if (ct.IsCancellationRequested)
-                    break;
+
                 dynamic game = new ExpandoObject();
                 game = Sync(game, "games/" + gameToken, 3);
                 while (game.GameState == "active")
                 {
+
                     view.UpdateTimer(game.TimeLeft);
                     score = (int)game.Player1.Score;
                     view.UpdateScore1(score);
                     score = (int)game.Player2.Score;
                     view.UpdateScore2(score);
                     await Task.Delay(1000);
-                    game = Sync(game, "games/" + gameToken, 3);
+                    if (ct.IsCancellationRequested)
+                        break;
+                game = Sync(game, "games/" + gameToken, 3);
                 }
-            }
 
         }
 
