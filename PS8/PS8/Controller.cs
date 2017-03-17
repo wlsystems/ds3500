@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Net;
@@ -23,6 +24,11 @@ namespace PS8
         /// Stores the url;
         /// </summary>
         private static string url;
+
+        /// <summary>
+        /// Stores the url;
+        /// </summary>
+        private string localClient;
 
         /// <summary>
         /// The view controlled by this Controller
@@ -51,11 +57,6 @@ namespace PS8
         /// </summary>
         private IList<string> wordList;
 
-        /// <summary>
-        /// True if both list of words should be shown, once the game is over, when false
-        /// will only show the local client's list.  
-        /// </summary>
-        private bool showBothClientsFinalLists;
 
         // <summary>
         /// The current score provided by the game    
@@ -83,12 +84,11 @@ namespace PS8
             gameActive = false;  //true is game is active, false if it has ended.
             score = 0;
             wordList = new List<string>();
-            showBothClientsFinalLists = false;
             view.CancelPressed += Cancel;
             view.RegisterPressed += Register;
             view.SubmitPressed += SubmitWord;
             view.DonePressed += Done;
-            view.FilterChanged += FilterListVisible;
+            //view.FilterChanged += FilterListVisible;
             view.SetServerURL += Register;
             view.JoinGame += View_JoinGame;
 
@@ -163,6 +163,19 @@ namespace PS8
                 await Task.Delay(1000);
                 game = Sync(game, "games/" + gameToken, 3);
             }
+            if (game.GameState == "completed")
+            {
+                game = Sync(game, "games/" + gameToken, 3);
+                List<object> oppWordsPlayed;
+                if (game.Player1.Nickname == localClient)
+                {
+                    oppWordsPlayed = game.Player2.WordsPlayed;
+                }
+                else
+                {
+                    oppWordsPlayed = game.Player1.WordsPlayed;
+                }
+            }
         }
 
         /// <summary>
@@ -223,6 +236,7 @@ namespace PS8
             try
             {
                 url = server;
+                localClient = name;
                 dynamic user = new ExpandoObject();
                 user.Nickname = name;
                 user.UserToken = "";
@@ -326,21 +340,6 @@ namespace PS8
             ///TODO!!!!
         }
 
-        /// <summary>
-        /// Changes the state of the filter that control what is to be displayed.
-        /// </summary>
-        private void FilterListVisible(bool showBothClientsFinalLists)
-        {
-            try
-            {
-                view.EnableControls(false);
-                this.showBothClientsFinalLists = showBothClientsFinalLists;
-            }
-            finally
-            {
-                view.EnableControls(true);
-            }
-        }
 
     
 

@@ -103,14 +103,6 @@ namespace PS8
         public event Action<string> SubmitPressed;
 
 
-
-        /// <summary>
-        /// Fired when one of the filter has changed, at the end of the
-        /// game the client will show both players' list, during the game it will show only the local player.
-        /// </summary>
-        public event Action<bool> FilterChanged;
-
-
         /// <summary>
         /// Fires when a player wants to end a current
         /// session. 
@@ -196,6 +188,17 @@ namespace PS8
                 registerButton.Enabled = true;
             if (nameBox.Text.Length <= 0 | serverBox.Text.Length <= 0)
                 registerButton.Enabled = false;
+        }
+
+        internal void ViewOpponentsWords(List<string> oppWords)
+        {
+            label_wordPlayed2.Visible = true;
+            wordPanel2.Visible = true;
+            foreach (var item in oppWords)
+            {
+                wordPanel2.Text = wordPanel2.Text + "\r" + item.ToString().ToUpper();
+            }
+
         }
 
         private void registerButton_Click_1(object sender, EventArgs e)
