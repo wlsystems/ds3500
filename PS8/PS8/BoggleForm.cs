@@ -45,7 +45,9 @@ namespace PS8
         /// </summary>
         public void AddWord(string wordplayed)
         {
-            wordPanel.Controls.Add(new Label() { Text = wordplayed +" "+ 1 });
+            label_WordsPlayed.Visible = true;
+            wordPanel.Visible = true;
+            wordPanel.Text = wordPanel.Text.ToString() + "\r" + wordplayed.ToUpper();
         }
 
 
