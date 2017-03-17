@@ -281,7 +281,7 @@ namespace PS8
                 WordPlayed.Word = wordPlayed;
 
                 // Compose and send the request.
-                if (game.GameStatus == "completed")
+                if (game.GameState == "completed")
                 {
                     MessageBox.Show("Sorry that game is over!");
                     return;
