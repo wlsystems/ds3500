@@ -410,9 +410,9 @@
             // cancelbutton1
             // 
             this.cancelbutton1.Enabled = false;
-            this.cancelbutton1.Location = new System.Drawing.Point(79, 296);
+            this.cancelbutton1.Location = new System.Drawing.Point(217, 257);
             this.cancelbutton1.Name = "cancelbutton1";
-            this.cancelbutton1.Size = new System.Drawing.Size(116, 34);
+            this.cancelbutton1.Size = new System.Drawing.Size(75, 23);
             this.cancelbutton1.TabIndex = 14;
             this.cancelbutton1.Tag = "doneButton";
             this.cancelbutton1.Text = "Cancel";
@@ -465,7 +465,7 @@
             // joinButton
             // 
             this.joinButton.Enabled = false;
-            this.joinButton.Location = new System.Drawing.Point(166, 256);
+            this.joinButton.Location = new System.Drawing.Point(137, 257);
             this.joinButton.Name = "joinButton";
             this.joinButton.Size = new System.Drawing.Size(75, 23);
             this.joinButton.TabIndex = 19;

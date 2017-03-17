@@ -110,12 +110,23 @@ namespace PS8
                 CancelPressed -= value;
             }
         }
+        /// <summary>
+        /// Start the game
+        /// </summary>
+        private void GameStatusStart()
+        {
+            Task task = new Task(delegate { GameStatus(); });
+            task.Start();
+            
+        }
 
         /// <summary>
         /// Get the current status/state of the board.
         /// </summary>
         private void GameStatus()
         {
+            
+            tokenSource2 = new CancellationTokenSource();
             bool isActive = false;
             dynamic game = new ExpandoObject();
             try
@@ -126,10 +137,13 @@ namespace PS8
             {
                 while (game.GameState == "pending")
                 {
-                    System.Threading.Thread.Sleep(500);
+                    Thread.Sleep(1000);
+                    GameStatus();
                 }
-                 if (game.GameState == "active")
+                view.CancelJoinEnabled(false);
+                if (game.GameState == "active")
                 {
+                    Thread.Sleep(500);
                     if (isActive == false)
                         view.EnableControls(true);
                     isActive = true;
@@ -177,10 +191,11 @@ namespace PS8
                 try
                 {
                     tokenSource.Cancel();
+                    tokenSource2.Cancel();
                     dynamic game = new ExpandoObject();
                     game.UserToken = user1Token;
                     game = Sync(game, "games", 2); //2 is for type PUT
-                    //MessageBox.Show(game.toString());
+                    MessageBox.Show(""+game);
                 }
                 finally
                 {
@@ -227,7 +242,11 @@ namespace PS8
                     if (type == 1)
                         response = client.PostAsync(Name, content, tokenSource.Token).Result;
                     else if (type == 2)
+                    {
                         response = client.PutAsync(Name, content, tokenSource.Token).Result;
+                        MessageBox.Show(response.ToString());
+                    }
+                        
                     else if (type == 3)
                         response = client.GetAsync(Name).Result;
                     // Deal with the response
