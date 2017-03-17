@@ -133,6 +133,7 @@ namespace PS8
                 while (game.GameState == "pending")
                 {
                     await Task.Delay(1000);
+                    game = Sync(game, "games/" + gameToken, 3); //1 is for type post
                 }
                 view.CancelJoinEnabled(false);
                 if (game.GameState == "active")
@@ -152,15 +153,15 @@ namespace PS8
         {
             dynamic game = new ExpandoObject();
             game = Sync(game, "games/" + gameToken, 3);
-            view.UpdateTimer(game.TimeLeft);
-            score = (int)game.Player1.Score;
-            view.UpdateScore1(score);
-            score = (int)game.Player2.Score;
-            view.UpdateScore2(score);
-            if (game.GameState == "active")
+            while (game.GameState == "active")
             {
+                view.UpdateTimer(game.TimeLeft);
+                score = (int)game.Player1.Score;
+                view.UpdateScore1(score);
+                score = (int)game.Player2.Score;
+                view.UpdateScore2(score);
                 await Task.Delay(1000);
-                Timer();
+                game = Sync(game, "games/" + gameToken, 3);
             }
         }
 
