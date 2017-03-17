@@ -137,13 +137,12 @@ namespace PS8
             {
                 while (game.GameState == "pending")
                 {
-                    await Task.Delay(500);
+                    await Task.Delay(1000);
                     GameStatus();
                 }
                 view.CancelJoinEnabled(false);
                 if (game.GameState == "active")
                 {
-                    Thread.Sleep(500);
                     if (isActive == false)
                         view.EnableControls(true);
                     isActive = true;
