@@ -34,10 +34,6 @@ namespace PS8
         /// </summary>
         private string user1Token;
 
-        /// <summary>
-        /// The token of the other player, or "0" if waiting for another player to join. 
-        /// </summary>
-        private string user2Token;
 
         /// <summary>
         /// The current game token, or "0" if no current game exist. 
@@ -84,7 +80,6 @@ namespace PS8
             this.view = view;
             gameToken = "0";
             user1Token = "0";
-            user2Token = "0";
             gameActive = false;  //true is game is active, false if it has ended.
             score = 0;
             wordList = new List<string>();
@@ -137,13 +132,11 @@ namespace PS8
             {
                 while (game.GameState == "pending")
                 {
-                    await Task.Delay(500);
-                    GameStatus();
+                    await Task.Delay(1000);
                 }
                 view.CancelJoinEnabled(false);
                 if (game.GameState == "active")
                 {
-                    Thread.Sleep(500);
                     if (isActive == false)
                         view.EnableControls(true);
                     isActive = true;
