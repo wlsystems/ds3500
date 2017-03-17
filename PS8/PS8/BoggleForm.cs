@@ -154,6 +154,11 @@ namespace PS8
             label_player1score.Text = nickname + "'s score";
         }
 
+        internal void UpdateTimer(dynamic timeLeft)
+        {
+            textBox_Timer.Text = timeLeft + " ";
+        }
+
         private void WordBox_TextChanged(object sender, EventArgs e)
         {
             wordButton.Enabled = UserRegistered && wordBox.Text.Trim().Length > 0;

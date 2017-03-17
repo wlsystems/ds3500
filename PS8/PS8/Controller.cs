@@ -150,8 +150,24 @@ namespace PS8
                     view.SetLabel(game.Board);
                     view.Player1Update(game.Player1.Nickname);
                     view.Player2Update(game.Player2.Nickname);
-
+                    //Timer();
                 }
+            }
+        }
+
+        private void Timer()
+        {
+            dynamic game = new ExpandoObject();
+            game = Sync(game, "games/" + gameToken, 3);
+            view.UpdateTimer(game.TimeLeft);
+            score = (int)game.Player1.Score;
+            view.UpdateScore1(score);
+            score = (int)game.Player2.Score;
+            view.UpdateScore2(score);
+            if (game.GameState == "active")
+            {
+                Thread.Sleep(1000);
+                Timer();
             }
         }
 
@@ -282,21 +298,23 @@ namespace PS8
             {
                 // Create the parameter
                 dynamic WordPlayed = new ExpandoObject();
+                dynamic game = new ExpandoObject();
                 WordPlayed.UserToken = user1Token;
                 WordPlayed.Word = wordPlayed;
 
                 // Compose and send the request.
+                if (game.GameState == "completed")
+                {
+                    MessageBox.Show("Sorry that game is over!");
+                    return;
+                }
                 WordPlayed.Score = 0;
                 WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);
                 view.AddWord(WordPlayed.Word);
                 wordList.Add(wordPlayed);
-
-                dynamic game = new ExpandoObject();
+                
                 game = Sync(game, "games/" + gameToken, 3);
-                score = (int)game.Player1.Score;
-                view.UpdateScore1(score);
-                score = (int)game.Player2.Score;
-                view.UpdateScore2(score);
+
             }
 
             finally
