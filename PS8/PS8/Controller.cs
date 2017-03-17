@@ -123,9 +123,9 @@ namespace PS8
         /// <summary>
         /// Get the current status/state of the board.
         /// </summary>
-        private void GameStatus()
+        private async void GameStatus()
         {
-            
+
             tokenSource2 = new CancellationTokenSource();
             bool isActive = false;
             dynamic game = new ExpandoObject();
@@ -137,7 +137,7 @@ namespace PS8
             {
                 while (game.GameState == "pending")
                 {
-                    Thread.Sleep(1000);
+                    await Task.Delay(500);
                     GameStatus();
                 }
                 view.CancelJoinEnabled(false);
@@ -150,12 +150,12 @@ namespace PS8
                     view.SetLabel(game.Board);
                     view.Player1Update(game.Player1.Nickname);
                     view.Player2Update(game.Player2.Nickname);
-                    //Timer();
+                    Timer();
                 }
             }
         }
 
-        private void Timer()
+        private async void Timer()
         {
             dynamic game = new ExpandoObject();
             game = Sync(game, "games/" + gameToken, 3);
@@ -166,7 +166,7 @@ namespace PS8
             view.UpdateScore2(score);
             if (game.GameState == "active")
             {
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
                 Timer();
             }
         }
@@ -260,7 +260,7 @@ namespace PS8
                     else if (type == 2)
                     {
                         response = client.PutAsync(Name, content, tokenSource.Token).Result;
-                        MessageBox.Show(response.ToString());
+                        //MessageBox.Show(response.ToString());
                     }
                         
                     else if (type == 3)
@@ -299,6 +299,7 @@ namespace PS8
                 // Create the parameter
                 dynamic WordPlayed = new ExpandoObject();
                 dynamic game = new ExpandoObject();
+                game = Sync(game, "games/" + gameToken, 3);
                 WordPlayed.UserToken = user1Token;
                 WordPlayed.Word = wordPlayed;
 
@@ -313,7 +314,6 @@ namespace PS8
                 view.AddWord(WordPlayed.Word);
                 wordList.Add(wordPlayed);
                 
-                game = Sync(game, "games/" + gameToken, 3);
 
             }
 
@@ -341,7 +341,6 @@ namespace PS8
             {
                 view.EnableControls(false);
                 this.showBothClientsFinalLists = showBothClientsFinalLists;
-                Refresh();
             }
             finally
             {
@@ -349,35 +348,7 @@ namespace PS8
             }
         }
 
-        /// <summary>
-        /// Refreshes the display because something has changed.
-        /// </summary>
-        private void Refresh()
-        {
-            using (HttpClient client = CreateClient())
-            {
-                HttpResponseMessage response = client.GetAsync(url).Result;
-
-                // Deal with the response
-                if (response.IsSuccessStatusCode)
-                {
-                    String result = response.Content.ReadAsStringAsync().Result;
-                    dynamic words = JsonConvert.DeserializeObject(result);
-                    view.Clear();
-                    wordList.Clear();
-                    foreach (dynamic word in words)
-                    {
-                        view.AddWord((string)word.Description);
-                        wordList.Add((string)word.WordID);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Error getting items: " + response.StatusCode);
-                    Console.WriteLine(response.ReasonPhrase);
-                }
-            }
-        }
+    
 
         /// <summary>
         /// Creates an HttpClient for communicating with the server.
