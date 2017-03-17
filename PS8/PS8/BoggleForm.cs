@@ -73,7 +73,12 @@ namespace PS8
         /// </summary>
         public void Clear()
         {
-            wordPanel.Controls.Clear();
+            wordPanel.Visible = false;
+            wordPanel2.Visible = false;
+            label_WordsPlayed.Visible = false;
+            label_wordPlayed2.Visible = false;
+            wordPanel.Text = "";
+            wordPanel2.Text = "";
         }
 
         /// <summary>
@@ -225,6 +230,7 @@ namespace PS8
         private void joinButton_Click(object sender, EventArgs e)
         {
             cancelbutton1.Enabled = true;
+            Clear();
             joinButton.Enabled = false;
             if (JoinGame != null)
             {
