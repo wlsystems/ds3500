@@ -135,8 +135,14 @@ namespace PS8
                 }
                 finally
                 {
+                    bool A = false; //sets up the flashing effect
                     while (game.GameState == "pending")
                     {
+                        A = !A;
+                        if (A == true)
+                            view.SetStatusLabel(true, false);
+                        else
+                            view.SetStatusLabel(false, false);
                         await Task.Delay(1000);
                         if (token2.IsCancellationRequested)
                         {
@@ -144,10 +150,13 @@ namespace PS8
                             break;
                         }     
                         game = Sync(game, "games/" + gameToken, 3); //1 is for type post
+                        
                     }
                     view.CancelJoinEnabled(false);
                     if (game.GameState == "active")
                     {
+                        view.SetStatusLabel(true, true);
+                        tokenSource3.Cancel();
                         if (isActive == false)
                             view.EnableControls(true);
                         isActive = true;
@@ -168,7 +177,6 @@ namespace PS8
                 game = Sync(game, "games/" + gameToken, 3);
                 while (game.GameState == "active")
                 {
-
                     view.UpdateTimer(game.TimeLeft);
                     score = (int)game.Player1.Score;
                     view.UpdateScore1(score);
@@ -179,7 +187,6 @@ namespace PS8
                         break;
                 game = Sync(game, "games/" + gameToken, 3);
                 }
-
         }
 
         /// <summary>
@@ -213,7 +220,11 @@ namespace PS8
         private void Cancel(int cancelMode)
         {
             if (cancelMode == 1)
-                tokenSource.Cancel();
+            {
+                if (tokenSource != null)
+                    tokenSource.Cancel();
+            }
+                
             else if (cancelMode == 2)
             {
                 try
@@ -221,13 +232,20 @@ namespace PS8
                     dynamic game = new ExpandoObject();
                     game.UserToken = user1Token;
                     game = Sync(game, "games", 2); //2 is for type PUT
-                    tokenSource2.Cancel();
+                    if (tokenSource2 != null)
+                        tokenSource2.Cancel();
                 }
                 finally
                 {
+                    view.Clear();
                     view.JoinEnabled(true);
                     view.CancelJoinEnabled(false);
                 }
+            }
+            else if (cancelMode == 3)
+            {
+                if (tokenSource3 != null)
+                    tokenSource3.Cancel();
             }
         }
 
