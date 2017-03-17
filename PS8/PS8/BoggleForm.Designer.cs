@@ -64,6 +64,8 @@
             this.textBox_player1Score = new System.Windows.Forms.TextBox();
             this.label_player2score = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label_Timer = new System.Windows.Forms.Label();
+            this.textBox_Timer = new System.Windows.Forms.TextBox();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -518,11 +520,32 @@
             this.textBox1.TabIndex = 24;
             this.textBox1.Text = "0";
             // 
+            // label_Timer
+            // 
+            this.label_Timer.AutoSize = true;
+            this.label_Timer.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label_Timer.Location = new System.Drawing.Point(807, 284);
+            this.label_Timer.Name = "label_Timer";
+            this.label_Timer.Size = new System.Drawing.Size(82, 25);
+            this.label_Timer.TabIndex = 25;
+            this.label_Timer.Text = "TIMER";
+            // 
+            // textBox_Timer
+            // 
+            this.textBox_Timer.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Timer.Location = new System.Drawing.Point(798, 326);
+            this.textBox_Timer.Name = "textBox_Timer";
+            this.textBox_Timer.ReadOnly = true;
+            this.textBox_Timer.Size = new System.Drawing.Size(100, 44);
+            this.textBox_Timer.TabIndex = 26;
+            // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(929, 425);
+            this.Controls.Add(this.textBox_Timer);
+            this.Controls.Add(this.label_Timer);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label_player2score);
             this.Controls.Add(this.textBox_player1Score);
@@ -593,6 +616,8 @@
         private System.Windows.Forms.TextBox textBox_player1Score;
         private System.Windows.Forms.Label label_player2score;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label_Timer;
+        private System.Windows.Forms.TextBox textBox_Timer;
     }
 }
 
