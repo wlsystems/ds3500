@@ -141,7 +141,10 @@ namespace PS8
                     {
                         await Task.Delay(1000);
                         if (token2.IsCancellationRequested)
+                        {
+                            tokenSource3.Cancel();
                             break;
+                        }     
                         game = Sync(game, "games/" + gameToken, 3); //1 is for type post
                     }
                     view.CancelJoinEnabled(false);
@@ -157,24 +160,36 @@ namespace PS8
                     }
                 }
                 if (token2.IsCancellationRequested)
+                {
+                    tokenSource3.Cancel();
                     break;
+                }
+                    
             }
         }
 
         private async void Timer()
         {
-            dynamic game = new ExpandoObject();
-            game = Sync(game, "games/" + gameToken, 3);
-            while (game.GameState == "active")
+            tokenSource3 = new CancellationTokenSource();
+            CancellationToken ct = tokenSource3.Token;
+            while (true)
             {
-                view.UpdateTimer(game.TimeLeft);
-                score = (int)game.Player1.Score;
-                view.UpdateScore1(score);
-                score = (int)game.Player2.Score;
-                view.UpdateScore2(score);
-                await Task.Delay(1000);
+                if (ct.IsCancellationRequested)
+                    break;
+                dynamic game = new ExpandoObject();
                 game = Sync(game, "games/" + gameToken, 3);
+                while (game.GameState == "active")
+                {
+                    view.UpdateTimer(game.TimeLeft);
+                    score = (int)game.Player1.Score;
+                    view.UpdateScore1(score);
+                    score = (int)game.Player2.Score;
+                    view.UpdateScore2(score);
+                    await Task.Delay(1000);
+                    game = Sync(game, "games/" + gameToken, 3);
+                }
             }
+
         }
 
         /// <summary>
