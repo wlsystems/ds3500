@@ -137,7 +137,8 @@ namespace PS8
             {
                 while (game.GameState == "pending")
                 {
-                    Thread.Sleep(1000);
+                    Task.Delay(3000);
+                    MessageBox.Show("pending");
                     GameStatus();
                 }
                 view.CancelJoinEnabled(false);
