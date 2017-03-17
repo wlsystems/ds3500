@@ -53,7 +53,6 @@
             this.registerButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.cancelbutton1 = new System.Windows.Forms.Button();
-            this.wordPanel = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.wordBox = new System.Windows.Forms.TextBox();
@@ -66,7 +65,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label_Timer = new System.Windows.Forms.Label();
             this.textBox_Timer = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.wordPanel = new System.Windows.Forms.RichTextBox();
+            this.label_WordsPlayed = new System.Windows.Forms.Label();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -406,14 +406,6 @@
             this.cancelbutton1.UseVisualStyleBackColor = true;
             this.cancelbutton1.Click += new System.EventHandler(this.cancelbutton1_Click);
             // 
-            // wordPanel
-            // 
-            this.wordPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.wordPanel.Location = new System.Drawing.Point(622, 30);
-            this.wordPanel.Name = "wordPanel";
-            this.wordPanel.Size = new System.Drawing.Size(142, 220);
-            this.wordPanel.TabIndex = 15;
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -472,7 +464,7 @@
             // label_player1score
             // 
             this.label_player1score.AutoSize = true;
-            this.label_player1score.Location = new System.Drawing.Point(645, 296);
+            this.label_player1score.Location = new System.Drawing.Point(605, 346);
             this.label_player1score.Name = "label_player1score";
             this.label_player1score.Size = new System.Drawing.Size(79, 13);
             this.label_player1score.TabIndex = 21;
@@ -481,7 +473,7 @@
             // textBox_player1Score
             // 
             this.textBox_player1Score.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox_player1Score.Location = new System.Drawing.Point(730, 296);
+            this.textBox_player1Score.Location = new System.Drawing.Point(730, 346);
             this.textBox_player1Score.Name = "textBox_player1Score";
             this.textBox_player1Score.ReadOnly = true;
             this.textBox_player1Score.Size = new System.Drawing.Size(34, 13);
@@ -491,7 +483,7 @@
             // label_player2score
             // 
             this.label_player2score.AutoSize = true;
-            this.label_player2score.Location = new System.Drawing.Point(645, 343);
+            this.label_player2score.Location = new System.Drawing.Point(605, 379);
             this.label_player2score.Name = "label_player2score";
             this.label_player2score.Size = new System.Drawing.Size(79, 13);
             this.label_player2score.TabIndex = 23;
@@ -500,7 +492,7 @@
             // textBox1
             // 
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Location = new System.Drawing.Point(730, 343);
+            this.textBox1.Location = new System.Drawing.Point(730, 379);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(34, 13);
@@ -526,6 +518,29 @@
             this.textBox_Timer.Size = new System.Drawing.Size(100, 44);
             this.textBox_Timer.TabIndex = 26;
             // 
+            // wordPanel
+            // 
+            this.wordPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.wordPanel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.wordPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.wordPanel.Location = new System.Drawing.Point(648, 47);
+            this.wordPanel.Name = "wordPanel";
+            this.wordPanel.Size = new System.Drawing.Size(76, 262);
+            this.wordPanel.TabIndex = 28;
+            this.wordPanel.Text = "";
+            this.wordPanel.Visible = false;
+            // 
+            // label_WordsPlayed
+            // 
+            this.label_WordsPlayed.AutoSize = true;
+            this.label_WordsPlayed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label_WordsPlayed.Location = new System.Drawing.Point(635, 24);
+            this.label_WordsPlayed.Name = "label_WordsPlayed";
+            this.label_WordsPlayed.Size = new System.Drawing.Size(106, 20);
+            this.label_WordsPlayed.TabIndex = 29;
+            this.label_WordsPlayed.Text = "Words Played";
+            this.label_WordsPlayed.Visible = false;
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(413, 398);
@@ -541,6 +556,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(929, 425);
+            this.Controls.Add(this.label_WordsPlayed);
+            this.Controls.Add(this.wordPanel);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox_Timer);
             this.Controls.Add(this.label_Timer);
@@ -553,7 +570,6 @@
             this.Controls.Add(this.timeBox);
             this.Controls.Add(this.wordBox);
             this.Controls.Add(this.gameBoard);
-            this.Controls.Add(this.wordPanel);
             this.Controls.Add(this.cancelbutton1);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.registerButton);
@@ -587,7 +603,6 @@
         private System.Windows.Forms.Button registerButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button cancelbutton1;
-        private System.Windows.Forms.Panel wordPanel;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuItem_Help;
         private System.Windows.Forms.Label label1;
@@ -616,6 +631,8 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label_Timer;
         private System.Windows.Forms.TextBox textBox_Timer;
+        private System.Windows.Forms.RichTextBox wordPanel;
+        private System.Windows.Forms.Label label_WordsPlayed;
         private System.Windows.Forms.Button button1;
     }
 }
