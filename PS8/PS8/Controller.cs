@@ -72,6 +72,11 @@ namespace PS8
         /// </summary>
         private static CancellationTokenSource tokenSource2;
 
+        /// <summary>
+        /// For canceling the join button operation.
+        /// </summary>
+        private static CancellationTokenSource tokenSource3;
+
         /// <summary>/
         /// Creates a Controller for the provided view
         /// </summary>
@@ -172,6 +177,7 @@ namespace PS8
         /// <param name="arg2"></param>
         private void View_JoinGame(int time)
         {
+            tokenSource3 = new CancellationTokenSource();
             try
             {
                 dynamic game = new ExpandoObject();
@@ -200,18 +206,25 @@ namespace PS8
             {
                 try
                 {
-                    tokenSource.Cancel();
-                    tokenSource2.Cancel();
                     dynamic game = new ExpandoObject();
                     game.UserToken = user1Token;
-                    game = Sync(game, "games", 2); //2 is for type PUT
-                    MessageBox.Show(""+game);
+                    game = Sync(game, "games", 2); //2 is for type PUT+
+                    if (tokenSource2 != null)
+                        tokenSource2.Cancel();
+                    if (tokenSource3 != null)
+                        tokenSource3.Cancel();
+
+                }
+                catch 
+                {
+
                 }
                 finally
                 {
                     view.JoinEnabled(true);
                     view.CancelJoinEnabled(false);
                 }
+
             }
         }
 
@@ -229,11 +242,16 @@ namespace PS8
                 user = Sync(user, "users", 1); //1 is for type POST
                 user1Token = user.UserToken;
             }
+            catch
+            {
+                MessageBox.Show("Invalid URL");
+            }
             finally
             {
                 view.TimeEnabled(true);
                 view.UserRegistered = true;
             }
+            
         }
 
         //a general helper method for post requests
@@ -307,8 +325,6 @@ namespace PS8
                 WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);
                 view.AddWord(WordPlayed.Word);
                 wordList.Add(wordPlayed);
-                
-
             }
 
             finally

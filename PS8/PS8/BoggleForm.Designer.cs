@@ -66,6 +66,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label_Timer = new System.Windows.Forms.Label();
             this.textBox_Timer = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -117,7 +118,6 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 74);
             this.label2.TabIndex = 1;
-            this.label2.Text = "A";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
@@ -132,7 +132,6 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 74);
             this.label1.TabIndex = 0;
-            this.label1.Text = "A";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label3
@@ -146,7 +145,6 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(72, 74);
             this.label3.TabIndex = 2;
-            this.label3.Text = "A";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
@@ -160,7 +158,6 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(78, 74);
             this.label4.TabIndex = 3;
-            this.label4.Text = "A";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label5
@@ -174,7 +171,6 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(75, 75);
             this.label5.TabIndex = 3;
-            this.label5.Text = "A";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label6
@@ -188,7 +184,6 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 75);
             this.label6.TabIndex = 3;
-            this.label6.Text = "A";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label7
@@ -202,7 +197,6 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(72, 75);
             this.label7.TabIndex = 3;
-            this.label7.Text = "A";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label8
@@ -216,7 +210,6 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(78, 75);
             this.label8.TabIndex = 3;
-            this.label8.Text = "A";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label9
@@ -230,7 +223,6 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(75, 74);
             this.label9.TabIndex = 3;
-            this.label9.Text = "A";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label10
@@ -244,7 +236,6 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(75, 74);
             this.label10.TabIndex = 3;
-            this.label10.Text = "A";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label11
@@ -258,7 +249,6 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(72, 74);
             this.label11.TabIndex = 3;
-            this.label11.Text = "A";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label12
@@ -272,7 +262,6 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(78, 74);
             this.label12.TabIndex = 3;
-            this.label12.Text = "A";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label13
@@ -286,7 +275,6 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(75, 77);
             this.label13.TabIndex = 3;
-            this.label13.Text = "A";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label14
@@ -300,7 +288,6 @@
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(75, 77);
             this.label14.TabIndex = 3;
-            this.label14.Text = "A";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label15
@@ -314,7 +301,6 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(72, 77);
             this.label15.TabIndex = 3;
-            this.label15.Text = "A";
             this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label16
@@ -328,7 +314,6 @@
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(78, 77);
             this.label16.TabIndex = 3;
-            this.label16.Text = "A";
             this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // wordButton
@@ -495,10 +480,11 @@
             // 
             // textBox_player1Score
             // 
-            this.textBox_player1Score.Location = new System.Drawing.Point(730, 293);
+            this.textBox_player1Score.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox_player1Score.Location = new System.Drawing.Point(730, 296);
             this.textBox_player1Score.Name = "textBox_player1Score";
             this.textBox_player1Score.ReadOnly = true;
-            this.textBox_player1Score.Size = new System.Drawing.Size(34, 20);
+            this.textBox_player1Score.Size = new System.Drawing.Size(34, 13);
             this.textBox_player1Score.TabIndex = 22;
             this.textBox_player1Score.Text = "0";
             // 
@@ -513,10 +499,11 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(730, 340);
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Location = new System.Drawing.Point(730, 343);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(34, 20);
+            this.textBox1.Size = new System.Drawing.Size(34, 13);
             this.textBox1.TabIndex = 24;
             this.textBox1.Text = "0";
             // 
@@ -539,11 +526,22 @@
             this.textBox_Timer.Size = new System.Drawing.Size(100, 44);
             this.textBox_Timer.TabIndex = 26;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(413, 398);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 27;
+            this.button1.Text = "End Game";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(929, 425);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox_Timer);
             this.Controls.Add(this.label_Timer);
             this.Controls.Add(this.textBox1);
@@ -618,6 +616,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label_Timer;
         private System.Windows.Forms.TextBox textBox_Timer;
+        private System.Windows.Forms.Button button1;
     }
 }
 

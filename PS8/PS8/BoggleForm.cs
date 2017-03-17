@@ -336,5 +336,9 @@ namespace PS8
             SubmitPressed(wordBox.Text.Trim());
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            EnableControls(false);
+        }
     }
 }
