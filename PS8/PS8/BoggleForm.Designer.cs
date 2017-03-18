@@ -56,6 +56,7 @@
             this.cancelbutton1 = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wordBox = new System.Windows.Forms.TextBox();
             this.timeBox = new System.Windows.Forms.TextBox();
             this.joinButton = new System.Windows.Forms.Button();
@@ -67,11 +68,10 @@
             this.label_Timer = new System.Windows.Forms.Label();
             this.textBox_Timer = new System.Windows.Forms.TextBox();
             this.wordPanel = new System.Windows.Forms.RichTextBox();
-            this.label_WordsPlayed = new System.Windows.Forms.Label();
-            this.label_wordPlayed2 = new System.Windows.Forms.Label();
             this.wordPanel2 = new System.Windows.Forms.RichTextBox();
-            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusLabel = new System.Windows.Forms.Label();
+            this.player1ScoreList = new System.Windows.Forms.RichTextBox();
+            this.player2ScoreList = new System.Windows.Forms.RichTextBox();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -368,7 +368,7 @@
             this.serverBox.Location = new System.Drawing.Point(94, 75);
             this.serverBox.Margin = new System.Windows.Forms.Padding(2);
             this.serverBox.Name = "serverBox";
-            this.serverBox.Size = new System.Drawing.Size(156, 20);
+            this.serverBox.Size = new System.Drawing.Size(190, 20);
             this.serverBox.TabIndex = 6;
             this.serverBox.TextChanged += new System.EventHandler(this.serverBox_TextChanged);
             // 
@@ -377,10 +377,10 @@
             this.registerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.registerButton.Enabled = false;
-            this.registerButton.Location = new System.Drawing.Point(41, 123);
+            this.registerButton.Location = new System.Drawing.Point(94, 119);
             this.registerButton.Margin = new System.Windows.Forms.Padding(2);
             this.registerButton.Name = "registerButton";
-            this.registerButton.Size = new System.Drawing.Size(164, 41);
+            this.registerButton.Size = new System.Drawing.Size(126, 41);
             this.registerButton.TabIndex = 7;
             this.registerButton.Text = "Register";
             this.registerButton.UseVisualStyleBackColor = true;
@@ -390,7 +390,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.Enabled = false;
-            this.cancelButton.Location = new System.Drawing.Point(94, 180);
+            this.cancelButton.Location = new System.Drawing.Point(113, 177);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 26);
@@ -417,7 +417,7 @@
             this.menuItem_Help});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(908, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(984, 24);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -429,6 +429,12 @@
             this.menuItem_Help.Size = new System.Drawing.Size(44, 20);
             this.menuItem_Help.Text = "Help";
             this.menuItem_Help.Click += new System.EventHandler(this.menuItem_Help_Click);
+            // 
+            // typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem
+            // 
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name");
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Size = new System.Drawing.Size(1853, 22);
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text");
             // 
             // wordBox
             // 
@@ -471,7 +477,7 @@
             // label_player1score
             // 
             this.label_player1score.AutoSize = true;
-            this.label_player1score.Location = new System.Drawing.Point(605, 346);
+            this.label_player1score.Location = new System.Drawing.Point(623, 39);
             this.label_player1score.Name = "label_player1score";
             this.label_player1score.Size = new System.Drawing.Size(79, 13);
             this.label_player1score.TabIndex = 21;
@@ -480,17 +486,18 @@
             // textBox_player1Score
             // 
             this.textBox_player1Score.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox_player1Score.Location = new System.Drawing.Point(730, 346);
+            this.textBox_player1Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_player1Score.Location = new System.Drawing.Point(744, 39);
             this.textBox_player1Score.Name = "textBox_player1Score";
             this.textBox_player1Score.ReadOnly = true;
-            this.textBox_player1Score.Size = new System.Drawing.Size(34, 13);
+            this.textBox_player1Score.Size = new System.Drawing.Size(34, 19);
             this.textBox_player1Score.TabIndex = 22;
             this.textBox_player1Score.Text = "0";
             // 
             // label_player2score
             // 
             this.label_player2score.AutoSize = true;
-            this.label_player2score.Location = new System.Drawing.Point(605, 379);
+            this.label_player2score.Location = new System.Drawing.Point(802, 39);
             this.label_player2score.Name = "label_player2score";
             this.label_player2score.Size = new System.Drawing.Size(79, 13);
             this.label_player2score.TabIndex = 23;
@@ -499,10 +506,11 @@
             // textBox_player2Score
             // 
             this.textBox_player2Score.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox_player2Score.Location = new System.Drawing.Point(730, 379);
+            this.textBox_player2Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_player2Score.Location = new System.Drawing.Point(922, 39);
             this.textBox_player2Score.Name = "textBox_player2Score";
             this.textBox_player2Score.ReadOnly = true;
-            this.textBox_player2Score.Size = new System.Drawing.Size(34, 13);
+            this.textBox_player2Score.Size = new System.Drawing.Size(34, 19);
             this.textBox_player2Score.TabIndex = 24;
             this.textBox_player2Score.Text = "0";
             // 
@@ -510,7 +518,7 @@
             // 
             this.label_Timer.AutoSize = true;
             this.label_Timer.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label_Timer.Location = new System.Drawing.Point(800, 321);
+            this.label_Timer.Location = new System.Drawing.Point(677, 366);
             this.label_Timer.Name = "label_Timer";
             this.label_Timer.Size = new System.Drawing.Size(82, 25);
             this.label_Timer.TabIndex = 25;
@@ -530,53 +538,24 @@
             this.wordPanel.BackColor = System.Drawing.SystemColors.Control;
             this.wordPanel.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.wordPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.wordPanel.Location = new System.Drawing.Point(648, 47);
+            this.wordPanel.Location = new System.Drawing.Point(635, 60);
             this.wordPanel.Name = "wordPanel";
-            this.wordPanel.Size = new System.Drawing.Size(76, 262);
+            this.wordPanel.Size = new System.Drawing.Size(81, 262);
             this.wordPanel.TabIndex = 28;
             this.wordPanel.Text = "";
             this.wordPanel.Visible = false;
-            // 
-            // label_WordsPlayed
-            // 
-            this.label_WordsPlayed.AutoSize = true;
-            this.label_WordsPlayed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label_WordsPlayed.Location = new System.Drawing.Point(635, 24);
-            this.label_WordsPlayed.Name = "label_WordsPlayed";
-            this.label_WordsPlayed.Size = new System.Drawing.Size(106, 20);
-            this.label_WordsPlayed.TabIndex = 29;
-            this.label_WordsPlayed.Text = "Words Played";
-            this.label_WordsPlayed.Visible = false;
-            // 
-            // label_wordPlayed2
-            // 
-            this.label_wordPlayed2.AutoSize = true;
-            this.label_wordPlayed2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label_wordPlayed2.Location = new System.Drawing.Point(761, 24);
-            this.label_wordPlayed2.Name = "label_wordPlayed2";
-            this.label_wordPlayed2.Size = new System.Drawing.Size(80, 20);
-            this.label_wordPlayed2.TabIndex = 30;
-            this.label_wordPlayed2.Text = "Opponent";
-            this.label_wordPlayed2.Visible = false;
             // 
             // wordPanel2
             // 
             this.wordPanel2.BackColor = System.Drawing.SystemColors.Control;
             this.wordPanel2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.wordPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.wordPanel2.Location = new System.Drawing.Point(765, 47);
+            this.wordPanel2.Location = new System.Drawing.Point(805, 60);
             this.wordPanel2.Name = "wordPanel2";
-            this.wordPanel2.Size = new System.Drawing.Size(76, 262);
+            this.wordPanel2.Size = new System.Drawing.Size(76, 227);
             this.wordPanel2.TabIndex = 31;
             this.wordPanel2.Text = "";
             this.wordPanel2.Visible = false;
-            this.wordPanel2.TextChanged += new System.EventHandler(this.wordPanel2_TextChanged);
-            // 
-            // typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem
-            // 
-            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name");
-            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Size = new System.Drawing.Size(1853, 22);
-            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text");
             // 
             // statusLabel
             // 
@@ -590,15 +569,39 @@
             this.statusLabel.Text = "Waiting for Player 2 to join...";
             this.statusLabel.Visible = false;
             // 
+            // player1ScoreList
+            // 
+            this.player1ScoreList.BackColor = System.Drawing.SystemColors.Control;
+            this.player1ScoreList.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.player1ScoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.player1ScoreList.Location = new System.Drawing.Point(733, 60);
+            this.player1ScoreList.Name = "player1ScoreList";
+            this.player1ScoreList.ReadOnly = true;
+            this.player1ScoreList.Size = new System.Drawing.Size(26, 262);
+            this.player1ScoreList.TabIndex = 33;
+            this.player1ScoreList.Text = "";
+            // 
+            // player2ScoreList
+            // 
+            this.player2ScoreList.BackColor = System.Drawing.SystemColors.Control;
+            this.player2ScoreList.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.player2ScoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.player2ScoreList.Location = new System.Drawing.Point(913, 60);
+            this.player2ScoreList.Name = "player2ScoreList";
+            this.player2ScoreList.ReadOnly = true;
+            this.player2ScoreList.Size = new System.Drawing.Size(26, 262);
+            this.player2ScoreList.TabIndex = 34;
+            this.player2ScoreList.Text = "";
+            // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(908, 425);
+            this.ClientSize = new System.Drawing.Size(984, 425);
+            this.Controls.Add(this.player2ScoreList);
+            this.Controls.Add(this.player1ScoreList);
             this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.wordPanel2);
-            this.Controls.Add(this.label_wordPlayed2);
-            this.Controls.Add(this.label_WordsPlayed);
             this.Controls.Add(this.wordPanel);
             this.Controls.Add(this.textBox_Timer);
             this.Controls.Add(this.label_Timer);
@@ -673,12 +676,12 @@
         private System.Windows.Forms.Label label_Timer;
         private System.Windows.Forms.TextBox textBox_Timer;
         private System.Windows.Forms.RichTextBox wordPanel;
-        private System.Windows.Forms.Label label_WordsPlayed;
-        private System.Windows.Forms.Label label_wordPlayed2;
         private System.Windows.Forms.RichTextBox wordPanel2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ToolStripMenuItem typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem;
         private System.Windows.Forms.Label statusLabel;
+        private System.Windows.Forms.RichTextBox player1ScoreList;
+        private System.Windows.Forms.RichTextBox player2ScoreList;
     }
 }
 
