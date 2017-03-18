@@ -195,7 +195,7 @@ namespace PS8
                 else
                 {
                     oppWords = game.Player1.WordsPlayed;
-                }
+                } 
                 List<string> oppString = new List<string>();
                 dynamic WordsPlayed = new ExpandoObject();
                 WordsPlayed.Word = "";
