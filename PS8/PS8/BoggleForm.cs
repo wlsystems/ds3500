@@ -381,7 +381,7 @@ namespace PS8
                 e.Handled = true;
                 if (SubmitPressed != null)
                 {
-                    SubmitPressed(wordBox.Text.Trim());
+                    SubmitPressed(wordBox.Text);
                     wordBox.Text = "";
                 }
             }

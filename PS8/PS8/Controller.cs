@@ -171,41 +171,52 @@ namespace PS8
             tokenSource3 = new CancellationTokenSource();
             CancellationToken ct = tokenSource3.Token;
 
-                dynamic game = new ExpandoObject();
-                game = Sync(game, "games/" + gameToken, 3);
-                while (game.GameState == "active")
-                {
-                    view.UpdateTimer(game.TimeLeft);
-                    score = (int)game.Player1.Score;
-                    view.UpdateScore1(score);
-                    score = (int)game.Player2.Score;
-                    view.UpdateScore2(score);
-                    await Task.Delay(1000);
-                    if (ct.IsCancellationRequested)
-                        break;
-                game = Sync(game, "games/" + gameToken, 3);
-                }
-                if (game.GameState == "completed")
-                {
+            dynamic game = new ExpandoObject();
+            game = Sync(game, "games/" + gameToken, 3);
+            while (game.GameState == "active")
+            {
+                view.UpdateTimer(game.TimeLeft);
+                score = (int)game.Player1.Score;
+                view.UpdateScore1(score);
+                score = (int)game.Player2.Score;
+                view.UpdateScore2(score);
+                await Task.Delay(1000);
+                if (ct.IsCancellationRequested)
+                    break;
+            game = Sync(game, "games/" + gameToken, 3);
+            }
+            if (game.GameState == "completed")
+            {
                 IList<object> oppWords;
+                IList<object> myWords;
                 if (game.Player1.Nickname == localClient)
                 {
-                   oppWords = game.Player1.WordsPlayed.Word;
+                    myWords = game.Player1.WordsPlayed;
+                    oppWords = game.Player2.WordsPlayed;
                 }
                 else
                 {
-                    oppWords = game.Player2.WordsPlayed.Word;
+                    myWords = game.Player2.WordsPlayed;
+                    oppWords = game.Player1.WordsPlayed;
                 }
                 List<string> oppString = new List<string>();
-                ExpandoObject WordsPlayed = new ExpandoObject();
+                List<string> myString = new List<string>();
+                dynamic WordsPlayed = new ExpandoObject();
                 foreach (object item in oppWords)
                 {
-                    WordsPlayed= (ExpandoObject) item;
-                    oppString.Add(WordsPlayed.Word.ToString());  ///??
+                    WordsPlayed = item;
+                    oppString.Add(WordsPlayed.ToString());  ///??
+                }
+
+               WordsPlayed = new ExpandoObject();
+                foreach (object item in myWords)
+                {
+                    WordsPlayed = item;
+                    myString.Add(WordsPlayed.ToString());  ///??
 
                 }
                 view.ViewOpponentsWords(oppString);
-            }
+              }
 
         }
 
