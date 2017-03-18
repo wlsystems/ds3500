@@ -90,10 +90,8 @@ namespace PS8
             score = 0;
             wordList = new List<string>();
             view.CancelPressed += Cancel;
-            view.RegisterPressed += Register;
             view.SubmitPressed += SubmitWord;
             view.DonePressed += Done;
-            //view.FilterChanged += FilterListVisible;
             view.SetServerURL += Register;
             view.JoinGame += View_JoinGame;
 
@@ -198,6 +196,12 @@ namespace PS8
                 {
                     oppWords = game.Player1.WordsPlayed;
                 }
+                List<string> oppString = new List<string>();
+                foreach (object item in oppWords)
+                {
+                    
+                }
+                view.ViewOpponentsWords(oppString);
             }
 
         }

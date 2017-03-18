@@ -38,8 +38,8 @@ namespace PS8
         /// </summary>
         public void AddWord(string wordplayed)
         {
-            label_WordsPlayed.Visible = true;
-            wordPanel.Visible = true;
+            //label_WordsPlayed.Visible = true;
+            //wordPanel.Visible = true;
             wordPanel.Text = wordPanel.Text.ToString() + "\r" + wordplayed.ToUpper();
         }
 
@@ -88,11 +88,7 @@ namespace PS8
         /// Fired when register button is pushed.
         /// </summary>
         public event Action<string, string> SetServerURL;
-        /// <summary>
-        /// Fired when user must be registered.
-        /// Parameters are name and requested client address. 
-        /// </summary>
-        public event Action<string, string> RegisterPressed;
+
 
         /// <summary>
         /// Fired when a new word is played. 
@@ -190,6 +186,8 @@ namespace PS8
 
         internal void ViewOpponentsWords(List<string> oppWords)
         {
+            label_wordPlayed.Visible = true;
+            wordPanel.Visible = true;
             label_wordPlayed2.Visible = true;
             wordPanel2.Visible = true;
             foreach (var item in oppWords)
