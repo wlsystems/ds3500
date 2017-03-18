@@ -171,26 +171,26 @@ namespace PS8
             tokenSource3 = new CancellationTokenSource();
             CancellationToken ct = tokenSource3.Token;
 
-                dynamic game = new ExpandoObject();
+            dynamic game = new ExpandoObject();
+            game = Sync(game, "games/" + gameToken, 3);
+            while (game.GameState == "active")
+            {
+                view.UpdateTimer(game.TimeLeft);
+                score = (int)game.Player1.Score;
+                view.UpdateScore1(score);
+                score = (int)game.Player2.Score;
+                view.UpdateScore2(score);
+                await Task.Delay(1000);
+                if (ct.IsCancellationRequested)
+                    break;
                 game = Sync(game, "games/" + gameToken, 3);
-                while (game.GameState == "active")
-                {
-                    view.UpdateTimer(game.TimeLeft);
-                    score = (int)game.Player1.Score;
-                    view.UpdateScore1(score);
-                    score = (int)game.Player2.Score;
-                    view.UpdateScore2(score);
-                    await Task.Delay(1000);
-                    if (ct.IsCancellationRequested)
-                        break;
-                game = Sync(game, "games/" + gameToken, 3);
-                }
-                if (game.GameState == "completed")
-                {
+            }
+            if (game.GameState == "completed")
+            {
                 IList<object> oppWords;
                 if (game.Player1.Nickname == localClient)
                 {
-                   oppWords = game.Player2.WordsPlayed.Word;
+                    oppWords = game.Player2.WordsPlayed.Word;
                 }
                 else
                 {
@@ -200,7 +200,7 @@ namespace PS8
                 ExpandoObject WordsPlayed = new ExpandoObject();
                 foreach (object item in oppWords)
                 {
-                    WordsPlayed= (ExpandoObject) item;
+                    WordsPlayed = (ExpandoObject)item;
                     oppString.Add(WordsPlayed.Word.ToString());  ///??
 
                 }
