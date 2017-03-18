@@ -94,6 +94,11 @@ namespace PS8
             wordPanel2.Visible = false;
             wordPanel.Text = "";
             wordPanel2.Text = "";
+            player1ScoreList.Visible = false;
+            player2ScoreList.Visible = false;
+            player1ScoreList.Text = "";
+            player2ScoreList.Text = "";
+
         }
 
         /// <summary>
