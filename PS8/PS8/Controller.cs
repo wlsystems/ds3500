@@ -186,20 +186,23 @@ namespace PS8
                 game = Sync(game, "games/" + gameToken, 3);
                 }
                 if (game.GameState == "completed")
-            {
+                {
                 IList<object> oppWords;
                 if (game.Player1.Nickname == localClient)
                 {
-                   oppWords = game.Player2.WordsPlayed;
+                   oppWords = game.Player1.WordsPlayed.Word;
                 }
                 else
                 {
-                    oppWords = game.Player1.WordsPlayed;
+                    oppWords = game.Player2.WordsPlayed.Word;
                 }
                 List<string> oppString = new List<string>();
+                ExpandoObject WordsPlayed = new ExpandoObject();
                 foreach (object item in oppWords)
                 {
-                    //NEED TO PARSE WORDS FROM OBJECT
+                    WordsPlayed= (ExpandoObject) item;
+                    oppString.Add(WordsPlayed.Word.ToString());  ///??
+
                 }
                 view.ViewOpponentsWords(oppString);
             }
