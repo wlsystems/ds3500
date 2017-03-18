@@ -190,11 +190,11 @@ namespace PS8
                 IList<object> oppWords;
                 if (game.Player1.Nickname == localClient)
                 {
-                   oppWords = game.Player1.WordsPlayed.Word;
+                   oppWords = game.Player2.WordsPlayed.Word;
                 }
                 else
                 {
-                    oppWords = game.Player2.WordsPlayed.Word;
+                    oppWords = game.Player1.WordsPlayed.Word;
                 }
                 List<string> oppString = new List<string>();
                 ExpandoObject WordsPlayed = new ExpandoObject();
