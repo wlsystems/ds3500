@@ -25,17 +25,10 @@ namespace PS8
         { 
             registerButton.Enabled = state;
             wordBox.Enabled = state && UserRegistered && timeBox.Text.Length > 0;
-            joinButton.Enabled = UserRegistered;
-
-            foreach (Control control in wordPanel.Controls)
-            {
-                if (control is Button)
-                {
-                    control.Enabled = state && UserRegistered;
-                }
-            }
+            joinButton.Enabled = false;
             cancelButton.Enabled = !state;
-
+            cancelbutton1.Enabled = state;
+            cancelbutton1.Text = "Leave";
         }
 
 
@@ -211,6 +204,19 @@ namespace PS8
             cancelButton.Enabled = true;
             SetServerURL(nameBox.Text, serverBox.Text);
             registerButton.Enabled = false;
+            joinButton.Enabled = true;
+            cancelbutton1.Enabled = false;
+            ClearBoard();
+            CancelPressed(3);
+            textBox_Timer.Text = "";
+            textBox_player1Score.Text = "0";
+            textBox_player2Score.Text = "0";
+            SetStatusLabel(false, false);
+        }
+
+        private void ClearBoard()
+        {
+            label1.Text = ""; label2.Text = ""; label3.Text = ""; label4.Text = ""; label5.Text = ""; label6.Text = ""; label7.Text = ""; label8.Text = ""; label9.Text = ""; label10.Text = ""; label11.Text = ""; label12.Text = ""; label13.Text = ""; label14.Text = ""; label15.Text = ""; label16.Text = "";
         }
 
         private void nameBox_TextChanged(object sender, EventArgs e)
@@ -226,7 +232,26 @@ namespace PS8
 
         }
 
-
+        /// <summary>
+        /// Show or hide the status label.
+        /// </summary>
+        /// <param name="state"></param>
+        public void SetStatusLabel(bool state, bool active)
+        {
+            statusLabel.Visible = state;
+            if (active)
+            {
+                statusLabel.Text = "Active Game";
+                statusLabel.ForeColor = Color.Green;
+            }
+            else
+            {
+                statusLabel.ForeColor = Color.DarkRed;
+                statusLabel.Text = "Waiting for Player 2 to join...";  
+            }
+                
+                
+        }
         private void joinButton_Click(object sender, EventArgs e)
         {
             cancelbutton1.Enabled = true;
@@ -261,9 +286,13 @@ namespace PS8
         {
             if (CancelPressed != null)
                 CancelPressed(2);
+            registerButton_Click_1(sender, e);
+            SetStatusLabel(false, false);
         }
         public void SetLabel(string s)
         {
+            if (s.Equals("q"))
+                s = "qu";
             for (int i = 0; i < 16; i++)
             {
                 switch (i)
@@ -329,7 +358,7 @@ namespace PS8
 
         internal void UpdateScore2(int score)
         {
-            textBox1.Text = score.ToString();
+            textBox_player2Score.Text = score.ToString();
         }
 
         internal void submitEnableControls(bool wordState)
@@ -350,6 +379,11 @@ namespace PS8
         private void button1_Click(object sender, EventArgs e)
         {
             EnableControls(false);
+        }
+
+        private void wordPanel2_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

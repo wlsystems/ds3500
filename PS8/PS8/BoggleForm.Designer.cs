@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BoggleForm));
             this.gameBoard = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -62,13 +63,15 @@
             this.label_player1score = new System.Windows.Forms.Label();
             this.textBox_player1Score = new System.Windows.Forms.TextBox();
             this.label_player2score = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox_player2Score = new System.Windows.Forms.TextBox();
             this.label_Timer = new System.Windows.Forms.Label();
             this.textBox_Timer = new System.Windows.Forms.TextBox();
             this.wordPanel = new System.Windows.Forms.RichTextBox();
             this.label_WordsPlayed = new System.Windows.Forms.Label();
             this.label_wordPlayed2 = new System.Windows.Forms.Label();
             this.wordPanel2 = new System.Windows.Forms.RichTextBox();
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusLabel = new System.Windows.Forms.Label();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -81,7 +84,7 @@
             this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 72F));
-            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.gameBoard.Controls.Add(this.label2, 1, 0);
             this.gameBoard.Controls.Add(this.label1, 0, 0);
             this.gameBoard.Controls.Add(this.label3, 3, 0);
@@ -114,7 +117,7 @@
             this.label2.AutoSize = true;
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(74, 0);
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
@@ -128,7 +131,7 @@
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
@@ -141,7 +144,7 @@
             this.label3.AutoSize = true;
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(148, 0);
             this.label3.Margin = new System.Windows.Forms.Padding(0);
             this.label3.Name = "label3";
@@ -154,7 +157,7 @@
             this.label4.AutoSize = true;
             this.label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(220, 0);
             this.label4.Margin = new System.Windows.Forms.Padding(0);
             this.label4.Name = "label4";
@@ -167,7 +170,7 @@
             this.label5.AutoSize = true;
             this.label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(0, 74);
             this.label5.Margin = new System.Windows.Forms.Padding(0);
             this.label5.Name = "label5";
@@ -180,7 +183,7 @@
             this.label6.AutoSize = true;
             this.label6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(74, 74);
             this.label6.Margin = new System.Windows.Forms.Padding(0);
             this.label6.Name = "label6";
@@ -193,7 +196,7 @@
             this.label7.AutoSize = true;
             this.label7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.Location = new System.Drawing.Point(148, 74);
             this.label7.Margin = new System.Windows.Forms.Padding(0);
             this.label7.Name = "label7";
@@ -206,7 +209,7 @@
             this.label8.AutoSize = true;
             this.label8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.Location = new System.Drawing.Point(220, 74);
             this.label8.Margin = new System.Windows.Forms.Padding(0);
             this.label8.Name = "label8";
@@ -219,7 +222,7 @@
             this.label9.AutoSize = true;
             this.label9.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.Location = new System.Drawing.Point(0, 149);
             this.label9.Margin = new System.Windows.Forms.Padding(0);
             this.label9.Name = "label9";
@@ -232,7 +235,7 @@
             this.label10.AutoSize = true;
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.Location = new System.Drawing.Point(74, 149);
             this.label10.Margin = new System.Windows.Forms.Padding(0);
             this.label10.Name = "label10";
@@ -245,7 +248,7 @@
             this.label11.AutoSize = true;
             this.label11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.Location = new System.Drawing.Point(148, 149);
             this.label11.Margin = new System.Windows.Forms.Padding(0);
             this.label11.Name = "label11";
@@ -258,7 +261,7 @@
             this.label12.AutoSize = true;
             this.label12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.Location = new System.Drawing.Point(220, 149);
             this.label12.Margin = new System.Windows.Forms.Padding(0);
             this.label12.Name = "label12";
@@ -271,7 +274,7 @@
             this.label13.AutoSize = true;
             this.label13.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.Location = new System.Drawing.Point(0, 223);
             this.label13.Margin = new System.Windows.Forms.Padding(0);
             this.label13.Name = "label13";
@@ -284,7 +287,7 @@
             this.label14.AutoSize = true;
             this.label14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label14.Location = new System.Drawing.Point(74, 223);
             this.label14.Margin = new System.Windows.Forms.Padding(0);
             this.label14.Name = "label14";
@@ -297,7 +300,7 @@
             this.label15.AutoSize = true;
             this.label15.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label15.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label15.Location = new System.Drawing.Point(148, 223);
             this.label15.Margin = new System.Windows.Forms.Padding(0);
             this.label15.Name = "label15";
@@ -310,7 +313,7 @@
             this.label16.AutoSize = true;
             this.label16.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label16.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Font = new System.Drawing.Font("Trebuchet MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label16.Location = new System.Drawing.Point(220, 223);
             this.label16.Margin = new System.Windows.Forms.Padding(0);
             this.label16.Name = "label16";
@@ -321,9 +324,9 @@
             // wordButton
             // 
             this.wordButton.Enabled = false;
-            this.wordButton.Location = new System.Drawing.Point(388, 369);
+            this.wordButton.Location = new System.Drawing.Point(401, 374);
             this.wordButton.Name = "wordButton";
-            this.wordButton.Size = new System.Drawing.Size(129, 23);
+            this.wordButton.Size = new System.Drawing.Size(100, 23);
             this.wordButton.TabIndex = 1;
             this.wordButton.Text = "Submit Word";
             this.wordButton.UseVisualStyleBackColor = true;
@@ -342,7 +345,7 @@
             // nameBox
             // 
             this.nameBox.Location = new System.Drawing.Point(63, 39);
-            this.nameBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.nameBox.Margin = new System.Windows.Forms.Padding(2);
             this.nameBox.Name = "nameBox";
             this.nameBox.Size = new System.Drawing.Size(187, 20);
             this.nameBox.TabIndex = 4;
@@ -363,7 +366,7 @@
             this.serverBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.serverBox.Location = new System.Drawing.Point(94, 75);
-            this.serverBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.serverBox.Margin = new System.Windows.Forms.Padding(2);
             this.serverBox.Name = "serverBox";
             this.serverBox.Size = new System.Drawing.Size(156, 20);
             this.serverBox.TabIndex = 6;
@@ -375,7 +378,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.registerButton.Enabled = false;
             this.registerButton.Location = new System.Drawing.Point(41, 123);
-            this.registerButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.registerButton.Margin = new System.Windows.Forms.Padding(2);
             this.registerButton.Name = "registerButton";
             this.registerButton.Size = new System.Drawing.Size(164, 41);
             this.registerButton.TabIndex = 7;
@@ -388,7 +391,7 @@
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.Enabled = false;
             this.cancelButton.Location = new System.Drawing.Point(94, 180);
-            this.cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 26);
             this.cancelButton.TabIndex = 13;
@@ -420,6 +423,8 @@
             // 
             // menuItem_Help
             // 
+            this.menuItem_Help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem});
             this.menuItem_Help.Name = "menuItem_Help";
             this.menuItem_Help.Size = new System.Drawing.Size(44, 20);
             this.menuItem_Help.Text = "Help";
@@ -428,7 +433,7 @@
             // wordBox
             // 
             this.wordBox.Enabled = false;
-            this.wordBox.Location = new System.Drawing.Point(401, 343);
+            this.wordBox.Location = new System.Drawing.Point(401, 336);
             this.wordBox.Name = "wordBox";
             this.wordBox.Size = new System.Drawing.Size(100, 20);
             this.wordBox.TabIndex = 17;
@@ -491,15 +496,15 @@
             this.label_player2score.TabIndex = 23;
             this.label_player2score.Text = "Player 2 Score:";
             // 
-            // textBox1
+            // textBox_player2Score
             // 
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.Location = new System.Drawing.Point(730, 379);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(34, 13);
-            this.textBox1.TabIndex = 24;
-            this.textBox1.Text = "0";
+            this.textBox_player2Score.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox_player2Score.Location = new System.Drawing.Point(730, 379);
+            this.textBox_player2Score.Name = "textBox_player2Score";
+            this.textBox_player2Score.ReadOnly = true;
+            this.textBox_player2Score.Size = new System.Drawing.Size(34, 13);
+            this.textBox_player2Score.TabIndex = 24;
+            this.textBox_player2Score.Text = "0";
             // 
             // label_Timer
             // 
@@ -542,7 +547,6 @@
             this.label_WordsPlayed.TabIndex = 29;
             this.label_WordsPlayed.Text = "Words Played";
             this.label_WordsPlayed.Visible = false;
-
             // 
             // label_wordPlayed2
             // 
@@ -566,20 +570,39 @@
             this.wordPanel2.TabIndex = 31;
             this.wordPanel2.Text = "";
             this.wordPanel2.Visible = false;
+            this.wordPanel2.TextChanged += new System.EventHandler(this.wordPanel2_TextChanged);
+            // 
+            // typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem
+            // 
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name");
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Size = new System.Drawing.Size(1853, 22);
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text");
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.AutoSize = true;
+            this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.statusLabel.ForeColor = System.Drawing.Color.DarkRed;
+            this.statusLabel.Location = new System.Drawing.Point(26, 366);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(333, 30);
+            this.statusLabel.TabIndex = 32;
+            this.statusLabel.Text = "Waiting for Player 2 to join...";
+            this.statusLabel.Visible = false;
             // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(908, 425);
+            this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.wordPanel2);
             this.Controls.Add(this.label_wordPlayed2);
             this.Controls.Add(this.label_WordsPlayed);
             this.Controls.Add(this.wordPanel);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox_Timer);
             this.Controls.Add(this.label_Timer);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBox_player2Score);
             this.Controls.Add(this.label_player2score);
             this.Controls.Add(this.textBox_player1Score);
             this.Controls.Add(this.label_player1score);
@@ -646,7 +669,7 @@
         private System.Windows.Forms.Label label_player1score;
         private System.Windows.Forms.TextBox textBox_player1Score;
         private System.Windows.Forms.Label label_player2score;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox_player2Score;
         private System.Windows.Forms.Label label_Timer;
         private System.Windows.Forms.TextBox textBox_Timer;
         private System.Windows.Forms.RichTextBox wordPanel;
@@ -654,6 +677,8 @@
         private System.Windows.Forms.Label label_wordPlayed2;
         private System.Windows.Forms.RichTextBox wordPanel2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ToolStripMenuItem typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem;
+        private System.Windows.Forms.Label statusLabel;
     }
 }
 
