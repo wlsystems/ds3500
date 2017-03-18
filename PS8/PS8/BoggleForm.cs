@@ -257,8 +257,10 @@ namespace PS8
             joinButton.Enabled = false;
             if (JoinGame != null)
             {
-                int time = int.Parse(timeBox.Text.Trim());
-                if ((time >= 5) && (time <= 120))
+                int time = 0;
+                if (timeBox.Text != "")
+                    time = int.Parse(timeBox.Text.Trim());
+                if ((time >= 5) && (time <= 120) )
                 {
                     JoinGame(time);
                 }
@@ -276,6 +278,8 @@ namespace PS8
         {
             registerButton.Enabled = true;
             cancelButton.Enabled = false;
+            timeBox.Enabled = false;
+            joinButton.Enabled = false;
             if (CancelPressed != null)
                 CancelPressed(1);
         }
@@ -367,6 +371,20 @@ namespace PS8
         private void wordBox_TextChanged_1(object sender, EventArgs e)
         {
             wordButton.Enabled = true;
+            wordBox.KeyPress += WordBox_KeyPress;
+        }
+
+        private void WordBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                e.Handled = true;
+                if (SubmitPressed != null)
+                {
+                    SubmitPressed(wordBox.Text.Trim());
+                    wordBox.Text = "";
+                }
+            }
         }
 
         private void wordButton_Click(object sender, EventArgs e)
