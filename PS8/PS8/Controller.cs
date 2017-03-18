@@ -26,7 +26,7 @@ namespace PS8
         private static string url;
 
         /// <summary>
-        /// Stores the url;
+        /// Stores the local client name. 
         /// </summary>
         private string localClient;
 
@@ -183,7 +183,7 @@ namespace PS8
                 await Task.Delay(1000);
                 if (ct.IsCancellationRequested)
                     break;
-            game = Sync(game, "games/" + gameToken, 3);
+                game = Sync(game, "games/" + gameToken, 3);
             }
             if (game.GameState == "completed")
             {
@@ -191,28 +191,20 @@ namespace PS8
                 IList<object> myWords;
                 if (game.Player1.Nickname == localClient)
                 {
-                    myWords = game.Player1.WordsPlayed;
                     oppWords = game.Player2.WordsPlayed;
                 }
                 else
                 {
-                    myWords = game.Player2.WordsPlayed;
                     oppWords = game.Player1.WordsPlayed;
                 }
                 List<string> oppString = new List<string>();
-                List<string> myString = new List<string>();
                 dynamic WordsPlayed = new ExpandoObject();
+                WordsPlayed.Word = "";
+
                 foreach (object item in oppWords)
                 {
-                    WordsPlayed = item;
-                    oppString.Add(WordsPlayed.ToString());  ///??
-                }
-
-               WordsPlayed = new ExpandoObject();
-                foreach (object item in myWords)
-                {
-                    WordsPlayed = item;
-                    myString.Add(WordsPlayed.ToString());  ///??
+                    WordsPlayed = (ExpandoObject)item;
+                    oppString.Add(WordsPlayed.Word.ToString());  ///??
 
                 }
                 view.ViewOpponentsWords(oppString);
