@@ -179,6 +179,18 @@ namespace PS8
                         break;
                 game = Sync(game, "games/" + gameToken, 3);
                 }
+                if (game.GameState == "completed")
+            {
+                IList<object> oppWords;
+                if (game.Player1.Nickname == localClient)
+                {
+                   oppWords = game.Player2.WordsPlayed;
+                }
+                else
+                {
+                    oppWords = game.Player1.WordsPlayed;
+                }
+            }
 
         }
 
