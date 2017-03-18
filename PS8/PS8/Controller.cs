@@ -96,6 +96,10 @@ namespace PS8
             view.JoinGame += View_JoinGame;
 
         }
+
+        /// <summary>
+        /// Handles the cancel button and prevents multiple firings.
+        /// </summary>
         public event EventHandler CancelPressed
         {
             add

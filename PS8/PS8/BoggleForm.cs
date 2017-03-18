@@ -293,59 +293,61 @@ namespace PS8
         }
         public void SetLabel(string s)
         {
-            if (s.Equals("q"))
-                s = "qu";
+            string temp = "";
             for (int i = 0; i < 16; i++)
             {
+                temp = s.ElementAt(i).ToString();
+                if (temp.Equals("Q"))
+                    temp = "Qu";
                 switch (i)
                 {
                     case 0:
-                        label1.Text = s.ElementAt(i).ToString();
+                        label1.Text = temp;
                         break;
                     case 1:
-                        label2.Text = s.ElementAt(i).ToString();
+                        label2.Text = temp;
                         break;
                     case 2:
-                        label3.Text = s.ElementAt(i).ToString();
+                        label3.Text = temp;
                         break;
                     case 3:
-                        label4.Text = s.ElementAt(i).ToString();
+                        label4.Text = temp;
                         break;
                     case 4:
-                        label5.Text = s.ElementAt(i).ToString();
+                        label5.Text = temp;
                         break;
                     case 5:
-                        label6.Text = s.ElementAt(i).ToString();
+                        label6.Text = temp;
                         break;
                     case 6:
-                        label7.Text = s.ElementAt(i).ToString();
+                        label7.Text = temp;
                         break;
                     case 7:
-                        label8.Text = s.ElementAt(i).ToString();
+                        label8.Text = temp;
                         break;
                     case 8:
-                        label9.Text = s.ElementAt(i).ToString();
+                        label9.Text = temp;
                         break;
                     case 9:
-                        label10.Text = s.ElementAt(i).ToString();
+                        label10.Text = temp;
                         break;
                     case 10:
-                        label11.Text = s.ElementAt(i).ToString();
+                        label11.Text = temp;
                         break;
                     case 11:
-                        label12.Text = s.ElementAt(i).ToString();
+                        label12.Text = temp;
                         break;
                     case 12:
-                        label13.Text = s.ElementAt(i).ToString();
+                        label13.Text = temp;
                         break;
                     case 13:
-                        label14.Text = s.ElementAt(i).ToString();
+                        label14.Text = temp;
                         break;
                     case 14:
-                        label15.Text = s.ElementAt(i).ToString();
+                        label15.Text = temp;
                         break;
                     case 15:
-                        label16.Text = s.ElementAt(i).ToString();
+                        label16.Text = temp;
                         break;
                 }
             }
@@ -371,18 +373,25 @@ namespace PS8
         private void wordBox_TextChanged_1(object sender, EventArgs e)
         {
             wordButton.Enabled = true;
-            wordBox.KeyPress += WordBox_KeyPress;
+            wordBox.KeyDown += WordBox_KeyDown;
         }
 
-        private void WordBox_KeyPress(object sender, KeyPressEventArgs e)
+        private void WordBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyChar == (char)13)
+            bool pressed = false;
+            if (e.KeyCode == Keys.Enter)
             {
-                e.Handled = true;
-                if (SubmitPressed != null)
+                if (pressed == false)
                 {
-                    SubmitPressed(wordBox.Text);
-                    wordBox.Text = "";
+                    pressed = true;
+                    MessageBox.Show("EE");
+                    e.Handled = true;
+                    if (SubmitPressed != null)
+                    {
+                        SubmitPressed(wordBox.Text);
+                        wordBox.Text = "";
+                        return;
+                    }
                 }
             }
         }
