@@ -26,7 +26,7 @@ namespace PS8
         private static string url;
 
         /// <summary>
-        /// Stores the url;
+        /// Stores the local client name. 
         /// </summary>
         private string localClient;
 
@@ -190,14 +190,16 @@ namespace PS8
                 IList<object> oppWords;
                 if (game.Player1.Nickname == localClient)
                 {
-                    oppWords = game.Player2.WordsPlayed.Word;
+                    oppWords = game.Player2.WordsPlayed;
                 }
                 else
                 {
-                    oppWords = game.Player1.WordsPlayed.Word;
+                    oppWords = game.Player1.WordsPlayed;
                 }
                 List<string> oppString = new List<string>();
-                ExpandoObject WordsPlayed = new ExpandoObject();
+                dynamic WordsPlayed = new ExpandoObject();
+                WordsPlayed.Word = "";
+
                 foreach (object item in oppWords)
                 {
                     WordsPlayed = (ExpandoObject)item;
