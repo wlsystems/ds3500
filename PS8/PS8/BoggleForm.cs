@@ -186,7 +186,7 @@ namespace PS8
 
         internal void ViewOpponentsWords(List<string> oppWords)
         {
-            label_wordPlayed.Visible = true;
+            label_WordsPlayed.Visible = true;
             wordPanel.Visible = true;
             label_wordPlayed2.Visible = true;
             wordPanel2.Visible = true;

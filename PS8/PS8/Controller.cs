@@ -199,7 +199,7 @@ namespace PS8
                 List<string> oppString = new List<string>();
                 foreach (object item in oppWords)
                 {
-                    
+                    //NEED TO PARSE WORDS FROM OBJECT
                 }
                 view.ViewOpponentsWords(oppString);
             }
