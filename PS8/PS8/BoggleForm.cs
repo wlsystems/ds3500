@@ -36,34 +36,26 @@ namespace PS8
         /// <summary>
         /// Adds words to Player 1 List
         /// </summary>
-        public void ViewPlayer1Word(List<string> player1List, List<int> player1Score)
+        public void ViewPlayer1Word(List<string> player1List)
         {
 
             wordPanel.Visible = true;
-            player1ScoreList.Visible = true;
             foreach (var item in player1List)
             {
                 wordPanel.Text = wordPanel.Text + "\r" + item.ToString().ToUpper();
                 
             }
-            foreach (var item in player1Score)
-            {
-                player1ScoreList.Text = player1ScoreList.Text + "\r" + item;
-            }
+
         }
 
-        public void ViewPlayer2Word(List<string> player2List, List<int> player2Score )
+        public void ViewPlayer2Word(List<string> player2List )
         {
             wordPanel2.Visible = true;
-            player2ScoreList.Visible = true;
             foreach (var item in player2List)
             {
                 wordPanel2.Text = wordPanel2.Text + "\r" + item.ToString().ToUpper();
             }
-            foreach (var item in player2Score)
-            {
-                player2ScoreList.Text = player2ScoreList.Text + "\r" + item;
-            }
+
 
         }
 
@@ -94,10 +86,6 @@ namespace PS8
             wordPanel2.Visible = false;
             wordPanel.Text = "";
             wordPanel2.Text = "";
-            player1ScoreList.Visible = false;
-            player2ScoreList.Visible = false;
-            player1ScoreList.Text = "";
-            player2ScoreList.Text = "";
 
         }
 
