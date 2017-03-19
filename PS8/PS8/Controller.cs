@@ -112,7 +112,6 @@ namespace PS8
         {
             Task task = new Task(delegate { GameStatus(); });
             task.Start();
-            
         }
 
         /// <summary>
@@ -137,7 +136,7 @@ namespace PS8
                         if (A == true)
                             view.SetStatusLabel(true, false);
                         else
-                            view.SetStatusLabel(false, false);
+                            view.SetStatusLabel(false, true);
                         await Task.Delay(1000);
                         if (token2.IsCancellationRequested)
                         {
@@ -184,6 +183,7 @@ namespace PS8
             }
             if (game.GameState == "completed")
             {
+                view.SetStatusLabel(false, false);
                 IList<object> Player1List;
                 Player1List = game.Player1.WordsPlayed;
                 List<string> Player1String = new List<string>();
@@ -196,11 +196,8 @@ namespace PS8
                     WordsPlayed = (ExpandoObject)item;
                     Player1String.Add(WordsPlayed.Score.ToString()+ " " + WordsPlayed.Word.ToString());
                     //Player1Score.Add((int)WordsPlayed.Score);
-
                 }
                 view.ViewPlayer1Word(Player1String);
-
-
                 IList<object> Player2List;
                 Player2List = game.Player2.WordsPlayed;
                 List<string> Player2String = new List<string>();
@@ -216,8 +213,8 @@ namespace PS8
 
                 }
                 view.ViewPlayer2Word(Player2String);
+                view.JoinEnabled(true);
             }
-
         }
 
         /// <summary>

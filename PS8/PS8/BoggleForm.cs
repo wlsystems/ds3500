@@ -12,6 +12,17 @@ namespace PS8
 {
     public partial class BoggleForm : Form
     {
+        //If there is a game in progress.
+
+        private bool isActiveGame;
+        public bool isActive
+        {
+            set
+            {
+                isActiveGame = value;
+            }
+            get { return isActiveGame; }
+        }
         public BoggleForm()
         {
             InitializeComponent();
@@ -131,6 +142,15 @@ namespace PS8
             timeBox.Enabled = state;
         }
 
+        public void EnableJoin(bool state, bool playAgain)
+        {
+            if (playAgain == true)
+            {
+                joinButton.Text = "Play Again";
+                joinButton.Enabled = true;
+            }      
+        }
+
         /// <summary>
         /// Enables time box.
         /// </summary>
@@ -212,7 +232,7 @@ namespace PS8
             textBox_Timer.Text = "";
             textBox_player1Score.Text = "0";
             textBox_player2Score.Text = "0";
-            SetStatusLabel(false, false);
+            SetStatusLabel(false, true);
         }
 
         private void ClearBoard()
@@ -239,23 +259,31 @@ namespace PS8
         /// <param name="state"></param>
         public void SetStatusLabel(bool state, bool active)
         {
-            statusLabel.Visible = state;
-            if (active)
+            if (state && active)
             {
+                statusLabel.Visible = state;
                 statusLabel.Text = "Active Game";
                 statusLabel.ForeColor = Color.Green;
             }
-            else
+            else if (state && !active)
             {
+                statusLabel.Visible = state;
                 statusLabel.ForeColor = Color.DarkRed;
                 statusLabel.Text = "Waiting for Player 2 to join...";  
             }
-                
-                
+            else if (!state && !active)
+            {
+                statusLabel.Visible = true;
+                statusLabel.ForeColor = Color.Black;
+                statusLabel.Text = "Game Over";
+            }
+            else if (!state && active)
+                statusLabel.Visible = state;
         }
         private void joinButton_Click(object sender, EventArgs e)
         {
             cancelbutton1.Enabled = true;
+            cancelbutton1.Text = "Cancel";
             Clear();
             joinButton.Enabled = false;
             if (JoinGame != null)
@@ -285,6 +313,10 @@ namespace PS8
             joinButton.Enabled = false;
             if (CancelPressed != null)
                 CancelPressed(1);
+            if (CancelPressed != null)
+                //CancelPressed(2);
+            SetStatusLabel(false, true);
+            joinButton.Text = "Join Game";
         }
 
         private void cancelbutton1_Click(object sender, EventArgs e)
@@ -292,7 +324,9 @@ namespace PS8
             if (CancelPressed != null)
                 CancelPressed(2);
             registerButton_Click_1(sender, e);
-            SetStatusLabel(false, false);
+            SetStatusLabel(false, true);
+            wordBox.Enabled = false;
+            wordButton.Enabled = false;
         }
         public void SetLabel(string s)
         {
@@ -376,10 +410,10 @@ namespace PS8
         private void wordBox_TextChanged_1(object sender, EventArgs e)
         {
             wordButton.Enabled = true;
-            wordBox.KeyDown += WordBox_KeyDown;
+            wordBox.KeyUp += WordBox_KeyUp;
         }
 
-        private void WordBox_KeyDown(object sender, KeyEventArgs e)
+        private void WordBox_KeyUp(object sender, KeyEventArgs e)
         {
             bool pressed = false;
             if (e.KeyCode == Keys.Enter)
