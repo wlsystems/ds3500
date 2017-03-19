@@ -288,21 +288,26 @@ namespace PS8
             joinButton.Enabled = false;
             if (JoinGame != null)
             {
-                int time = 0;
-                if (timeBox.Text != "")
-                    time = int.Parse(timeBox.Text.Trim());
-                if ((time >= 5) && (time <= 120) )
+                int n = 0;
+                bool result = Int32.TryParse(timeBox.Text, out n);
+                if (result & n >= 5 & n <= 120)
                 {
-                    JoinGame(time);
+                    JoinGame(n);
+                    JoinEnabled(false);
                 }
+                    
                 else
-                    MessageBox.Show("You did not enter a valid time.");         
+                {
+                    MessageBox.Show("Enter a number between 5-120 (seconds).");
+                    JoinEnabled(true);
+                }
+                    
             }
         }
 
         private void timeBox_TextChanged(object sender, EventArgs e)
         {
-            joinButton.Enabled = UserRegistered & timeBox.Text.Trim().Length > 0;
+
         }
 
         private void cancelButton_Click_1(object sender, EventArgs e)
