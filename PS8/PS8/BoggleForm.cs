@@ -420,10 +420,10 @@ namespace PS8
         private void wordBox_TextChanged_1(object sender, EventArgs e)
         {
             wordButton.Enabled = true;
-            wordBox.KeyDown += WordBox_KeyDown;
+            wordBox.KeyUp += WordBox_KeyUp;
         }
 
-        private void WordBox_KeyDown(object sender, KeyEventArgs e)
+        private void WordBox_KeyUp(object sender, KeyEventArgs e)
         {
             bool pressed = false;
             if (e.KeyCode == Keys.Enter)
