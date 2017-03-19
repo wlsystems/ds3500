@@ -176,7 +176,7 @@ namespace PS8
                 view.UpdateScore1(score);
                 score = (int)game.Player2.Score;
                 view.UpdateScore2(score);
-                await Task.Delay(1000);
+                await Task.Delay(500);
                 if (ct.IsCancellationRequested)
                     break;
                 game = Sync(game, "games/" + gameToken, 3);
@@ -196,11 +196,8 @@ namespace PS8
                     WordsPlayed = (ExpandoObject)item;
                     Player1String.Add(WordsPlayed.Score.ToString()+ " " + WordsPlayed.Word.ToString());
                     //Player1Score.Add((int)WordsPlayed.Score);
-
                 }
                 view.ViewPlayer1Word(Player1String);
-
-
                 IList<object> Player2List;
                 Player2List = game.Player2.WordsPlayed;
                 List<string> Player2String = new List<string>();
@@ -216,6 +213,7 @@ namespace PS8
 
                 }
                 view.ViewPlayer2Word(Player2String);
+                view.JoinEnabled(true);
             }
         }
 

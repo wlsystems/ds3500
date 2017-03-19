@@ -325,6 +325,8 @@ namespace PS8
                 CancelPressed(2);
             registerButton_Click_1(sender, e);
             SetStatusLabel(false, true);
+            wordBox.Enabled = false;
+            wordButton.Enabled = false;
         }
         public void SetLabel(string s)
         {
