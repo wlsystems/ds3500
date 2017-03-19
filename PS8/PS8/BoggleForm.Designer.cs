@@ -368,7 +368,7 @@
             this.serverBox.Location = new System.Drawing.Point(94, 75);
             this.serverBox.Margin = new System.Windows.Forms.Padding(2);
             this.serverBox.Name = "serverBox";
-            this.serverBox.Size = new System.Drawing.Size(190, 20);
+            this.serverBox.Size = new System.Drawing.Size(198, 20);
             this.serverBox.TabIndex = 6;
             this.serverBox.TextChanged += new System.EventHandler(this.serverBox_TextChanged);
             // 
@@ -380,7 +380,7 @@
             this.registerButton.Location = new System.Drawing.Point(94, 119);
             this.registerButton.Margin = new System.Windows.Forms.Padding(2);
             this.registerButton.Name = "registerButton";
-            this.registerButton.Size = new System.Drawing.Size(126, 41);
+            this.registerButton.Size = new System.Drawing.Size(151, 41);
             this.registerButton.TabIndex = 7;
             this.registerButton.Text = "Register";
             this.registerButton.UseVisualStyleBackColor = true;
@@ -390,7 +390,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.Enabled = false;
-            this.cancelButton.Location = new System.Drawing.Point(113, 177);
+            this.cancelButton.Location = new System.Drawing.Point(138, 177);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 26);
@@ -417,7 +417,7 @@
             this.menuItem_Help});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(984, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1009, 24);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -487,7 +487,7 @@
             // 
             this.textBox_player1Score.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox_player1Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_player1Score.Location = new System.Drawing.Point(744, 39);
+            this.textBox_player1Score.Location = new System.Drawing.Point(756, 37);
             this.textBox_player1Score.Name = "textBox_player1Score";
             this.textBox_player1Score.ReadOnly = true;
             this.textBox_player1Score.Size = new System.Drawing.Size(34, 19);
@@ -497,7 +497,7 @@
             // label_player2score
             // 
             this.label_player2score.AutoSize = true;
-            this.label_player2score.Location = new System.Drawing.Point(802, 39);
+            this.label_player2score.Location = new System.Drawing.Point(830, 39);
             this.label_player2score.Name = "label_player2score";
             this.label_player2score.Size = new System.Drawing.Size(79, 13);
             this.label_player2score.TabIndex = 23;
@@ -507,7 +507,7 @@
             // 
             this.textBox_player2Score.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox_player2Score.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_player2Score.Location = new System.Drawing.Point(922, 39);
+            this.textBox_player2Score.Location = new System.Drawing.Point(951, 37);
             this.textBox_player2Score.Name = "textBox_player2Score";
             this.textBox_player2Score.ReadOnly = true;
             this.textBox_player2Score.Size = new System.Drawing.Size(34, 19);
@@ -538,9 +538,9 @@
             this.wordPanel.BackColor = System.Drawing.SystemColors.Control;
             this.wordPanel.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.wordPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.wordPanel.Location = new System.Drawing.Point(635, 60);
+            this.wordPanel.Location = new System.Drawing.Point(624, 60);
             this.wordPanel.Name = "wordPanel";
-            this.wordPanel.Size = new System.Drawing.Size(81, 328);
+            this.wordPanel.Size = new System.Drawing.Size(100, 328);
             this.wordPanel.TabIndex = 28;
             this.wordPanel.Text = "";
             this.wordPanel.Visible = false;
@@ -550,9 +550,9 @@
             this.wordPanel2.BackColor = System.Drawing.SystemColors.Control;
             this.wordPanel2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.wordPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.wordPanel2.Location = new System.Drawing.Point(805, 60);
+            this.wordPanel2.Location = new System.Drawing.Point(823, 60);
             this.wordPanel2.Name = "wordPanel2";
-            this.wordPanel2.Size = new System.Drawing.Size(76, 328);
+            this.wordPanel2.Size = new System.Drawing.Size(100, 328);
             this.wordPanel2.TabIndex = 31;
             this.wordPanel2.Text = "";
             this.wordPanel2.Visible = false;
@@ -574,7 +574,7 @@
             this.player1ScoreList.BackColor = System.Drawing.SystemColors.Control;
             this.player1ScoreList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.player1ScoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.player1ScoreList.Location = new System.Drawing.Point(733, 60);
+            this.player1ScoreList.Location = new System.Drawing.Point(746, 60);
             this.player1ScoreList.Name = "player1ScoreList";
             this.player1ScoreList.ReadOnly = true;
             this.player1ScoreList.Size = new System.Drawing.Size(26, 328);
@@ -586,7 +586,7 @@
             this.player2ScoreList.BackColor = System.Drawing.SystemColors.Control;
             this.player2ScoreList.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.player2ScoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.player2ScoreList.Location = new System.Drawing.Point(913, 60);
+            this.player2ScoreList.Location = new System.Drawing.Point(948, 60);
             this.player2ScoreList.Name = "player2ScoreList";
             this.player2ScoreList.ReadOnly = true;
             this.player2ScoreList.Size = new System.Drawing.Size(26, 328);
@@ -597,7 +597,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 461);
+            this.ClientSize = new System.Drawing.Size(1009, 461);
             this.Controls.Add(this.player2ScoreList);
             this.Controls.Add(this.player1ScoreList);
             this.Controls.Add(this.statusLabel);
