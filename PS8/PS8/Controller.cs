@@ -177,7 +177,7 @@ namespace PS8
                 view.UpdateScore1(score);
                 score = (int)game.Player2.Score;
                 view.UpdateScore2(score);
-                await Task.Delay(1000);
+                await Task.Delay(500);
                 if (ct.IsCancellationRequested)
                     break;
                 game = Sync(game, "games/" + gameToken, 3);
