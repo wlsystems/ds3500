@@ -34,13 +34,37 @@ namespace PS8
 
 
         /// <summary>
-        /// Adds a row to the task display.
+        /// Adds words to Player 1 List
         /// </summary>
-        public void AddWord(string wordplayed)
+        public void ViewPlayer1Word(List<string> player1List, List<int> player1Score)
         {
-            //label_WordsPlayed.Visible = true;
-            //wordPanel.Visible = true;
-            wordPanel.Text = wordPanel.Text.ToString() + "\r" + wordplayed.ToUpper();
+
+            wordPanel.Visible = true;
+            player1ScoreList.Visible = true;
+            foreach (var item in player1List)
+            {
+                wordPanel.Text = wordPanel.Text + "\r" + item.ToString().ToUpper();
+                
+            }
+            foreach (var item in player1Score)
+            {
+                player1ScoreList.Text = player1ScoreList.Text + "\r" + item;
+            }
+        }
+
+        public void ViewPlayer2Word(List<string> player2List, List<int> player2Score )
+        {
+            wordPanel2.Visible = true;
+            player2ScoreList.Visible = true;
+            foreach (var item in player2List)
+            {
+                wordPanel2.Text = wordPanel2.Text + "\r" + item.ToString().ToUpper();
+            }
+            foreach (var item in player2Score)
+            {
+                player2ScoreList.Text = player2ScoreList.Text + "\r" + item;
+            }
+
         }
 
 
@@ -68,10 +92,13 @@ namespace PS8
         {
             wordPanel.Visible = false;
             wordPanel2.Visible = false;
-            label_WordsPlayed.Visible = false;
-            label_wordPlayed2.Visible = false;
             wordPanel.Text = "";
             wordPanel2.Text = "";
+            player1ScoreList.Visible = false;
+            player2ScoreList.Visible = false;
+            player1ScoreList.Text = "";
+            player2ScoreList.Text = "";
+
         }
 
         /// <summary>
@@ -184,18 +211,6 @@ namespace PS8
                 registerButton.Enabled = false;
         }
 
-        internal void ViewOpponentsWords(List<string> oppWords)
-        {
-            label_WordsPlayed.Visible = true;
-            wordPanel.Visible = true;
-            label_wordPlayed2.Visible = true;
-            wordPanel2.Visible = true;
-            foreach (var item in oppWords)
-            {
-                wordPanel2.Text = wordPanel2.Text + "\r" + item.ToString().ToUpper();
-            }
-
-        }
 
         private void registerButton_Click_1(object sender, EventArgs e)
         {
@@ -404,11 +419,6 @@ namespace PS8
         private void button1_Click(object sender, EventArgs e)
         {
             EnableControls(false);
-        }
-
-        private void wordPanel2_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

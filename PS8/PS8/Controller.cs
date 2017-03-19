@@ -51,12 +51,6 @@ namespace PS8
         /// </summary>
         private bool gameActive;
 
-        /// <summary>
-        /// List of all the words submitted by the user, in the order they were
-        /// submitted
-        /// </summary>
-        private IList<string> wordList;
-
 
         // <summary>
         /// The current score provided by the game    
@@ -88,7 +82,6 @@ namespace PS8
             user1Token = "0";
             gameActive = false;  //true is game is active, false if it has ended.
             score = 0;
-            wordList = new List<string>();
             view.CancelPressed += Cancel;
             view.SubmitPressed += SubmitWord;
             view.DonePressed += Done;
@@ -191,28 +184,39 @@ namespace PS8
             }
             if (game.GameState == "completed")
             {
-                IList<object> oppWords;
-                IList<object> myWords;
-                if (game.Player1.Nickname == localClient)
-                {
-                    oppWords = game.Player2.WordsPlayed;
-                }
-                else
-                {
-                    oppWords = game.Player1.WordsPlayed;
-                }
-                List<string> oppString = new List<string>();
+                IList<object> Player1List;
+                Player1List = game.Player1.WordsPlayed;
+                List<string> Player1String = new List<string>();
+                List<int> Player1Score = new List<int>();
                 dynamic WordsPlayed = new ExpandoObject();
                 WordsPlayed.Word = "";
-
-                foreach (object item in oppWords)
+                WordsPlayed.Score = 0;
+                foreach (object item in Player1List)
                 {
                     WordsPlayed = (ExpandoObject)item;
-                    oppString.Add(WordsPlayed.Word.ToString());  ///??
+                    Player1String.Add(WordsPlayed.Word.ToString());
+                    Player1Score.Add((int)WordsPlayed.Score);
 
                 }
-                view.ViewOpponentsWords(oppString);
-              }
+                view.ViewPlayer1Word(Player1String, Player1Score);
+
+
+                IList<object> Player2List;
+                Player2List = game.Player2.WordsPlayed;
+                List<string> Player2String = new List<string>();
+                List<int> Player2Score = new List<int>();
+                dynamic Words2Played = new ExpandoObject();
+                Words2Played.Word = "";
+                WordsPlayed.Score = 0;
+                foreach (object item in Player2List)
+                {
+                    Words2Played = (ExpandoObject)item;
+                    Player2String.Add(Words2Played.Word.ToString());
+                    Player2Score.Add((int)Words2Played.Score);
+
+                }
+                view.ViewPlayer2Word(Player2String, Player2Score);
+            }
 
         }
 
@@ -371,8 +375,6 @@ namespace PS8
                 }
                 WordPlayed.Score = 0;
                 WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);
-                view.AddWord(WordPlayed.Word);
-                wordList.Add(wordPlayed);
             }
 
             finally
