@@ -70,8 +70,6 @@
             this.wordPanel = new System.Windows.Forms.RichTextBox();
             this.wordPanel2 = new System.Windows.Forms.RichTextBox();
             this.statusLabel = new System.Windows.Forms.Label();
-            this.player1ScoreList = new System.Windows.Forms.RichTextBox();
-            this.player2ScoreList = new System.Windows.Forms.RichTextBox();
             this.gameBoard.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -540,7 +538,7 @@
             this.wordPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.wordPanel.Location = new System.Drawing.Point(624, 60);
             this.wordPanel.Name = "wordPanel";
-            this.wordPanel.Size = new System.Drawing.Size(100, 328);
+            this.wordPanel.Size = new System.Drawing.Size(155, 328);
             this.wordPanel.TabIndex = 28;
             this.wordPanel.Text = "";
             this.wordPanel.Visible = false;
@@ -552,7 +550,7 @@
             this.wordPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.wordPanel2.Location = new System.Drawing.Point(823, 60);
             this.wordPanel2.Name = "wordPanel2";
-            this.wordPanel2.Size = new System.Drawing.Size(100, 328);
+            this.wordPanel2.Size = new System.Drawing.Size(155, 328);
             this.wordPanel2.TabIndex = 31;
             this.wordPanel2.Text = "";
             this.wordPanel2.Visible = false;
@@ -569,37 +567,11 @@
             this.statusLabel.Text = "Waiting for Player 2 to join...";
             this.statusLabel.Visible = false;
             // 
-            // player1ScoreList
-            // 
-            this.player1ScoreList.BackColor = System.Drawing.SystemColors.Control;
-            this.player1ScoreList.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.player1ScoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.player1ScoreList.Location = new System.Drawing.Point(746, 60);
-            this.player1ScoreList.Name = "player1ScoreList";
-            this.player1ScoreList.ReadOnly = true;
-            this.player1ScoreList.Size = new System.Drawing.Size(26, 328);
-            this.player1ScoreList.TabIndex = 33;
-            this.player1ScoreList.Text = "";
-            // 
-            // player2ScoreList
-            // 
-            this.player2ScoreList.BackColor = System.Drawing.SystemColors.Control;
-            this.player2ScoreList.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.player2ScoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.player2ScoreList.Location = new System.Drawing.Point(948, 60);
-            this.player2ScoreList.Name = "player2ScoreList";
-            this.player2ScoreList.ReadOnly = true;
-            this.player2ScoreList.Size = new System.Drawing.Size(26, 328);
-            this.player2ScoreList.TabIndex = 34;
-            this.player2ScoreList.Text = "";
-            // 
             // BoggleForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1009, 461);
-            this.Controls.Add(this.player2ScoreList);
-            this.Controls.Add(this.player1ScoreList);
             this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.wordPanel2);
             this.Controls.Add(this.wordPanel);
@@ -680,8 +652,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ToolStripMenuItem typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem;
         private System.Windows.Forms.Label statusLabel;
-        private System.Windows.Forms.RichTextBox player1ScoreList;
-        private System.Windows.Forms.RichTextBox player2ScoreList;
     }
 }
 

@@ -194,11 +194,13 @@ namespace PS8
                 foreach (object item in Player1List)
                 {
                     WordsPlayed = (ExpandoObject)item;
-                    Player1String.Add(WordsPlayed.Word.ToString());
-                    Player1Score.Add((int)WordsPlayed.Score);
+                    Player1String.Add(WordsPlayed.Score.ToString()+ " " + WordsPlayed.Word.ToString());
+                    //Player1Score.Add((int)WordsPlayed.Score);
 
                 }
-                view.ViewPlayer1Word(Player1String, Player1Score);
+                view.ViewPlayer1Word(Player1String);
+
+
                 IList<object> Player2List;
                 Player2List = game.Player2.WordsPlayed;
                 List<string> Player2String = new List<string>();
@@ -209,11 +211,11 @@ namespace PS8
                 foreach (object item in Player2List)
                 {
                     Words2Played = (ExpandoObject)item;
-                    Player2String.Add(Words2Played.Word.ToString());
-                    Player2Score.Add((int)Words2Played.Score);
+                    Player2String.Add(Words2Played.Score.ToString()+" " + Words2Played.Word.ToString());
+                    //Player2Score.Add((int)Words2Played.Score);
+
                 }
-                view.ViewPlayer2Word(Player2String, Player2Score);
-                view.EnableJoin(true,true);
+                view.ViewPlayer2Word(Player2String);
             }
         }
 
