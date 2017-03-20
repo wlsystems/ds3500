@@ -26,11 +26,6 @@ namespace PS8
         private static string url;
 
         /// <summary>
-        /// Stores the local client name. 
-        /// </summary>
-        private string localClient;
-
-        /// <summary>
         /// The view controlled by this Controller
         /// </summary>
         private BoggleForm view;
@@ -45,11 +40,6 @@ namespace PS8
         /// The current game token, or "0" if no current game exist. 
         /// </summary>
         private string gameToken;
-
-        /// <summary>
-        /// True if a game is in session, false once the game has been completed.  
-        /// </summary>
-        private bool gameActive;
 
 
         // <summary>
@@ -80,11 +70,9 @@ namespace PS8
             this.view = view;
             gameToken = "0";
             user1Token = "0";
-            gameActive = false;  //true is game is active, false if it has ended.
             score = 0;
             view.CancelPressed += Cancel;
             view.SubmitPressed += SubmitWord;
-            view.DonePressed += Done;
             view.SetServerURL += Register;
             view.JoinGame += View_JoinGame;
 
@@ -106,7 +94,7 @@ namespace PS8
             }
         }
         /// <summary>
-        /// Start the game
+        /// Start the game, calls the task.  
         /// </summary>
         private void GameStatusStart()
         {
@@ -115,53 +103,57 @@ namespace PS8
         }
 
         /// <summary>
-        /// Get the current status/state of the board.
+        /// Handles the game while it is pending,  checks for canellation requests while it is pending, once the game status has
+        /// changed to active, sets up the board and calls the timer.  
         /// </summary>
         private async void GameStatus()
         {
             tokenSource2 = new CancellationTokenSource();
             CancellationToken token2 = tokenSource2.Token;
-                bool isActive = false;
-                dynamic game = new ExpandoObject();
-                try
+            bool isActive = false;
+            dynamic game = new ExpandoObject();
+            try
+            {
+                game = Sync(game, "games/" + gameToken, 3); //1 is for type post
+            }
+            finally
+            {
+                bool A = false; //sets up the flashing effect
+                while (game.GameState == "pending")                 //game is pending, checks again in 1000 ms and checks for cancellation request
                 {
-                    game = Sync(game, "games/" + gameToken, 3); //1 is for type post
-                }
-                finally
-                {
-                    bool A = false; //sets up the flashing effect
-                    while (game.GameState == "pending")
+                    A = !A;
+                    if (A == true)
+                        view.SetStatusLabel(true, false);
+                    else
+                        view.SetStatusLabel(false, true);
+                    await Task.Delay(1000);
+                    if (token2.IsCancellationRequested)
                     {
-                        A = !A;
-                        if (A == true)
-                            view.SetStatusLabel(true, false);
-                        else
-                            view.SetStatusLabel(false, true);
-                        await Task.Delay(1000);
-                        if (token2.IsCancellationRequested)
-                        {
-                            tokenSource3.Cancel();
-                            break;
-                        }     
-                        game = Sync(game, "games/" + gameToken, 3); //1 is for type post
-                        
-                    }
-                    view.CancelJoinEnabled(false);
-                    if (game.GameState == "active")
-                    {
-                        view.SetStatusLabel(true, true);
                         tokenSource3.Cancel();
-                        if (isActive == false)
-                            view.EnableControls(true);
-                        isActive = true;
-                        view.SetLabel(game.Board);
-                        view.Player1Update(game.Player1.Nickname);
-                        view.Player2Update(game.Player2.Nickname);
-                        Timer();
+                        break;
                     }
+                    game = Sync(game, "games/" + gameToken, 3); //1 is for type post
+
                 }
+                view.CancelJoinEnabled(false);
+                if (game.GameState == "active")
+                {
+                    view.SetStatusLabel(true, true);
+                    tokenSource3.Cancel();
+                    if (isActive == false)
+                        view.EnableControls(true);
+                    isActive = true;
+                    view.SetLabel(game.Board);                      //this is the helper method that sets the game board. 
+                    view.Player1Update(game.Player1.Nickname);      //sets the labels for player 1 and 2 
+                    view.Player2Update(game.Player2.Nickname);
+                    Timer();                                        //starts the timer and handles the remainder of the game. 
+                }
+            }
         }
 
+        /// <summary>
+        /// HAndles the game while it is active and finishs the game when the time expires after the status changes to "completed."
+        /// </summary>
         private async void Timer()
         {
             tokenSource3 = new CancellationTokenSource();
@@ -171,54 +163,55 @@ namespace PS8
             game = Sync(game, "games/" + gameToken, 3);
             while (game.GameState == "active")
             {
-                view.UpdateTimer(game.TimeLeft);
-                score = (int)game.Player1.Score;
+                view.UpdateTimer(game.TimeLeft);            //updates score for both players every 500 ms
+                score = (int)game.Player1.Score;                
                 view.UpdateScore1(score);
                 score = (int)game.Player2.Score;
                 view.UpdateScore2(score);
                 await Task.Delay(500);
-                if (ct.IsCancellationRequested)
+                if (ct.IsCancellationRequested)            //checks for cancellation request
                     break;
-                game = Sync(game, "games/" + gameToken, 3);
+                game = Sync(game, "games/" + gameToken, 3); //rechecks game status before looping again
             }
-            if (game.GameState == "completed")
+            if (game.GameState == "completed")          //game is now completed
             {
                 view.SetStatusLabel(false, false);
+                /// Pulls the list of objects for WordsPlayed for player 1, takes the words and scores and 
+                /// sets them in a string list. 
                 IList<object> Player1List;
-                Player1List = game.Player1.WordsPlayed;
-                List<string> Player1String = new List<string>();
-                List<int> Player1Score = new List<int>();
-                dynamic WordsPlayed = new ExpandoObject();
-                WordsPlayed.Word = "";
-                WordsPlayed.Score = 0;
-                foreach (object item in Player1List)
+                Player1List = game.Player1.WordsPlayed;   //Pulls list from server. 
+                List<string> Player1String = new List<string>(); //List that the WordPlayed object will be placed into. 
+                dynamic WordsPlayed = new ExpandoObject();   
+                WordsPlayed.Word = "";             //Initilizes the Word default
+                WordsPlayed.Score = 0;             //Initilizes the score default
+                foreach (object item in Player1List)            //Iterates though each Wordplayed object in the list. 
                 {
-                    WordsPlayed = (ExpandoObject)item;
-                    Player1String.Add(WordsPlayed.Score.ToString()+ " " + WordsPlayed.Word.ToString());
-                    //Player1Score.Add((int)WordsPlayed.Score);
+                    WordsPlayed = (ExpandoObject)item;        //Casts it as an Expando object. 
+                    Player1String.Add(WordsPlayed.Score.ToString() + " " + WordsPlayed.Word.ToString());  //Adds word and score to string list
                 }
-                view.ViewPlayer1Word(Player1String);
+                view.ViewPlayer1Word(Player1String);                //Calls method that will set the text panel with the words. 
+
+                //Repeats the above actions for player #2,  gets Wordplayeds and converts the words and scores
+                //and puts them in a string list.  
                 IList<object> Player2List;
-                Player2List = game.Player2.WordsPlayed;
+                Player2List = game.Player2.WordsPlayed;    //List of WordPlayed object for Player 2 
                 List<string> Player2String = new List<string>();
-                List<int> Player2Score = new List<int>();
                 dynamic Words2Played = new ExpandoObject();
-                Words2Played.Word = "";
-                WordsPlayed.Score = 0;
-                foreach (object item in Player2List)
+                Words2Played.Word = "";                 //sets Word default
+                WordsPlayed.Score = 0;                  //sets Score default
+                foreach (object item in Player2List)    //iterates though each object in the WordPlayed object list.  
                 {
                     Words2Played = (ExpandoObject)item;
-                    Player2String.Add(Words2Played.Score.ToString()+" " + Words2Played.Word.ToString());
-                    //Player2Score.Add((int)Words2Played.Score);
+                    Player2String.Add(Words2Played.Score.ToString() + " " + Words2Played.Word.ToString());
 
                 }
                 view.ViewPlayer2Word(Player2String);
-                view.JoinEnabled(true);
+                view.JoinEnabled(true);                 //Game is officially completed, enables player to join again.  
             }
         }
 
         /// <summary>
-        /// Uses the token to add the user to a game.  
+        ///  Takes the time and calls the helper method to post a new game.  
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
@@ -252,7 +245,7 @@ namespace PS8
                 if (tokenSource != null)
                     tokenSource.Cancel();
             }
-                
+
             else if (cancelMode == 2)
             {
                 try
@@ -278,14 +271,13 @@ namespace PS8
         }
 
         /// <summary>
-        /// Registers a user with the given name and email..
+        /// Registers a user with the given name and requested server.  
         /// </summary>
         private void Register(string name, string server)
         {
             try
             {
                 url = server;
-                localClient = name;
                 dynamic user = new ExpandoObject();
                 user.Nickname = name;
                 user.UserToken = "";
@@ -294,18 +286,25 @@ namespace PS8
             }
             catch
             {
-                MessageBox.Show("Invalid URL");
+                MessageBox.Show("Invalid URL");     //Unable to sucessfully register the user
             }
             finally
             {
                 view.TimeEnabled(true);
                 view.UserRegistered = true;
             }
-            
+
         }
 
-        //a general helper method for post requests
-        private ExpandoObject Sync(ExpandoObject obj, string Name, int type)//type is 1 for POST, 2 for PUT, 3 for GET
+        /// <summary>
+        /// This is our main helper method that interacts with the server,  it is called several times in our program. It takes in an ExpandoObject, a name location on the server
+        /// and also takes an int for one of 3 type of actions, 1 for POST,  2 for PUT and 3 for GET.  
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="Name"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private ExpandoObject Sync(ExpandoObject obj, string Name, int type)
         {
             try
             {
@@ -318,16 +317,16 @@ namespace PS8
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
                     HttpResponseMessage response = null;
                     if (type == 1)
-                        response = client.PostAsync(Name, content, tokenSource.Token).Result;
+                        response = client.PostAsync(Name, content, tokenSource.Token).Result;   //POST
                     else if (type == 2)
                     {
-                        response = client.PutAsync(Name, content, tokenSource.Token).Result;
+                        response = client.PutAsync(Name, content, tokenSource.Token).Result;  //PUT
                     }
-                        
-                    else if (type == 3)
+
+                    else if (type == 3)                                                         //GET
                         response = client.GetAsync(Name).Result;
-                    // Deal with the response
-                    if (response.IsSuccessStatusCode)
+                  
+                    if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
                         string result = "";
                         var obj2 = new ExpandoObject();
@@ -354,58 +353,45 @@ namespace PS8
         /// </summary>
         private void SubmitWord(string wordPlayed)
         {
-            view.submitEnableControls(false);
+            view.submitEnableControls(false);                           //While a word is being submitted, temporarily disables controls
             try
             {
-                // Create the parameter
-                dynamic WordPlayed = new ExpandoObject();
+               
+                dynamic WordPlayed = new ExpandoObject();                  //Creates new WordPlayed object
                 dynamic game = new ExpandoObject();
-                game = Sync(game, "games/" + gameToken, 3);
-                WordPlayed.UserToken = user1Token;
-                WordPlayed.Word = wordPlayed;
+                game = Sync(game, "games/" + gameToken, 3);               //pulls game status to ensure it is still active before playing word
+                WordPlayed.UserToken = user1Token;                        //sets user token
+                WordPlayed.Word = wordPlayed;                             //sets word
 
-                // Compose and send the request.
-                if (game.GameState == "completed")
+                
+                if (game.GameState == "completed")                      //If time has run out, pop ups an error message
                 {
                     MessageBox.Show("Sorry that game is over!");
                     return;
                 }
                 WordPlayed.Score = 0;
-                WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);
+                WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);       //put the Word and the score is returned 
             }
 
             finally
             {
-                view.submitEnableControls(true);
+                view.submitEnableControls(true);                    //Finished submitting word, reenables controls on board. 
             }
         }
 
-
-        /// <summary>
-        /// Ends the current game immediately. 
-        /// </summary>
-        private void Done()
-        {
-            ///TODO!!!!
-        }
-
-
-    
 
         /// <summary>
         /// Creates an HttpClient for communicating with the server.
         /// </summary>
         private static HttpClient CreateClient()
         {
-            // Create a client whose base address is the GitHub server
+            // Create a client whose base address is the one provided by the user.  
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(url); 
+            client.BaseAddress = new Uri(url);
 
             // Tell the server that the client will accept this particular type of response data
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-
-            // There is more client configuration to do, depending on the request.
             return client;
         }
     }
