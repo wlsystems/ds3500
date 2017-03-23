@@ -95,14 +95,7 @@ namespace PS8
                 CancelPressed -= value;
             }
         }
-        /// <summary>
-        /// Start the game, calls the task.  
-        /// </summary>
-        private void GameStatusStart()
-        {
-            Task task = new Task(delegate { GameStatus(); });
-            task.Start();
-        }
+
 
         /// <summary>
         /// Handles the game while it is pending,  checks for canellation requests while it is pending, once the game status has
@@ -160,7 +153,6 @@ namespace PS8
         {
             tokenSource3 = new CancellationTokenSource();
             CancellationToken ct = tokenSource3.Token;
-
             dynamic game = new ExpandoObject();
             game = Sync(game, "games/" + gameToken, 3);
             while (game.GameState == "active")
@@ -275,8 +267,9 @@ namespace PS8
         /// <summary>
         /// Registers a user with the given name and requested server.  
         /// </summary>
-        private void Register(string name, string server)
+        private async void Register(string name, string server)
         {
+            await Task.Delay(500);
             try
             {
                 url = server;
@@ -327,11 +320,11 @@ namespace PS8
 
                     else if (type == 3)                                                         //GET
                         response = client.GetAsync(Name).Result;
-                  
+                    var obj2 = new ExpandoObject();
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
                         string result = "";
-                        var obj2 = new ExpandoObject();
+                        
                         result = response.Content.ReadAsStringAsync().Result;
                         if (result != "")
                             obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
