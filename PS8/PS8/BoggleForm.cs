@@ -536,5 +536,24 @@ namespace PS8
             EnableControls(false);
         }
 
+        private void wordPanel_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void gameBoard_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void gameBoard_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
