@@ -379,7 +379,11 @@ namespace PS8
             if (CancelPressed != null)
                 CancelPressed(2);
         }
-
+        /// <summary>
+        /// Cancels the join request.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cancelbutton1_Click(object sender, EventArgs e)
         {
             if (CancelPressed != null)
