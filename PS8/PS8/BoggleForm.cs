@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Tracy King  u0040235
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,92 +14,10 @@ namespace PS8
 {
     public partial class BoggleForm : Form
     {
-        //If there is a game in progress.
-
-        private bool isActiveGame;
-        public bool isActive
-        {
-            set
-            {
-                isActiveGame = value;
-            }
-            get { return isActiveGame; }
-        }
+        //New BoggleForm
         public BoggleForm()
         {
             InitializeComponent();
-        }
-
-        /// <summary>
-        /// If state == true, enables all controls that are normally enabled; disables Cancel.
-        /// If state == false, disables all controls; enables Cancel.
-        /// </summary>
-        public void EnableControls(bool state)
-        { 
-            registerButton.Enabled = state;
-            wordBox.Enabled = state && UserRegistered && timeBox.Text.Length > 0;
-            joinButton.Enabled = false;
-            cancelButton.Enabled = !state;
-            cancelbutton1.Enabled = state;
-            cancelbutton1.Text = "Leave";
-        }
-
-
-
-        /// <summary>
-        /// Adds words to Player 1 List
-        /// </summary>
-        public void ViewPlayer1Word(List<string> player1List)
-        {
-
-            wordPanel.Visible = true;
-            foreach (var item in player1List)
-            {
-                wordPanel.Text = wordPanel.Text + "\r" + item.ToString().ToUpper();
-                
-            }
-
-        }
-
-        public void ViewPlayer2Word(List<string> player2List )
-        {
-            wordPanel2.Visible = true;
-            foreach (var item in player2List)
-            {
-                wordPanel2.Text = wordPanel2.Text + "\r" + item.ToString().ToUpper();
-            }
-
-
-        }
-
-
-        /// <summary>
-        /// Backing variable for UserRegistered property
-        /// </summary>
-        private bool _userRegistered = false;
-
-        /// <summary>
-        /// Is the user currently registered?
-        /// </summary>
-        public bool UserRegistered
-        {
-            get { return _userRegistered; }
-            set
-            {
-                _userRegistered = value;
-                WordBox_TextChanged(null, null);
-            }
-        }
-        /// <summary>
-        /// Removes all the words played from the list. 
-        /// </summary>
-        public void Clear()
-        {
-            wordPanel.Visible = false;
-            wordPanel2.Visible = false;
-            wordPanel.Text = "";
-            wordPanel2.Text = "";
-
         }
 
         /// <summary>
@@ -134,6 +54,96 @@ namespace PS8
         /// </summary>
         public event Action<int> CancelPressed;
 
+
+        /// <summary>
+        /// Backing variable for UserRegistered property
+        /// </summary>
+        private bool _userRegistered = false;
+
+        //sets and returns game status
+        private bool isActiveGame;
+        public bool isActive
+        {
+            set
+            {
+                isActiveGame = value;
+            }
+            get { return isActiveGame; }
+        }
+
+        /// <summary>
+        /// If state == true, enables all controls that are normally enabled; disables Cancel.
+        /// If state == false, disables all controls; enables Cancel.
+        /// </summary>
+        public void EnableControls(bool state)
+        {
+            registerButton.Enabled = state;
+            wordBox.Enabled = state && UserRegistered && timeBox.Text.Length > 0;
+            joinButton.Enabled = false;
+            cancelButton.Enabled = !state;
+            cancelbutton1.Enabled = state;
+            cancelbutton1.Text = "Leave";  //used to leave a game after game is started
+        }
+
+
+        /// <summary>
+        /// Is the user currently registered?
+        /// </summary>
+        public bool UserRegistered
+        {
+            get { return _userRegistered; }
+            set
+            {
+                _userRegistered = value;
+                WordBox_TextChanged(null, null);
+            }
+        }
+        /// <summary>
+        /// Removes all the words played from the list. 
+        /// </summary>
+        public void Clear()
+        {
+            wordPanel.Visible = false;
+            wordPanel2.Visible = false;
+            wordPanel.Text = "";
+            wordPanel2.Text = "";
+
+        }
+
+
+
+        /// <summary>
+        /// Adds words to Player 2 Lisit, takes in a list of strings, iterates through each word and converts to uppercase as needed.
+        /// This occurs after game is completed. 
+        /// </summary>
+        public void ViewPlayer1Word(List<string> player1List)
+        {
+
+            wordPanel.Visible = true;
+            foreach (var item in player1List)
+            {
+                wordPanel.Text = wordPanel.Text + "\r" + item.ToString().ToUpper(); //uppercases each word and adds a return before adding new text
+
+            }
+
+        }
+
+        /// <summary>
+        ///Adds words to Player 2 List, takes in a list of strings, iterates through each word and converts to uppercase as needed.
+        /// This occurs after game is completed. 
+        /// </summary>
+        /// <param name="player2List"></param>
+        public void ViewPlayer2Word(List<string> player2List)
+        {
+            wordPanel2.Visible = true;
+            foreach (var item in player2List)
+            {
+                wordPanel2.Text = wordPanel2.Text + "\r" + item.ToString().ToUpper(); //uppercases each word and adds a return before adding new text
+            }
+
+
+        }
+
         /// <summary>
         /// Enables time box.
         /// </summary>
@@ -142,13 +152,18 @@ namespace PS8
             timeBox.Enabled = state;
         }
 
+        /// <summary>
+        /// If a current game has ended either by quitting or time expiring, allows the user to enter another game. 
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="playAgain"></param>
         public void EnableJoin(bool state, bool playAgain)
         {
             if (playAgain == true)
             {
                 joinButton.Text = "Play Again";
                 joinButton.Enabled = true;
-            }      
+            }
         }
 
         /// <summary>
@@ -167,41 +182,60 @@ namespace PS8
             cancelbutton1.Enabled = state;
         }
 
-        internal void Player2Update(dynamic nickname)
+        /// <summary>
+        /// Updates the label for player 2's name when the game is started.
+        /// </summary>  
+        public void Player2Update(dynamic nickname)
         {
             label_player2score.Text = nickname + "'s score";
         }
 
-        internal void Player1Update(dynamic nickname)
+        /// <summary>
+        /// Updates the label for player 1's name when the game is started. 
+        /// </summary>
+        /// <param name="nickname"></param>
+        public void Player1Update(dynamic nickname)
         {
             label_player1score.Text = nickname + "'s score";
         }
 
-        internal void UpdateTimer(dynamic timeLeft)
+        /// <summary>
+        /// Updates the countdown time for the time remaining in the game. 
+        /// </summary>
+        /// <param name="timeLeft"></param>
+        public void UpdateTimer(dynamic timeLeft)
         {
-            textBox_Timer.Text = timeLeft + " ";
+            textBox_Timer.Text = timeLeft + "";
         }
 
+        /// <summary>
+        /// If text is entered into the word box, enables the submit button. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WordBox_TextChanged(object sender, EventArgs e)
         {
             wordButton.Enabled = UserRegistered && wordBox.Text.Trim().Length > 0;
         }
 
-
         /// <summary>
-        /// Player wants to end a current game seesion. 
+        ///  Help menu for the TAs 
         /// </summary>
-        private void FireDoneEvent()
-        {
-            if (DonePressed != null)
-            {
-                DonePressed();
-            }
-        }
-
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void menuItem_Help_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This is how to play Boogle.");
+            MessageBox.Show("This is a simple Boogle Client. A user can enter their name and their chosen server " +
+                "and press register.   They can cancel the registering process by clicking the " +
+                "cancel button underneath the register button.  After you have been successfully registered " +
+                "you can enter a desired game time between 5-120 seconds and click join game." +
+                "You can use the cancel button next to join game should you no longer want to play " +
+                " Once you have joined you will join an existing game or wait for " +
+                "the next available opponent. The status will appear on the bottom left.  As soon as an opponent " +
+                "is available the game will start.  You can enter words in the box below the gameboard and submit " +
+                "them by clicking on submit word. You will be able to watch the timer and the current score. " +
+                "If you choose to exit early, you can click the Leave button.  After the game is over, all of the words  " +
+                "played by both opponents will appear to the right of the board.  Happy Spelling!");
         }
 
 
@@ -235,11 +269,19 @@ namespace PS8
             SetStatusLabel(false, true);
         }
 
+        /// <summary>
+        /// Clears the game board of letters from previous game. 
+        /// </summary>
         private void ClearBoard()
         {
             label1.Text = ""; label2.Text = ""; label3.Text = ""; label4.Text = ""; label5.Text = ""; label6.Text = ""; label7.Text = ""; label8.Text = ""; label9.Text = ""; label10.Text = ""; label11.Text = ""; label12.Text = ""; label13.Text = ""; label14.Text = ""; label15.Text = ""; label16.Text = "";
         }
 
+        /// <summary>
+        ///  The name box has been changed, checks to see if the server box has been entered and enables if appropriate. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void nameBox_TextChanged(object sender, EventArgs e)
         {
             if (nameBox.Text.Length > 0 && serverBox.Text.Length > 0)
@@ -248,6 +290,11 @@ namespace PS8
                 registerButton.Enabled = false;
         }
 
+        /// <summary>
+        /// Loads form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BoggleForm_Load(object sender, EventArgs e)
         {
 
@@ -269,7 +316,7 @@ namespace PS8
             {
                 statusLabel.Visible = state;
                 statusLabel.ForeColor = Color.DarkRed;
-                statusLabel.Text = "Waiting for Player 2 to join...";  
+                statusLabel.Text = "Waiting for Player 2 to join...";
             }
             else if (!state && !active)
             {
@@ -280,6 +327,13 @@ namespace PS8
             else if (!state && active)
                 statusLabel.Visible = state;
         }
+
+        /// <summary>
+        /// The join button has been clicked, attempts to parse the time, and checks to see if the time submitted is within
+        /// the allowed 5-120 seconds, has the user resubmit if it is not.  
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void joinButton_Click(object sender, EventArgs e)
         {
             cancelbutton1.Enabled = true;
@@ -295,20 +349,22 @@ namespace PS8
                     JoinGame(n);
                     JoinEnabled(false);
                 }
+
                 else
                 {
                     MessageBox.Show("Enter a number between 5-120 (seconds).");
                     JoinEnabled(true);
                 }
-                    
+
             }
         }
 
-        private void timeBox_TextChanged(object sender, EventArgs e)
-        {
 
-        }
-
+        /// <summary>
+        /// The cancel button was pressed during registeration, cancels and allows the user to attempt again if desird. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cancelButton_Click_1(object sender, EventArgs e)
         {
             registerButton.Enabled = true;
@@ -318,9 +374,10 @@ namespace PS8
             if (CancelPressed != null)
                 CancelPressed(1);
             if (CancelPressed != null)
-                //CancelPressed(2);
-            SetStatusLabel(false, true);
+                SetStatusLabel(false, true);
             joinButton.Text = "Join Game";
+            if (CancelPressed != null)
+                CancelPressed(2);
         }
 
         private void cancelbutton1_Click(object sender, EventArgs e)
@@ -332,6 +389,12 @@ namespace PS8
             wordBox.Enabled = false;
             wordButton.Enabled = false;
         }
+
+        /// <summary>
+        /// This takes in the string of 16 letters, parses it into characters and then checks for the letter Q to handle it 
+        /// as a "Qu."  Sets the 16 texboxes for the game board. 
+        /// </summary>
+        /// <param name="s"></param>
         public void SetLabel(string s)
         {
             string temp = "";
@@ -395,28 +458,49 @@ namespace PS8
 
         }
 
-        internal void UpdateScore1(int score)
+        /// <summary>
+        /// Updates the score for player one when called. 
+        /// </summary>
+        /// <param name="score"></param>
+        public void UpdateScore1(int score)
         {
             textBox_player1Score.Text = score.ToString();
         }
 
-
-        internal void UpdateScore2(int score)
+        /// <summary>
+        /// Updates the score for player 2 when called. 
+        /// </summary>
+        /// <param name="score"></param>
+        public void UpdateScore2(int score)
         {
             textBox_player2Score.Text = score.ToString();
         }
 
-        internal void submitEnableControls(bool wordState)
+        /// <summary>
+        /// Enables the "submit word" button when called, depending on if the word box contains text. 
+        /// </summary>
+        /// <param name="wordState"></param>
+        public void submitEnableControls(bool wordState)
         {
             wordButton.Enabled = wordState;
         }
 
-        private void wordBox_TextChanged_1(object sender, EventArgs e)
+        /// <summary>
+        ///  Enables the word butto when test is entered into word box. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void wordBox_TextChanged_1(object sender, EventArgs e)
         {
             wordButton.Enabled = true;
             wordBox.KeyUp += WordBox_KeyUp;
         }
 
+        /// <summary>
+        /// Handles the user using an enter key to submit.  
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void WordBox_KeyUp(object sender, KeyEventArgs e)
         {
             bool pressed = false;
@@ -437,6 +521,11 @@ namespace PS8
             }
         }
 
+        /// <summary>
+        /// The submit word button has been clicked, first Submit Pressed action.  
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void wordButton_Click(object sender, EventArgs e)
         {
             SubmitPressed(wordBox.Text.Trim());
@@ -446,7 +535,6 @@ namespace PS8
         {
             EnableControls(false);
         }
-
 
     }
 }

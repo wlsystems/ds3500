@@ -123,9 +123,6 @@
   <data name="typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name" xml:space="preserve">
     <value>typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem</value>
   </data>
-  <data name="typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text" xml:space="preserve">
-    <value>1. Type your name to and server and click to register. 2. Next click join game to enter a game. If no other players are in queue you will automatically be forced to join a game when another player arrives. 3 If you click "leave" once the game starts you will leave the current game.  4. The time entered by the first player that joined will be used.</value>
-  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>25</value>
   </metadata>

@@ -431,8 +431,8 @@
             // typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem
             // 
             this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Name");
-            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Size = new System.Drawing.Size(1853, 22);
-            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text = resources.GetString(@"typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text");
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.typeYourNameToAndServerAndClickToRegister2NextClickJoinGameToEnterAGameIfNoOtherPlayersAreInQueueYouWillAutomaticallyBeForcedToJoinAGameWhenAnotherPlayerArrives3IfYouClickleaveOnceTheGameStartsYouWillLeaveTheCurrentGame4TheTimeEnteredByTheFirstPlayerThatJoinedWillBeUsedToolStripMenuItem.Text = "Help";
             // 
             // wordBox
             // 
@@ -450,7 +450,6 @@
             this.timeBox.Name = "timeBox";
             this.timeBox.Size = new System.Drawing.Size(100, 20);
             this.timeBox.TabIndex = 18;
-            this.timeBox.TextChanged += new System.EventHandler(this.timeBox_TextChanged);
             // 
             // joinButton
             // 
