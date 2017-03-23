@@ -205,6 +205,7 @@ namespace PS8
                 {
                     Words2Played = (ExpandoObject)item;
                     Player2String.Add(Words2Played.Score.ToString() + " " + Words2Played.Word.ToString());
+
                 }
                 view.ViewPlayer2Word(Player2String);
                 view.JoinEnabled(true);                 //Game is officially completed, enables player to join again.  
@@ -274,9 +275,8 @@ namespace PS8
         /// <summary>
         /// Registers a user with the given name and requested server.  
         /// </summary>
-        private async void Register(string name, string server)
+        private void Register(string name, string server)
         {
-            await Task.Delay(500);
             try
             {
                 url = server;
