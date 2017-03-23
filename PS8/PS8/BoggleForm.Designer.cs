@@ -77,12 +77,12 @@
             // gameBoard
             // 
             this.gameBoard.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.gameBoard.ColumnCount = 5;
-            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 72F));
-            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.gameBoard.ColumnCount = 4;
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.gameBoard.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.gameBoard.Controls.Add(this.label2, 1, 0);
             this.gameBoard.Controls.Add(this.label1, 0, 0);
             this.gameBoard.Controls.Add(this.label3, 3, 0);
@@ -101,7 +101,7 @@
             this.gameBoard.Controls.Add(this.label16, 4, 4);
             this.gameBoard.Location = new System.Drawing.Point(298, 19);
             this.gameBoard.Name = "gameBoard";
-            this.gameBoard.RowCount = 5;
+            this.gameBoard.RowCount = 4;
             this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 49.66887F));
             this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.33113F));
             this.gameBoard.RowStyles.Add(new System.Windows.Forms.RowStyle());
