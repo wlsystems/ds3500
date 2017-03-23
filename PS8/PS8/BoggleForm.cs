@@ -295,7 +295,6 @@ namespace PS8
                     JoinGame(n);
                     JoinEnabled(false);
                 }
-                    
                 else
                 {
                     MessageBox.Show("Enter a number between 5-120 (seconds).");
