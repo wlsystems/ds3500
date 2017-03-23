@@ -77,7 +77,6 @@ namespace PS8
             view.SubmitPressed += SubmitWord;
             view.SetServerURL += Register;
             view.JoinGame += View_JoinGame;
-
         }
 
         /// <summary>
@@ -109,7 +108,8 @@ namespace PS8
             dynamic game = new ExpandoObject();
             try
             {
-                game = Sync(game, "games/" + gameToken, 3); //1 is for type post
+                Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games/" + gameToken, 3));
+                game = await t;
             }
             finally
             {
@@ -127,8 +127,8 @@ namespace PS8
                         tokenSource3.Cancel();
                         break;
                     }
-                    game = Sync(game, "games/" + gameToken, 3); //1 is for type post
-
+                    Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games/" + gameToken, 3));
+                    game = await t;
                 }
                 view.CancelJoinEnabled(false);
                 if (game.GameState == "active")
@@ -154,7 +154,8 @@ namespace PS8
             tokenSource3 = new CancellationTokenSource();
             CancellationToken ct = tokenSource3.Token;
             dynamic game = new ExpandoObject();
-            game = Sync(game, "games/" + gameToken, 3);
+            Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games/" + gameToken, 3));
+            game = await t;
             while (game.GameState == "active")
             {
                 view.UpdateTimer(game.TimeLeft);            //updates score for both players every 500 ms
@@ -165,7 +166,9 @@ namespace PS8
                 await Task.Delay(500);
                 if (ct.IsCancellationRequested)            //checks for cancellation request
                     break;
-                game = Sync(game, "games/" + gameToken, 3); //rechecks game status before looping again
+                t = await Task<ExpandoObject>.Run(() => Sync(game, "games/" + gameToken, 3));
+                game = await t;//rechecks game status before looping again
+
             }
             if (game.GameState == "completed")          //game is now completed
             {
@@ -209,7 +212,7 @@ namespace PS8
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        private void View_JoinGame(int time)
+        private async void View_JoinGame(int time)
         {
             tokenSource3 = new CancellationTokenSource();
             try
@@ -218,7 +221,8 @@ namespace PS8
                 game.TimeLimit = time;
                 game.UserToken = user1Token;
                 game.GameID = "";
-                game = Sync(game, "games", 1); //1 is for type post
+                Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games", 1));
+                game = await t;
                 gameToken = game.GameID;
             }
             finally
@@ -232,12 +236,19 @@ namespace PS8
         /// <summary>
         /// Cancels the current operation.
         /// </summary>
-        private void Cancel(int cancelMode)
+        private async void Cancel(int cancelMode)
         {
             if (cancelMode == 1)
             {
-                if (tokenSource != null)
-                    tokenSource.Cancel();
+                try
+                {
+                    if (tokenSource != null)
+                        tokenSource.Cancel();
+                }
+                catch
+                {
+                    MessageBox.Show("Invalid URL");
+                }
             }
 
             else if (cancelMode == 2)
@@ -246,9 +257,14 @@ namespace PS8
                 {
                     dynamic game = new ExpandoObject();
                     game.UserToken = user1Token;
-                    game = Sync(game, "games", 2); //2 is for type PUT
+                    Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games", 2));
+                    game = await t;
                     if (tokenSource2 != null)
                         tokenSource2.Cancel();
+                }
+                catch
+                {
+                    MessageBox.Show("Invalid URL");
                 }
                 finally
                 {
@@ -259,8 +275,15 @@ namespace PS8
             }
             else if (cancelMode == 3)
             {
-                if (tokenSource3 != null)
-                    tokenSource3.Cancel();
+                try
+                {
+                    if (tokenSource3 != null)
+                        tokenSource3.Cancel();
+                }
+                catch
+                {
+
+                }
             }
         }
 
@@ -276,12 +299,13 @@ namespace PS8
                 dynamic user = new ExpandoObject();
                 user.Nickname = name;
                 user.UserToken = "";
-                user = Sync(user, "users", 1); //1 is for type POST
+                Task<ExpandoObject> t = await  Task<ExpandoObject>.Run ( () =>  Sync(user, "users", 1));
+                user = await t;
                 user1Token = user.UserToken;
             }
-            catch
+            catch(Exception e)
             {
-                MessageBox.Show("Invalid URL");     //Unable to sucessfully register the user
+               // MessageBox.Show(e.ToString());     //Unable to sucessfully register the user
             }
             finally
             {
@@ -299,7 +323,7 @@ namespace PS8
         /// <param name="Name"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        private ExpandoObject Sync(ExpandoObject obj, string Name, int type)
+        private async Task<ExpandoObject> Sync(ExpandoObject obj, string Name, int type)
         {
             try
             {
@@ -310,21 +334,19 @@ namespace PS8
                     // Compose and send the request.
                     tokenSource = new CancellationTokenSource();
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = null;
-                    if (type == 1)
-                        response = client.PostAsync(Name, content, tokenSource.Token).Result;   //POST
-                    else if (type == 2)
-                    {
-                        response = client.PutAsync(Name, content, tokenSource.Token).Result;  //PUT
-                    }
-
-                    else if (type == 3)                                                         //GET
-                        response = client.GetAsync(Name).Result;
-                    var obj2 = new ExpandoObject();
+                    HttpResponseMessage response=null;
+                         if (type == 1)
+                             response = await Task.Run(() => client.PostAsync(Name, content, tokenSource.Token).Result);   //POST
+                         else if (type == 2)
+                         {
+                             response = await Task.Run(() =>  client.PutAsync(Name, content, tokenSource.Token).Result);  //PUT
+                         }
+                         else if (type == 3)                                                         //GET
+                             response = await Task.Run(() => client.GetAsync(Name).Result);
+                    dynamic obj2 =null;
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
-                        string result = "";
-                        
+                        string result = "";        
                         result = response.Content.ReadAsStringAsync().Result;
                         if (result != "")
                             obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
@@ -343,29 +365,29 @@ namespace PS8
                 return null;
             }
         }
+
         /// <summary>
         /// Submits a word during the game
         /// </summary>
-        private void SubmitWord(string wordPlayed)
+        private async void SubmitWord(string wordPlayed)
         {
             view.submitEnableControls(false);                           //While a word is being submitted, temporarily disables controls
             try
             {
-               
                 dynamic WordPlayed = new ExpandoObject();                  //Creates new WordPlayed object
                 dynamic game = new ExpandoObject();
-                game = Sync(game, "games/" + gameToken, 3);               //pulls game status to ensure it is still active before playing word
+                Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games/" + gameToken, 3));
+                game = await t; //pulls game status to ensure it is still active before playing word
                 WordPlayed.UserToken = user1Token;                        //sets user token
                 WordPlayed.Word = wordPlayed;                             //sets word
-
-                
                 if (game.GameState == "completed")                      //If time has run out, pop ups an error message
                 {
                     MessageBox.Show("Sorry that game is over!");
                     return;
                 }
                 WordPlayed.Score = 0;
-                WordPlayed.Score = Sync(WordPlayed, "games/" + gameToken, 2);       //put the Word and the score is returned 
+                t = await Task<ExpandoObject>.Run(() => Sync(WordPlayed, "games/" + gameToken, 2));
+                WordPlayed.Score = await t;      //put the Word and the score is returned 
             }
 
             finally
