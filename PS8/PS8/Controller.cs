@@ -363,7 +363,7 @@ namespace PS8
             catch (TaskCanceledException)
             {
                 return null;
-            }
+            } 
         }
 
         /// <summary>
