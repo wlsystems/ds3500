@@ -110,8 +110,6 @@ namespace PS8
 
         }
 
-
-
         /// <summary>
         /// Adds words to Player 2 Lisit, takes in a list of strings, iterates through each word and converts to uppercase as needed.
         /// This occurs after game is completed. 
@@ -474,32 +472,6 @@ namespace PS8
         public void wordBox_TextChanged_1(object sender, EventArgs e)
         {
             wordButton.Enabled = true;
-            wordBox.KeyUp += WordBox_KeyUp;
-        }
-
-        /// <summary>
-        /// Handles the user using an enter key to submit.  
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void WordBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            bool pressed = false;
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (pressed == false)
-                {
-                    pressed = true;
-                    MessageBox.Show("EE");
-                    e.Handled = true;
-                    if (SubmitPressed != null)
-                    {
-                        SubmitPressed(wordBox.Text);
-                        wordBox.Text = "";
-                        return;
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -552,8 +524,8 @@ namespace PS8
             if (CancelPressed != null)
                 SetStatusLabel(false, true);
             joinButton.Text = "Join Game";
-            if (CancelPressed != null)
-                CancelPressed(2);
+            //if (CancelPressed != null)
+                //CancelPressed(2);
         }
 
         private void cancelbutton1_Click_1(object sender, EventArgs e)
