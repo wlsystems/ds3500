@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Tracy King  u0040235
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -232,7 +234,7 @@ namespace PS8
                 "the next available opponent. The status will appear on the bottom left.  As soon as an opponent " +
                 "is available the game will start.  You can enter words in the box below the gameboard and submit " +
                 "them by clicking on submit word. You will be able to watch the timer and the current score. " +
-                "If you choose to exit early, you can click the Leave button.  After the game is over, all of the words " +
+                "If you choose to exit early, you can click the Leave button.  After the game is over, all of the words  " +
                 "played by both opponents will appear to the right of the board.  Happy Spelling!");
         }
 
@@ -374,6 +376,8 @@ namespace PS8
             if (CancelPressed != null)
                 SetStatusLabel(false, true);
             joinButton.Text = "Join Game";
+            if (CancelPressed != null)
+                CancelPressed(2);
         }
 
         private void cancelbutton1_Click(object sender, EventArgs e)
