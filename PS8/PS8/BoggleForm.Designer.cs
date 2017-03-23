@@ -150,7 +150,7 @@
             this.cancelButton.TabIndex = 13;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // cancelbutton1
             // 
@@ -162,6 +162,7 @@
             this.cancelbutton1.Tag = "doneButton";
             this.cancelbutton1.Text = "Cancel";
             this.cancelbutton1.UseVisualStyleBackColor = true;
+            this.cancelbutton1.Click += new System.EventHandler(this.cancelbutton1_Click_1);
             // 
             // menuStrip1
             // 

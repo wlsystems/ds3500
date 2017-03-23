@@ -360,38 +360,15 @@ namespace PS8
         }
 
 
-        /// <summary>
-        /// The cancel button was pressed during registeration, cancels and allows the user to attempt again if desird. 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private void cancelButton_Click_1(object sender, EventArgs e)
         {
-            registerButton.Enabled = true;
-            cancelButton.Enabled = false;
-            timeBox.Enabled = false;
-            joinButton.Enabled = false;
-            if (CancelPressed != null)
-                CancelPressed(1);
-            if (CancelPressed != null)
-                SetStatusLabel(false, true);
-            joinButton.Text = "Join Game";
-            if (CancelPressed != null)
-                CancelPressed(2);
+ 
         }
-        /// <summary>
-        /// Cancels the join request.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+
         private void cancelbutton1_Click(object sender, EventArgs e)
         {
-            if (CancelPressed != null)
-                CancelPressed(2);
-            registerButton_Click_1(sender, e);
-            SetStatusLabel(false, true);
-            wordBox.Enabled = false;
-            wordButton.Enabled = false;
+
         }
 
         /// <summary>
@@ -558,6 +535,35 @@ namespace PS8
         private void gameBoard_Paint_1(object sender, PaintEventArgs e)
         {
 
+        }
+        /// <summary>
+        /// The cancel button was pressed during registeration, cancels and allows the user to attempt again if desird. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            registerButton.Enabled = true;
+            cancelButton.Enabled = false;
+            timeBox.Enabled = false;
+            joinButton.Enabled = false;
+            if (CancelPressed != null)
+                CancelPressed(1);
+            if (CancelPressed != null)
+                SetStatusLabel(false, true);
+            joinButton.Text = "Join Game";
+            if (CancelPressed != null)
+                CancelPressed(2);
+        }
+
+        private void cancelbutton1_Click_1(object sender, EventArgs e)
+        {
+            if (CancelPressed != null)
+                CancelPressed(2);
+            registerButton_Click_1(sender, e);
+            SetStatusLabel(false, true);
+            wordBox.Enabled = false;
+            wordButton.Enabled = false;
         }
     }
 }

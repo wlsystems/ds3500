@@ -153,7 +153,6 @@ namespace PS8
         {
             tokenSource3 = new CancellationTokenSource();
             CancellationToken ct = tokenSource3.Token;
-
             dynamic game = new ExpandoObject();
             game = Sync(game, "games/" + gameToken, 3);
             while (game.GameState == "active")
@@ -198,6 +197,7 @@ namespace PS8
                 {
                     Words2Played = (ExpandoObject)item;
                     Player2String.Add(Words2Played.Score.ToString() + " " + Words2Played.Word.ToString());
+
                 }
                 view.ViewPlayer2Word(Player2String);
                 view.JoinEnabled(true);                 //Game is officially completed, enables player to join again.  
@@ -320,11 +320,11 @@ namespace PS8
 
                     else if (type == 3)                                                         //GET
                         response = client.GetAsync(Name).Result;
-                  
+                    var obj2 = new ExpandoObject();
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
                         string result = "";
-                        var obj2 = new ExpandoObject();
+                        
                         result = response.Content.ReadAsStringAsync().Result;
                         if (result != "")
                             obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
