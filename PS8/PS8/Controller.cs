@@ -95,14 +95,7 @@ namespace PS8
                 CancelPressed -= value;
             }
         }
-        /// <summary>
-        /// Start the game, calls the task.  
-        /// </summary>
-        private void GameStatusStart()
-        {
-            Task task = new Task(delegate { GameStatus(); });
-            task.Start();
-        }
+
 
         /// <summary>
         /// Handles the game while it is pending,  checks for canellation requests while it is pending, once the game status has

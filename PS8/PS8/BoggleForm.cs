@@ -225,7 +225,7 @@ namespace PS8
         /// <param name="e"></param>
         private void menuItem_Help_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This is a simple Boogle Client. A user can enter their name and their chosen server " +
+            MessageBox.Show("This is a simple Boggle Client. A user can enter their name and their chosen server " +
                 "and press register.   They can cancel the registering process by clicking the " +
                 "cancel button underneath the register button.  After you have been successfully registered " +
                 "you can enter a desired game time between 5-120 seconds and click join game." +
@@ -256,9 +256,9 @@ namespace PS8
 
         private void registerButton_Click_1(object sender, EventArgs e)
         {
+            registerButton.Enabled = false;
             cancelButton.Enabled = true;
             SetServerURL(nameBox.Text, serverBox.Text);
-            registerButton.Enabled = false;
             joinButton.Enabled = true;
             cancelbutton1.Enabled = false;
             ClearBoard();
