@@ -172,6 +172,7 @@ namespace PS8
             }
             if (game.GameState == "completed")          //game is now completed
             {
+                view.SetJoinText("Play Again");
                 view.SetStatusLabel(false, false);
                 /// Pulls the list of objects for WordsPlayed for player 1, takes the words and scores and 
                 /// sets them in a string list. 
@@ -227,6 +228,7 @@ namespace PS8
             }
             finally
             {
+                view.SetJoinText("Join Game");
                 view.UserRegistered = true;
                 GameStatus();
             }

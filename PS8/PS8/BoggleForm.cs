@@ -370,6 +370,14 @@ namespace PS8
         }
 
         /// <summary>
+        /// Set the text of the join button
+        /// </summary>
+        /// <param name="state"></param>
+        public void SetJoinText(string text)
+        {
+            joinButton.Text = text;
+        }
+        /// <summary>
         /// This takes in the string of 16 letters, parses it into characters and then checks for the letter Q to handle it 
         /// as a "Qu."  Sets the 16 texboxes for the game board. 
         /// </summary>
