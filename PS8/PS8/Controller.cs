@@ -223,7 +223,7 @@ namespace PS8
                 game.UserToken = user1Token;
                 game.GameID = "";
                 Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games", 1));
-                game = await t;
+                game = await t;  
                 gameToken = game.GameID;
             }
             finally
