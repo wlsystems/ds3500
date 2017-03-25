@@ -139,7 +139,7 @@ namespace Boggle
         ///  GameID or UserToken is missing or invalid, or if UserToken is not a player in the game identified by GameID, responds with 
         ///  response code 403 (Forbidden).  If game is not active response with code Conflict.  Return the word score as an string.  
         /// </summary>
-        string PlayWord(string gameID, string userToken, string word)
+        public string PlayWord(string gameID, string userToken, string word)
         {
             if (word == null || word.Trim().Length == 0)
             {
@@ -163,6 +163,26 @@ namespace Boggle
             }
             return null; ///just a placeholder till method is writen
         }
+
+        /// <summary>
+        ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
+        ///  in the pending game, they are removed and returns a status response of OK.  
+        /// </summary>
+        public void CancelJoin(string userToken)
+        {
+            if (!users.ContainsKey(userToken))
+            {
+                SetStatus(Forbidden);
+            }
+            string index = games.Keys.Count.ToString();
+            if ((games[index].GameState != "pending"))
+            {
+                SetStatus(Forbidden);
+            }
+        }
+
+        ////TODO need to check for userId in game status 
+
         /// <summary>
         /// Returns a Stream version of index.html.
         /// </summary>
