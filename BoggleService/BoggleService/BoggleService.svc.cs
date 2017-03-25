@@ -31,11 +31,11 @@ namespace Boggle
         {
             lock (sync)
             {
-                if (user.Name == "stall")
+                if (user.Nickname == "stall")
                 {
                     Thread.Sleep(5000);
                 }
-                if (user.Name == null || user.Name.Trim().Length == 0)
+                if (user.Nickname == null || user.Nickname.Trim().Length == 0)
                 {
                     SetStatus(Forbidden);
                     return null;

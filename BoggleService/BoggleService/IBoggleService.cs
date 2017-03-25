@@ -15,7 +15,7 @@ namespace Boggle
         /// If either user.Name or user.Email is null or is empty after trimming, responds with status code Forbidden.
         /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 
         /// </summary>
-        [WebInvoke(Method = "POST", UriTemplate = "/RegisterUser")]
+        [WebInvoke(Method = "POST", UriTemplate = "/users")]
         string Register(UserInfo user);
 
 
