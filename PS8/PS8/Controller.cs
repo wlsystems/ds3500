@@ -223,7 +223,7 @@ namespace PS8
                 game.UserToken = user1Token;
                 game.GameID = "";
                 Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games", 1));
-                game = await t;
+                game = await t;  
                 gameToken = game.GameID;
             }
             finally
@@ -307,7 +307,7 @@ namespace PS8
             }
             catch(Exception e)
             {
-               // MessageBox.Show(e.ToString());     //Unable to sucessfully register the user
+                MessageBox.Show(e.ToString());     //Unable to sucessfully register the user
             }
             finally
             {
@@ -346,6 +346,7 @@ namespace PS8
                          else if (type == 3)                                                         //GET
                              response = await Task.Run(() => client.GetAsync(Name).Result);
                     dynamic obj2 =null;
+                    MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
                         string result = "";        
