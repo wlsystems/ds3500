@@ -8,7 +8,7 @@ namespace BoggleList
 {
     public class UserInfo
     {
-        public string Name { get; set; }
+        public string Nickname { get; set; }
         public int score { get; set; }
         public string UserToken { get; set; }
         public List<Tuple<string, int>> PlayedWords { get; set; }
