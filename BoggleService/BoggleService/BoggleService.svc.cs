@@ -1,8 +1,10 @@
 ﻿using BoggleList;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.ServiceModel.Web;
 using System.Threading;
 using static System.Net.HttpStatusCode;
@@ -26,9 +28,17 @@ namespace Boggle
             WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
 
-
-        public string Register(UserInfo user)
+        public string JoinGame(string UserToken, int TimeLimit)
         {
+            lock (sync)
+            {
+                return "";
+            }
+        }
+
+        public Person Register(UserInfo user)
+        {
+            HttpResponseMessage hp = new HttpResponseMessage();
             lock (sync)
             {
                 if (user.Nickname == "stall")
@@ -42,10 +52,13 @@ namespace Boggle
                 }
                 else
                 {
+                    SetStatus(Created);
                     string userID = Guid.NewGuid().ToString();
                     users.Add(userID, user);
+                    Person p = new Person();
+                    p.UserToken = userID;
                     SetStatus(Created);
-                    return userID;
+                    return p;
                 }
             }
         }
@@ -62,37 +75,6 @@ namespace Boggle
             return File.OpenRead(AppDomain.CurrentDomain.BaseDirectory + "index.html");
         }
 
-        /// <summary>
-        /// Demo.  You can delete this.
-        /// </summary>
-        public string WordAtIndex(int n)
-        {
-            if (n < 0)
-            {
-                SetStatus(Forbidden);
-                return null;
-            }
-
-            string line;
-            using (StreamReader file = new System.IO.StreamReader(AppDomain.CurrentDomain.BaseDirectory + "dictionary.txt"))
-            {
-                while ((line = file.ReadLine()) != null)
-                {
-                    if (n == 0) break;
-                    n--;
-                }
-            }
-
-            if (n == 0)
-            {
-                SetStatus(OK);
-                return line;
-            }
-            else
-            {
-                SetStatus(Forbidden);
-                return null;
-            }
-        }
+      
     }
 }
