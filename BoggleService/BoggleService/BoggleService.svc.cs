@@ -13,7 +13,7 @@ namespace Boggle
     {
 
         private readonly static Dictionary<String, UserInfo> users = new Dictionary<String, UserInfo>();
-        //private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
+        private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
         private static readonly object sync = new object();
         
         /// <summary>
