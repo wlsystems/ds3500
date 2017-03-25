@@ -321,6 +321,7 @@ namespace PS8
                     else if (type == 3)                                                         //GET
                         response = client.GetAsync(Name).Result;
                     var obj2 = new ExpandoObject();
+                    MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
                         string result = "";
