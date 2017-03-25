@@ -122,7 +122,7 @@ namespace Boggle
                     GameItem g = new GameItem();                //creates a new game item
                     users[UserToken].InGame = true;         
                     g.Player1 = users[UserToken];           //sets player 1 
-                    g.GameID = index + 101;                 //sets gameID
+                    g.GameID = index + 1;                 //sets gameID
                     g.TimeLimit = TimeLimit;                //sets time limit
                     g.GameState = "pending";                //sets game status to pending since there is only one player
                     games.Add(g.GameID.ToString(), g);         //adds game ID and game item to dictionary
