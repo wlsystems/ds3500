@@ -110,8 +110,6 @@ namespace PS8
 
         }
 
-
-
         /// <summary>
         /// Adds words to Player 2 Lisit, takes in a list of strings, iterates through each word and converts to uppercase as needed.
         /// This occurs after game is completed. 
@@ -225,7 +223,7 @@ namespace PS8
         /// <param name="e"></param>
         private void menuItem_Help_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("This is a simple Boogle Client. A user can enter their name and their chosen server " +
+            MessageBox.Show("This is a simple Boggle Client. A user can enter their name and their chosen server " +
                 "and press register.   They can cancel the registering process by clicking the " +
                 "cancel button underneath the register button.  After you have been successfully registered " +
                 "you can enter a desired game time between 5-120 seconds and click join game." +
@@ -256,9 +254,9 @@ namespace PS8
 
         private void registerButton_Click_1(object sender, EventArgs e)
         {
+            registerButton.Enabled = false;
             cancelButton.Enabled = true;
             SetServerURL(nameBox.Text, serverBox.Text);
-            registerButton.Enabled = false;
             joinButton.Enabled = true;
             cancelbutton1.Enabled = false;
             ClearBoard();
@@ -372,6 +370,14 @@ namespace PS8
         }
 
         /// <summary>
+        /// Set the text of the join button
+        /// </summary>
+        /// <param name="state"></param>
+        public void SetJoinText(string text)
+        {
+            joinButton.Text = text;
+        }
+        /// <summary>
         /// This takes in the string of 16 letters, parses it into characters and then checks for the letter Q to handle it 
         /// as a "Qu."  Sets the 16 texboxes for the game board. 
         /// </summary>
@@ -474,32 +480,6 @@ namespace PS8
         public void wordBox_TextChanged_1(object sender, EventArgs e)
         {
             wordButton.Enabled = true;
-            wordBox.KeyUp += WordBox_KeyUp;
-        }
-
-        /// <summary>
-        /// Handles the user using an enter key to submit.  
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void WordBox_KeyUp(object sender, KeyEventArgs e)
-        {
-            bool pressed = false;
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (pressed == false)
-                {
-                    pressed = true;
-                    MessageBox.Show("EE");
-                    e.Handled = true;
-                    if (SubmitPressed != null)
-                    {
-                        SubmitPressed(wordBox.Text);
-                        wordBox.Text = "";
-                        return;
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -552,8 +532,8 @@ namespace PS8
             if (CancelPressed != null)
                 SetStatusLabel(false, true);
             joinButton.Text = "Join Game";
-            if (CancelPressed != null)
-                CancelPressed(2);
+            //if (CancelPressed != null)
+                //CancelPressed(2);
         }
 
         private void cancelbutton1_Click_1(object sender, EventArgs e)
