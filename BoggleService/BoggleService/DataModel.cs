@@ -10,11 +10,13 @@ namespace BoggleList
     {
         public string UserToken { get; set; }
     }
+
     public class UserInfo
     {
         public string Nickname { get; set; }
         public int Score { get; set; }
         public List<Tuple<string, int>> WordsPlayed { get; set; }
+        public bool InGame { get; set; };
     }
 
     public class GameItem
