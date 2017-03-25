@@ -304,6 +304,7 @@ namespace PS8
                 Task<ExpandoObject> t = await  Task<ExpandoObject>.Run ( () =>  Sync(user, "users", 1));
                 user = await t;
                 user1Token = user.UserToken;
+          
             }
             catch(Exception e)
             {
@@ -345,6 +346,8 @@ namespace PS8
                          }
                          else if (type == 3)                                                         //GET
                              response = await Task.Run(() => client.GetAsync(Name).Result);
+                    string r = response.ToString();
+                    MessageBox.Show(r);
                     dynamic obj2 =null;
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
