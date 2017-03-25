@@ -30,6 +30,14 @@ namespace Boggle
 
 
         /// <summary>
+        ///  Takes in a word, checks to see if the word is valid and exists on the board. If Word is null or empty when trimmed, or if
+        ///  GameID or UserToken is missing or invalid, or if UserToken is not a player in the game identified by GameID, responds with 
+        ///  response code 403 (Forbidden).  If game is not active response, with code Conflict. 
+        /// </summary>
+        [WebInvoke(Method = "PUT", UriTemplate = "/games/{string gameID}")]
+        string PlayWord(string gameID, string userToken, string word);
+
+        /// <summary>
         /// Sends back index.html as the response body.
         /// </summary>
         [WebGet(UriTemplate = "/api")]

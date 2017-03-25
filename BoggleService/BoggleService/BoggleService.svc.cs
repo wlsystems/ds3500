@@ -58,6 +58,7 @@ namespace Boggle
                 }
             }
         }
+
         /// <summary>
         ///   Takes in a user token and a time limit request to join a new game.  Checks to see if time limit is between 5-120,  also checks to see if user exists has a
         ///   current registered user.   If player 1,  sets status as "Accepted" and creates a pending game.  If player 2,  sets status as "Created"
@@ -133,7 +134,35 @@ namespace Boggle
             }
         }
 
-
+        /// <summary>
+        ///  Takes in a word, checks to see if the word is valid and exists on the board. If Word is null or empty when trimmed, or if
+        ///  GameID or UserToken is missing or invalid, or if UserToken is not a player in the game identified by GameID, responds with 
+        ///  response code 403 (Forbidden).  If game is not active response with code Conflict.  Return the word score as an string.  
+        /// </summary>
+        string PlayWord(string gameID, string userToken, string word)
+        {
+            if (word == null || word.Trim().Length == 0)
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
+            if (!users.ContainsKey(userToken))
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
+            if (!games.ContainsKey(gameID))
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
+            if (games[gameID].GameState != "active")
+            {
+                SetStatus(Conflict);
+                return null;
+            }
+            return null; ///just a placeholder till method is writen
+        }
         /// <summary>
         /// Returns a Stream version of index.html.
         /// </summary>
