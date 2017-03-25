@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.ServiceModel.Web;
 using System.Threading;
+using static Boggle.DataModel;
 using static System.Net.HttpStatusCode;
 
 namespace Boggle
@@ -12,7 +13,7 @@ namespace Boggle
     {
 
         private readonly static Dictionary<String, UserInfo> users = new Dictionary<String, UserInfo>();
-        private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
+        //private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
         private static readonly object sync = new object();
         
         /// <summary>
@@ -48,6 +49,7 @@ namespace Boggle
                 }
             }
         }
+
 
         /// <summary>
         /// Returns a Stream version of index.html.
