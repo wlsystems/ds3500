@@ -14,7 +14,7 @@ namespace BoggleList
         public List<Tuple<string, int>> PlayedWords { get; set; }
     }
 
-    public class Game
+    public class GameItem
     {
         public int GameID { get; set; } 
         public string GameState { get; set; }
