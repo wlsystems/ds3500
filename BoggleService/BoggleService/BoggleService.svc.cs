@@ -20,7 +20,7 @@ namespace Boggle
         
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when
-        /// an http response is sent.
+        /// an http response is sent..
         /// </summary>
         /// <param name="status"></param>
         private static void SetStatus(HttpStatusCode status)
