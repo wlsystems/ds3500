@@ -279,9 +279,9 @@ namespace PS8
                 user = Sync(user, "users", 1); //1 is for type POST
                 user1Token = user.UserToken;
             }
-            catch
+            catch(Exception e)
             {
-                MessageBox.Show("Invalid URL");     //Unable to sucessfully register the user
+                MessageBox.Show(e.ToString());     //Unable to sucessfully register the user
             }
             finally
             {
@@ -325,7 +325,6 @@ namespace PS8
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
                         string result = "";
-                        
                         result = response.Content.ReadAsStringAsync().Result;
                         if (result != "")
                             obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
