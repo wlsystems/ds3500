@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.ServiceModel.Web;
+using System.Threading;
 using static System.Net.HttpStatusCode;
 
 namespace Boggle
 {
     public class BoggleService : IBoggleService
     {
+
+        private readonly static Dictionary<String, UserInfo> users = new Dictionary<String, UserInfo>();
+        private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
+        private static readonly object sync = new object();
+        
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when
         /// an http response is sent.
@@ -17,6 +23,30 @@ namespace Boggle
         private static void SetStatus(HttpStatusCode status)
         {
             WebOperationContext.Current.OutgoingResponse.StatusCode = status;
+        }
+
+
+        public string Register(UserInfo user)
+        {
+            lock (sync)
+            {
+                if (user.Name == "stall")
+                {
+                    Thread.Sleep(5000);
+                }
+                if (user.Name == null || user.Name.Trim().Length == 0)
+                {
+                    SetStatus(Forbidden);
+                    return null;
+                }
+                else
+                {
+                    string userID = Guid.NewGuid().ToString();
+                    users.Add(userID, user);
+                    SetStatus(Created);
+                    return userID;
+                }
+            }
         }
 
         /// <summary>
