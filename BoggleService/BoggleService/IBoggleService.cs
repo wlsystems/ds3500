@@ -30,13 +30,5 @@ namespace Boggle
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/users")]
         Person Register(UserInfo user);
-
-        /// <summary>
-        /// If  user.Nickname is not valid responds with status code Forbidden.  If time limit isn't valid reponse with status code Forbidden. If
-        /// user is already in a game, response with status code Conflict.  
-        /// Otherwise, places user in a game.  
-        /// </summary>
-        [WebInvoke(Method = "POST", UriTemplate = "/games")]
-        GameInfo JoinGame(string userToken, int TimeLimit);
     }
 }
