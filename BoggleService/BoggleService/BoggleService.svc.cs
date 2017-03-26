@@ -106,13 +106,14 @@ namespace Boggle
                 SetStatus(Forbidden);
             else if (obj.UserToken == pending.UserToken)
                 SetStatus(Conflict);
+
             if (pending == null)
             {
-                pending.GameID = 0;
+                pending.GameID = 101;
                 pending.UserToken = "";
             }
 
-            else if (pending.UserToken == "")
+            if (pending.UserToken == "")
             {
                 pending.TimeLimit = obj.TimeLimit;
                 pending.UserToken = obj.UserToken;
@@ -134,6 +135,8 @@ namespace Boggle
                 games.Add(ng.GameID, g);
                 pending.UserToken = "";
                 pending.TimeLimit = 0;
+                pending.GameID = pending.GameID + 1;
+                SetStatus(Created);
             }
             return ng;
         }
