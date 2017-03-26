@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.ServiceModel.Web;
 using System.Threading;
+using System.Web.UI;
 using static System.Net.HttpStatusCode;
 
 namespace Boggle
@@ -20,7 +21,7 @@ namespace Boggle
 
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when
-        /// an http response is sent.
+        /// an http response is sent..
         /// </summary>
         /// <param name="status"></param>
         private static void SetStatus(HttpStatusCode status)
@@ -28,17 +29,12 @@ namespace Boggle
             WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
 
-        public string JoinGame(string UserToken, int TimeLimit)
-        {
-            lock (sync)
-            {
-                return "";
-            }
-        }
+
 
         public Person Register(UserInfo user)
         {
             HttpResponseMessage hp = new HttpResponseMessage();
+
             lock (sync)
             {
                 if (user.Nickname == "stall")
@@ -63,6 +59,129 @@ namespace Boggle
             }
         }
 
+        /// <summary>
+        ///   Takes in a user token and a time limit request to join a new game.  Checks to see if time limit is between 5-120,  also checks to see if user exists has a
+        ///   current registered user.   If player 1,  sets status as "Accepted" and creates a pending game.  If player 2,  sets status as "Created"
+        ///   and the game becomes active and is started.  
+        /// </summary>
+        /// <param name="UserToken"></param>
+        /// <param name="TimeLimit"></param>
+        /// <returns></returns>
+        public string JoinGame(string UserToken, int TimeLimit)
+        {
+            lock (sync)
+            {
+                if (TimeLimit > 120 || TimeLimit < 5)  //checks for invalid time and set status to forbidden
+                {
+                    SetStatus(Forbidden);
+                    return null;
+                }
+
+
+                if (!users.ContainsKey(UserToken))  //checks to see if userToken is valid, sets status to forbidden
+                {
+                    SetStatus(Forbidden);
+                    return null;
+                }
+
+                if (users[UserToken].InGame == true)  // user is already in an active or pending game
+                {
+                    SetStatus(Conflict);
+                    return null;
+                }
+
+
+                if (games == null)      // this is the very first game to start, the games dictionary is empty. 
+                {
+                    SetStatus(Accepted);
+                    GameItem g = new GameItem();                //creates a new game item
+                    g.Player1 = users[UserToken];           //sets player 1 
+                    users[UserToken].InGame = true;
+                    g.GameID = 101;
+                    g.TimeLimit = TimeLimit;                //sets time limit
+                    g.GameState = "pending";                //sets game status to pending since there is only one player
+                    games.Add(g.GameID.ToString(), g);         //adds game ID and game item to dictionary
+                    return g.GameID.ToString();                 //returns game id as a string;    
+                }
+
+                int index = games.Keys.Count;      //most recenty created game
+                string indexStr = index.ToString();
+                if ((games != null) && (games[indexStr].GameState == "pending"))    //a pending game exist, this player will be player two
+                {
+                    SetStatus(Created);                     //sets game status to created 
+                    users[UserToken].InGame = true;
+                    games[indexStr].Player2 = users[UserToken];  //adds player two
+                    int timeAvg = games[indexStr].TimeLimit + TimeLimit / 2;
+                    games[indexStr].TimeLimit = timeAvg;           //takes an average of the two requested time limits and averages them 
+                    games[indexStr].GameState = "active";          //sets status to active
+                    //timerStart(index);   // TODO  will start the timer in game
+                    return indexStr;
+                }
+                else         //there is no current pending game 
+                {
+                    SetStatus(Accepted);                          //Status for player 1
+                    GameItem g = new GameItem();                //creates a new game item
+                    users[UserToken].InGame = true;         
+                    g.Player1 = users[UserToken];           //sets player 1 
+                    g.GameID = index + 1;                 //sets gameID
+                    g.TimeLimit = TimeLimit;                //sets time limit
+                    g.GameState = "pending";                //sets game status to pending since there is only one player
+                    games.Add(g.GameID.ToString(), g);         //adds game ID and game item to dictionary
+                    return g.GameID.ToString();                 //returns game id as a string;
+                }
+
+
+            }
+        }
+
+        /// <summary>
+        ///  Takes in a word, checks to see if the word is valid and exists on the board. If Word is null or empty when trimmed, or if
+        ///  GameID or UserToken is missing or invalid, or if UserToken is not a player in the game identified by GameID, responds with 
+        ///  response code 403 (Forbidden).  If game is not active response with code Conflict.  Return the word score as an string.  
+        /// </summary>
+        public string PlayWord(string gameID, string userToken, string word)
+        {
+            if (word == null || word.Trim().Length == 0)
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
+            if (!users.ContainsKey(userToken))
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
+            if (!games.ContainsKey(gameID))
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
+            if (games[gameID].GameState != "active")
+            {
+                SetStatus(Conflict);
+                return null;
+            }
+            return null; ///just a placeholder till method is writen
+        }
+
+        /// <summary>
+        ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
+        ///  in the pending game, they are removed and returns a status response of OK.  
+        /// </summary>
+        public void CancelJoin(string userToken)
+        {
+            if (!users.ContainsKey(userToken))
+            {
+                SetStatus(Forbidden);
+            }
+            string index = games.Keys.Count.ToString();
+            if ((games[index].GameState != "pending"))
+            {
+                SetStatus(Forbidden);
+            }
+        }
+
+        ////TODO need to check for userId in game status 
 
         /// <summary>
         /// Returns a Stream version of index.html.
