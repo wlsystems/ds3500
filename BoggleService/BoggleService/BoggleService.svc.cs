@@ -113,7 +113,7 @@ namespace Boggle
                 pending.UserToken = "";
             }
 
-            if (pending.UserToken == "")
+            else if (pending.UserToken == "")
             {
                 pending.TimeLimit = obj.TimeLimit;
                 pending.UserToken = obj.UserToken;
@@ -125,8 +125,8 @@ namespace Boggle
                 ng.GameID = "" + pending.GameID;
                 GameItem g = new GameItem();
                 g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
-                g.Player1 = users[pending.UserToken];
-                g.Player2 = users[obj.UserToken];
+                g.Player1 = users[pending.UserToken.ToString()];
+                g.Player2 = users[obj.UserToken.ToString()];
                 g.GameID = short.Parse(ng.GameID);
                 g.StartTime = DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
