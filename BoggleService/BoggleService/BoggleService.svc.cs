@@ -102,9 +102,6 @@ namespace Boggle
         public NewGame JoinGame(NewGameRequest obj)
         {
             NewGame ng = new NewGame();
-            ng.GameID = "";
-            obj.UserToken = "";
-            obj.TimeLimit = 0;
             if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)
                 SetStatus(Forbidden);
             else if (obj.UserToken == pending.UserToken)
@@ -114,7 +111,7 @@ namespace Boggle
                 pending.GameID = 0;
                 pending.UserToken = "";
             }
- 
+
             else if (pending.UserToken == "")
             {
                 pending.TimeLimit = obj.TimeLimit;
@@ -122,11 +119,18 @@ namespace Boggle
                 SetStatus(Accepted);
                 ng.GameID = "" + pending.GameID;
             }
-            else 
+            else
             {
 
                 SetStatus(Created);
-                ng.GameID = ""+ pending.GameID;
+                ng.GameID = "" + pending.GameID;
+                GameItem g = new GameItem();
+                g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
+                g.Player1 = users[pending.UserToken];
+                g.Player2 = users[obj.UserToken];
+                g.StartTime = DateTime.Now.TimeOfDay.TotalSeconds;
+                g.GameState = "active";
+                games.Add(ng.GameID, g);
             }
             return ng;
         }
