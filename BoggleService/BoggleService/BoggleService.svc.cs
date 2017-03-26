@@ -122,8 +122,6 @@ namespace Boggle
             }
             else
             {
-
-                SetStatus(Created);
                 ng.GameID = "" + pending.GameID;
                 GameItem g = new GameItem();
                 g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
