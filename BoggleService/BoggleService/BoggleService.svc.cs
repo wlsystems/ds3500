@@ -16,7 +16,7 @@ namespace Boggle
         /// Keeps track of the currently pending game
         /// </summary>
         private readonly static Pending pending = new Pending();
-        private readonly static Dictionary<String, UserInfo> users = new Dictionary<String, UserInfo>();
+        private readonly static Dictionary<String, PlayerCompleted> users = new Dictionary<String, PlayerCompleted>();
         private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
         private static readonly object sync = new object();
         /// <summary>
@@ -45,7 +45,7 @@ namespace Boggle
                 {
                     SetStatus(Created);
                     string userID = Guid.NewGuid().ToString();
-                    UserInfo user = new UserInfo();
+                    PlayerCompleted user = new PlayerCompleted();
                     user.Nickname = newUser.Nickname;
                     users.Add(userID, user);
                     Person p = new Person();
@@ -107,7 +107,7 @@ namespace Boggle
             else if (obj.UserToken == pending.UserToken)
                 SetStatus(Conflict);
 
-            if (pending == null)
+            if (pending.UserToken == null)
             {
                 pending.GameID = 101;
                 pending.UserToken = "";
@@ -125,10 +125,9 @@ namespace Boggle
                 ng.GameID = "" + pending.GameID;
                 GameItem g = new GameItem();
                 g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
-                g.Player1 = users[pending.UserToken.ToString()];
-                g.Player2 = users[obj.UserToken.ToString()];
-                g.GameID = short.Parse(ng.GameID);
-                g.StartTime = DateTime.Now.TimeOfDay.TotalSeconds;
+                g.Player1 = users[pending.UserToken];
+                g.Player2 = users[obj.UserToken];
+                g.StartTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
                 games.Add(ng.GameID, g);
                 pending.UserToken = "";
