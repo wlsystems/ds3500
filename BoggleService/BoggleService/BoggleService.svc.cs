@@ -1,6 +1,7 @@
 ﻿using BoggleList;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Net;
 using System.ServiceModel.Web;
@@ -11,6 +12,10 @@ namespace Boggle
 {
     public class BoggleService : IBoggleService
     {
+        /// <summary>
+        /// Keeps track of the currently pending game
+        /// </summary>
+        private readonly static Pending pending = new Pending();
         private readonly static Dictionary<String, UserInfo> users = new Dictionary<String, UserInfo>();
         private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
         private static readonly object sync = new object();
@@ -23,15 +28,15 @@ namespace Boggle
         {
             WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
-        public Person Register(UserInfo user)
+        public Person Register(NewPlayer newUser)
         {
             lock (sync)
             {
-                if (user.Nickname == "stall")
+                if (newUser.Nickname == "stall")
                 {
                     Thread.Sleep(5000);
                 }
-                if (user.Nickname == null || user.Nickname.Trim().Length == 0)
+                if (newUser.Nickname == null || newUser.Nickname.Trim().Length == 0)
                 {
                     SetStatus(Forbidden);
                     return null;
@@ -40,6 +45,8 @@ namespace Boggle
                 {
                     SetStatus(Created);
                     string userID = Guid.NewGuid().ToString();
+                    UserInfo user = new UserInfo();
+                    user.Nickname = newUser.Nickname;
                     users.Add(userID, user);
                     Person p = new Person();
                     p.UserToken = userID;
@@ -90,6 +97,33 @@ namespace Boggle
                 SetStatus(Forbidden);
                 return null;
             }
+        }
+
+        public NewGame JoinGame(Object sender)
+        {
+            NewGame ng = new NewGame();
+            dynamic obj = new ExpandoObject();
+            obj.UserToken = "";
+            obj.TimeLimit = 0;
+            obj = sender;
+            if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)
+                SetStatus(Forbidden);
+            else if (obj.UserToken == pending.UserToken)
+                SetStatus(Conflict);
+            if (pending == null)
+            {
+                pending.GameID = 0;
+                pending.UserToken = "";
+            }
+ 
+            else if (pending.UserToken == "")
+            {
+                pending.TimeLimit = obj.TimeLimit;
+                pending.UserToken = obj.UserToken;
+                SetStatus(Accepted);
+                ng.GameID = "" + pending.GameID;
+            }
+            return ng;
         }
     }
 }

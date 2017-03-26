@@ -6,14 +6,27 @@ using System.Web;
 namespace BoggleList
 
 {
+    public class Pending
+    {
+        public string UserToken { get; set; }
+        public int TimeLimit { get; set; }
+        public int GameID { get; set; }
+    }
+    public class NewGame
+    {
+        public string GameID { get; set; }
+    }
     public class Person
     {
         public string UserToken { get; set; }
     }
 
-    public class Player
+    public class NewPlayer
     {
         public string Nickname { get; set; }
+    }
+    public class Player : NewPlayer
+    {
         public int Score { get; set; }
     }
     public class WordsPlayed
@@ -24,6 +37,7 @@ namespace BoggleList
     {
         public List<Tuple<string, int>> WordsPlayed { get; set; }
     }
+
 
     public class UserInfo : PlayerCompleted
     {
