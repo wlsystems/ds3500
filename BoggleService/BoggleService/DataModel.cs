@@ -6,10 +6,14 @@ using System.Web;
 namespace BoggleList
 
 {
-    public class Pending
+    public class NewGameRequest
     {
         public string UserToken { get; set; }
         public int TimeLimit { get; set; }
+       
+    }
+    public class Pending : NewGameRequest
+    {
         public int GameID { get; set; }
     }
     public class NewGame

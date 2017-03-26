@@ -1,5 +1,6 @@
 ﻿using BoggleList;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -37,6 +38,6 @@ namespace Boggle
         /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/games")]
-        NewGame JoinGame(object obj);
+        NewGame JoinGame(NewGameRequest obj);
     }
 }
