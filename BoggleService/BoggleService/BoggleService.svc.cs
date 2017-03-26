@@ -123,6 +123,13 @@ namespace Boggle
                 SetStatus(Accepted);
                 ng.GameID = "" + pending.GameID;
             }
+            else 
+            {
+                pending.TimeLimit = obj.TimeLimit;
+                pending.UserToken = obj.UserToken;
+                SetStatus(Accepted);
+                ng.GameID = "" + pending.GameID;
+            }
             return ng;
         }
     }
