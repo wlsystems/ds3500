@@ -30,6 +30,11 @@ namespace BoggleList
         public bool InGame { get; set; }
     }
 
+    public class GameInfo
+    {
+        public string GameID { get; set; }
+}
+
     /// <summary>
     /// Response (if game is pending)
     /// </summary>
