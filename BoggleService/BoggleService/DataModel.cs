@@ -11,12 +11,61 @@ namespace BoggleList
         public string UserToken { get; set; }
     }
 
-    public class UserInfo
+    public class Player
     {
         public string Nickname { get; set; }
         public int Score { get; set; }
+    }
+    public class WordsPlayed
+    {
+        
+    }
+    public class PlayerCompleted: Player
+    {
         public List<Tuple<string, int>> WordsPlayed { get; set; }
+    }
+
+    public class UserInfo : PlayerCompleted
+    {
         public bool InGame { get; set; }
+    }
+
+    /// <summary>
+    /// Response (if game is pending)
+    /// </summary>
+    public class PendingGame
+    {
+        public string GameState { get; set; }
+    }
+    /// <summary>
+    /// Response (if game is active or completed and "Brief=yes" was a parameter)
+    /// </summary>
+    public class ActiveGameBrief : PendingGame
+    {
+        public Player Player1 {get; set; }
+        public Player Player2 { get; set; }
+        public int TimeLeft { get; set; }
+    }
+
+    /// <summary>
+    /// Response (if game is active and "Brief=yes" was not a parameter)
+    /// </summary>
+    public class ActiveGame : ActiveGameBrief
+    {
+        public int TimeLimit{ get; set; }
+        public string Board { get; set; }
+    }
+
+    /// <summary>
+    /// Response (if game is active and "Brief=yes" was not a parameter)
+    /// </summary>
+    public class GameCompleted : PendingGame
+    {
+        public int TimeLimit { get; set; }
+        public string Board { get; set; }
+        public int TimeLeft { get; set; }
+        public PlayerCompleted Player1 { get; set; }
+        public PlayerCompleted Player2 { get; set; }
     }
 
     public class GameItem
