@@ -132,6 +132,8 @@ namespace Boggle
                 g.StartTime = DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
                 games.Add(ng.GameID, g);
+                pending.UserToken = "";
+                pending.TimeLimit = 0;
             }
             return ng;
         }
