@@ -159,7 +159,7 @@ namespace PS8
             while (game.GameState == "active")
             {
                 view.UpdateTimer(game.TimeLeft);            //updates score for both players every 500 ms
-                score = (int)game.Player1.Score;                
+                score = (int)game.Player1.Score;
                 view.UpdateScore1(score);
                 score = (int)game.Player2.Score;
                 view.UpdateScore2(score);
@@ -179,7 +179,7 @@ namespace PS8
                 IList<object> Player1List;
                 Player1List = game.Player1.WordsPlayed;   //Pulls list from server. 
                 List<string> Player1String = new List<string>(); //List that the WordPlayed object will be placed into. 
-                dynamic WordsPlayed = new ExpandoObject();   
+                dynamic WordsPlayed = new ExpandoObject();
                 WordsPlayed.Word = "";             //Initilizes the Word default
                 WordsPlayed.Score = 0;             //Initilizes the score default
                 foreach (object item in Player1List)            //Iterates though each Wordplayed object in the list. 
@@ -223,7 +223,7 @@ namespace PS8
                 game.UserToken = user1Token;
                 game.GameID = "";
                 Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(game, "games", 1));
-                game = await t;  
+                game = await t;
                 gameToken = game.GameID;
             }
             finally
@@ -301,11 +301,11 @@ namespace PS8
                 dynamic user = new ExpandoObject();
                 user.Nickname = name;
                 user.UserToken = "";
-                Task<ExpandoObject> t = await  Task<ExpandoObject>.Run ( () =>  Sync(user, "users", 1));
+                Task<ExpandoObject> t = await Task<ExpandoObject>.Run(() => Sync(user, "users", 1));
                 user = await t;
                 user1Token = user.UserToken;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.ToString());     //Unable to sucessfully register the user
             }
@@ -336,20 +336,20 @@ namespace PS8
                     // Compose and send the request.
                     tokenSource = new CancellationTokenSource();
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-                    HttpResponseMessage response=null;
-                         if (type == 1)
-                             response = await Task.Run(() => client.PostAsync(Name, content, tokenSource.Token).Result);   //POST
-                         else if (type == 2)
-                         {
-                             response = await Task.Run(() =>  client.PutAsync(Name, content, tokenSource.Token).Result);  //PUT
-                         }
-                         else if (type == 3)                                                         //GET
-                             response = await Task.Run(() => client.GetAsync(Name).Result);
-                    dynamic obj2 =null;
+                    HttpResponseMessage response = null;
+                    if (type == 1)
+                        response = await Task.Run(() => client.PostAsync(Name, content, tokenSource.Token).Result);   //POST
+                    else if (type == 2)
+                    {
+                        response = await Task.Run(() => client.PutAsync(Name, content, tokenSource.Token).Result);  //PUT
+                    }
+                    else if (type == 3)                                                         //GET
+                        response = await Task.Run(() => client.GetAsync(Name).Result);
+                    dynamic obj2 = null;
                     MessageBox.Show(response.ToString());
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
-                        string result = "";        
+                        string result = "";
                         result = response.Content.ReadAsStringAsync().Result;
                         if (result != "")
                             obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
@@ -366,7 +366,7 @@ namespace PS8
             catch (TaskCanceledException)
             {
                 return null;
-            } 
+            }
         }
 
         /// <summary>
