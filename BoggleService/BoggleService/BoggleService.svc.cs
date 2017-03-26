@@ -128,6 +128,7 @@ namespace Boggle
                 g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
+                g.GameID = short.Parse(ng.GameID);
                 g.StartTime = DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
                 games.Add(ng.GameID, g);
