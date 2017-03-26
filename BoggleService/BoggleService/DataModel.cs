@@ -70,6 +70,11 @@ namespace BoggleList
         public string Board { get; set; }
     }
 
+    public class GameInfo
+    {
+        public string GameID { get; set; }
+    }
+
     /// <summary>
     /// Response (if game is active and "Brief=yes" was not a parameter)
     /// </summary>
