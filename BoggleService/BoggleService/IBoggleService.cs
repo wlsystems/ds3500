@@ -41,6 +41,13 @@ namespace Boggle
         NewGame JoinGame(NewGameRequest obj);
 
         /// <summary>
+        ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
+        ///  in the pending game, they are removed and returns a status response of OK.  
+        /// </summary>
+        [WebInvoke(Method = "PUT", UriTemplate = "/games")]
+        void CancelJoin(CancelJoinRequest cancelobj);
+
+        /// <summary>
         /// Registers a new user.
         /// If either user.Name or user.Email is null or is empty after trimming, responds with status code Forbidden.
         /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 

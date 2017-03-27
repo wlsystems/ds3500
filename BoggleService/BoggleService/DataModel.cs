@@ -12,6 +12,12 @@ namespace BoggleList
         public int TimeLimit { get; set; }
        
     }
+
+    public class CancelJoinRequest
+    {
+        public string UserToken { get; set; }
+
+    }
     public class Pending : NewGameRequest
     {
         public int GameID { get; set; }
