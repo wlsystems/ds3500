@@ -163,7 +163,7 @@ namespace Boggle
         /// </summary>
         /// <param name="gameobj"></param>
         /// <returns></returns>
-        public PendingGame GameStatus( string GameID, string Brief)
+        public ActiveGame GameStatus( string GameID, string Brief)
         {
             if (!games.ContainsKey(GameID))
                 if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
@@ -173,32 +173,32 @@ namespace Boggle
                 }
             if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
             {
-                PendingGame pg = new PendingGame();
+                ActiveGame pg = new ActiveGame();
                 pg.GameState = "pending";
                 SetStatus(OK);
                 return pg;
             }
             else if (Brief == "yes")                            //either active or completed game, with brief as a parameter
             {
-                ActiveGameBrief agb = new ActiveGameBrief();
-                agb.GameState = games[GameID].GameState;
-                agb.TimeLeft = games[GameID].TimeLeft;
-                agb.TimeLeft = games[GameID].TimeLeft;
-                Player p1 = new Player();
-                Player p2 = new Player();
-                p1.Score = games[GameID].Player1.Score;
-                p2.Score = games[GameID].Player2.Score;
-                agb.Player1 = p1;
-                agb.Player1 = p2;
-                SetStatus(OK);
-                return agb;
+                //ActiveGameBrief agb = new ActiveGameBrief();
+                //agb.GameState = games[GameID].GameState;
+                //agb.TimeLeft = games[GameID].TimeLeft;
+                //agb.TimeLeft = games[GameID].TimeLeft;
+                //Player p1 = new Player();
+                //Player p2 = new Player();
+                //p1.Score = games[GameID].Player1.Score;
+                //p2.Score = games[GameID].Player2.Score;
+                //agb.Player1 = p1;
+                //agb.Player2 = p2;
+                //SetStatus(OK);
+                //return agb;
             }
             else if (games[GameID].GameState == "active")           //game state is active and not brief
             {
                 ActiveGame ag = new ActiveGame();
                 ag.GameState = games[GameID].GameState;
                 ag.Board = games[GameID].Board;
-                ag.TimeLeft = games[GameID].TimeLeft;
+                ag.TimeLeft = games[GameID].TimeLimit;
                 ag.TimeLimit = games[GameID].TimeLimit;
                 Player p1 = new Player();
                 Player p2 = new Player();
@@ -207,17 +207,18 @@ namespace Boggle
                 p1.Score = games[GameID].Player1.Score;
                 p2.Score = games[GameID].Player2.Score;
                 ag.Player1 = p1;
-                ag.Player1 = p2;
+                ag.Player2 = p2;
                 SetStatus(OK);
                 return ag;
             }
             else 
             {
-                GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
-                gc = games[GameID];
-                SetStatus(OK);
-                return gc;
+                //GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
+                //gc = games[GameID];
+                //SetStatus(OK);
+                //return gc;
             }
+            return null;
         }
     }
 }
