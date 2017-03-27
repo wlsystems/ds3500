@@ -1,10 +1,13 @@
 ﻿using BoggleList;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.ServiceModel.Web;
+using System.Text;
 using System.Threading;
 using static System.Net.HttpStatusCode;
 
@@ -161,10 +164,10 @@ namespace Boggle
         /// <summary>
         /// Returns the status of the game. 
         /// </summary>
-        /// <param name="gameobj"></param>
         /// <returns></returns>
-        public ActiveGame GameStatus( string GameID, string Brief)
+        public object GameStatus( string GameID, string Brief)
         {
+            dynamic game = new ExpandoObject();
             if (!games.ContainsKey(GameID))
                 if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
                 {
@@ -173,52 +176,38 @@ namespace Boggle
                 }
             if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
             {
-                ActiveGame pg = new ActiveGame();
-                pg.GameState = "pending";
+                game.GameState = "pending";
                 SetStatus(OK);
-                return pg;
+
             }
             else if (Brief == "yes")                            //either active or completed game, with brief as a parameter
             {
-                //ActiveGameBrief agb = new ActiveGameBrief();
-                //agb.GameState = games[GameID].GameState;
-                //agb.TimeLeft = games[GameID].TimeLeft;
-                //agb.TimeLeft = games[GameID].TimeLeft;
-                //Player p1 = new Player();
-                //Player p2 = new Player();
-                //p1.Score = games[GameID].Player1.Score;
-                //p2.Score = games[GameID].Player2.Score;
-                //agb.Player1 = p1;
-                //agb.Player2 = p2;
-                //SetStatus(OK);
-                //return agb;
+                game.GameState = games[GameID].GameState;
+                game.TimeLeft = (int)DateTime.Now.TimeOfDay.TotalSeconds - games[GameID].StartTime - games[GameID].TimeLimit;
+                game.TimeLimit = games[GameID].TimeLimit;
+                game.Player1.Score = games[GameID].Player1.Score;
+                game.Player2.Score = games[GameID].Player2.Score;
+                SetStatus(OK);
             }
             else if (games[GameID].GameState == "active")           //game state is active and not brief
             {
-                ActiveGame ag = new ActiveGame();
-                ag.GameState = games[GameID].GameState;
-                ag.Board = games[GameID].Board;
-                ag.TimeLeft = games[GameID].TimeLimit;
-                ag.TimeLimit = games[GameID].TimeLimit;
-                Player p1 = new Player();
-                Player p2 = new Player();
-                p1.Nickname = games[GameID].Player1.Nickname;
-                p2.Nickname = games[GameID].Player2.Nickname;
-                p1.Score = games[GameID].Player1.Score;
-                p2.Score = games[GameID].Player2.Score;
-                ag.Player1 = p1;
-                ag.Player2 = p2;
+                game.GameState = games[GameID].GameState;
+                game.Board = games[GameID].Board;
+                game.TimeLeft = (int)DateTime.Now.TimeOfDay.TotalSeconds - games[GameID].StartTime - games[GameID].TimeLimit;
+                game.TimeLimit = games[GameID].TimeLimit;
+                game.Player1.Nickname = games[GameID].Player1.Nickname;
+                game.Player2.Nickname = games[GameID].Player2.Nickname;
+                game.Player1.Score = games[GameID].Player1.Score;
+                game.Player2.Score = games[GameID].Player2.Score;
                 SetStatus(OK);
-                return ag;
             }
             else 
             {
-                //GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
-                //gc = games[GameID];
-                //SetStatus(OK);
-                //return gc;
+                game = games[GameID];
+                game.TimeLeft = (int)DateTime.Now.TimeOfDay.TotalSeconds - games[GameID].StartTime - games[GameID].TimeLimit;
+                SetStatus(OK);
             }
-            return null;
+            return JsonConvert.SerializeObject(game);
         }
     }
 }

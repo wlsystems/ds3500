@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Net.Http;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 
@@ -51,6 +52,6 @@ namespace Boggle
         ///  Returns the status of the game.  
         /// </summary>
         [WebGet(UriTemplate = "/games/{GameID}?Brief={Brief}")]
-        ActiveGame GameStatus(string GameID, string Brief);
+        object GameStatus(string GameID, string Brief);
     }
 }
