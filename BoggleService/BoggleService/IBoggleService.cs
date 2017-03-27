@@ -45,6 +45,6 @@ namespace Boggle
         ///  in the pending game, they are removed and returns a status response of OK.  
         /// </summary>
         [WebInvoke(Method = "PUT", UriTemplate = "/games")]
-        void CancelJoin(CancelJoinRequest cancelobj);
+        void CancelJoin(Person cancelobj);
     }
 }

@@ -142,7 +142,7 @@ namespace Boggle
         ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
         ///  in the pending game, they are removed and returns a status response of OK. 
         /// </summary>
-        public void CancelJoin(CancelJoinRequest cancelobj)
+        public void CancelJoin(Person cancelobj)
         {
             if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)))
             {
