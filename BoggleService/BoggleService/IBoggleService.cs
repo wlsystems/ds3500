@@ -39,5 +39,12 @@ namespace Boggle
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/games")]
         NewGame JoinGame(NewGameRequest obj);
+
+        /// <summary>
+        ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
+        ///  in the pending game, they are removed and returns a status response of OK.  
+        /// </summary>
+        [WebInvoke(Method = "PUT", UriTemplate = "/games")]
+        void CancelJoin(CancelJoinRequest cancelobj);
     }
 }

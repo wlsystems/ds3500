@@ -129,6 +129,7 @@ namespace Boggle
                 g.Player2 = users[obj.UserToken];
                 g.StartTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
+                g.Board = new BoggleBoard().ToString();
                 games.Add(ng.GameID, g);
                 pending.UserToken = "";
                 pending.TimeLimit = 0;
@@ -136,6 +137,30 @@ namespace Boggle
                 SetStatus(Created);
             }
             return ng;
+        }
+        /// <summary>
+        ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
+        ///  in the pending game, they are removed and returns a status response of OK. 
+        /// </summary>
+        /// <param name="userToken"></param>
+        public void CancelJoin(CancelJoinRequest cancelobj)
+        {
+            if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)))
+            {
+                SetStatus(Forbidden);
+                
+            }
+
+            if (pending.UserToken == cancelobj.UserToken)
+            {
+                pending.UserToken = "";
+                pending.TimeLimit = 0;
+                SetStatus(OK);
+            }
+            else if (pending.UserToken != cancelobj.UserToken)
+            {
+                SetStatus(Forbidden);
+            }
         }
     }
 }
