@@ -106,12 +106,13 @@ namespace Boggle
                 SetStatus(Forbidden);
             else if (obj.UserToken == pending.UserToken)
                 SetStatus(Conflict);
+
             if (pending.UserToken == null)
             {
-                pending.GameID = 0;
+                pending.GameID = 101;
                 pending.UserToken = "";
             }
- 
+
             else if (pending.UserToken == "")
             {
                 pending.TimeLimit = obj.TimeLimit;
@@ -119,10 +120,20 @@ namespace Boggle
                 SetStatus(Accepted);
                 ng.GameID = "" + pending.GameID;
             }
-            else 
+            else
             {
+                ng.GameID = "" + pending.GameID;
+                GameItem g = new GameItem();
+                g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
+                g.Player1 = users[pending.UserToken];
+                g.Player2 = users[obj.UserToken];
+                g.StartTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
+                g.GameState = "active";
+                games.Add(ng.GameID, g);
+                pending.UserToken = "";
+                pending.TimeLimit = 0;
+                pending.GameID = pending.GameID + 1;
                 SetStatus(Created);
-                ng.GameID = ""+ pending.GameID;
             }
             return ng;
         }

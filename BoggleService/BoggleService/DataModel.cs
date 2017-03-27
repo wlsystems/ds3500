@@ -43,11 +43,6 @@ namespace BoggleList
     }
 
 
-    public class UserInfo : PlayerCompleted
-    {
-        public bool InGame { get; set; }
-    }
-
     /// <summary>
     /// Response (if game is pending)
     /// </summary>
@@ -85,7 +80,6 @@ namespace BoggleList
         public PlayerCompleted Player1 { get; set; }
         public PlayerCompleted Player2 { get; set; }
     }
-
 
     public class GameItem: GameCompleted
     {
