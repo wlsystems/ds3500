@@ -43,7 +43,6 @@ namespace Boggle
                 }
                 else
                 {
-                    SetStatus(Created);
                     string userID = Guid.NewGuid().ToString();
                     PlayerCompleted user = new PlayerCompleted();
                     user.Nickname = newUser.Nickname;
