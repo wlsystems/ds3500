@@ -18,7 +18,7 @@ namespace Boggle
         private readonly static Pending pending = new Pending();
         private readonly static Dictionary<String, PlayerCompleted> users = new Dictionary<String, PlayerCompleted>();
         private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
-        private static readonly object sync = new object();
+        private readonly static object sync = new object();
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when
         /// an http response is sent.
@@ -105,7 +105,6 @@ namespace Boggle
                 SetStatus(Forbidden);
             else if (obj.UserToken == pending.UserToken)
                 SetStatus(Conflict);
-
             if (pending.UserToken == null)
             {
                 pending.GameID = 101;
@@ -116,6 +115,7 @@ namespace Boggle
             {
                 pending.TimeLimit = obj.TimeLimit;
                 pending.UserToken = obj.UserToken;
+                ng.GameID = "" + pending.GameID;
                 SetStatus(Accepted);
                 ng.GameID = "" + pending.GameID;
                 return ng;
@@ -127,7 +127,7 @@ namespace Boggle
                 g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
-                g.StartTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
+                g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
                 g.Board = new BoggleBoard().ToString();
                 games.Add(ng.GameID, g);
@@ -135,8 +135,8 @@ namespace Boggle
                 pending.TimeLimit = 0;
                 pending.GameID = pending.GameID + 1;
                 SetStatus(Created);
+                return ng;
             }
-            return ng;
         }
         /// <summary>
         ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
@@ -144,10 +144,10 @@ namespace Boggle
         /// </summary>
         public void CancelJoin(Person cancelobj)
         {
-            if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)))
+            if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)) | (pending.UserToken != cancelobj.UserToken))
             {
                 SetStatus(Forbidden);
-                
+                return;
             }
 
             if (pending.UserToken == cancelobj.UserToken)
@@ -155,11 +155,13 @@ namespace Boggle
                 pending.UserToken = "";
                 pending.TimeLimit = 0;
                 SetStatus(OK);
+                return;
             }
-            else if (pending.UserToken != cancelobj.UserToken)
-            {
-                SetStatus(Forbidden); 
-            }
+        }
+
+        public PendingGame GameStatus(GameStatusQuery gameobj)
+        {
+            throw new NotImplementedException();
         }
     }
 }
