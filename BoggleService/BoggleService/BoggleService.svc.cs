@@ -16,7 +16,7 @@ namespace Boggle
         /// Keeps track of the currently pending game
         /// </summary>
         private readonly static Pending pending = new Pending();
-        private readonly static Dictionary<String, UserInfo> users = new Dictionary<String, UserInfo>();
+        private readonly static Dictionary<String, PlayerCompleted> users = new Dictionary<String, PlayerCompleted>();
         private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
         private static readonly object sync = new object();
         /// <summary>
@@ -45,7 +45,7 @@ namespace Boggle
                 {
                     SetStatus(Created);
                     string userID = Guid.NewGuid().ToString();
-                    UserInfo user = new UserInfo();
+                    PlayerCompleted user = new PlayerCompleted();
                     user.Nickname = newUser.Nickname;
                     users.Add(userID, user);
                     Person p = new Person();
@@ -102,14 +102,11 @@ namespace Boggle
         public NewGame JoinGame(NewGameRequest obj)
         {
             NewGame ng = new NewGame();
-            ng.GameID = "";
-            obj.UserToken = "";
-            obj.TimeLimit = 0;
             if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)
                 SetStatus(Forbidden);
             else if (obj.UserToken == pending.UserToken)
                 SetStatus(Conflict);
-            if (pending == null)
+            if (pending.UserToken == null)
             {
                 pending.GameID = 0;
                 pending.UserToken = "";
@@ -124,7 +121,6 @@ namespace Boggle
             }
             else 
             {
-
                 SetStatus(Created);
                 ng.GameID = ""+ pending.GameID;
             }

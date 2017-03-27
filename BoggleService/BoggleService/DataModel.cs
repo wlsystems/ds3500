@@ -74,11 +74,6 @@ namespace BoggleList
         public string Board { get; set; }
     }
 
-    public class GameInfo
-    {
-        public string GameID { get; set; }
-    }
-
     /// <summary>
     /// Response (if game is active and "Brief=yes" was not a parameter)
     /// </summary>
@@ -91,17 +86,10 @@ namespace BoggleList
         public PlayerCompleted Player2 { get; set; }
     }
 
-    public class GameItem
+
+    public class GameItem: GameCompleted
     {
-        public int GameID { get; set; }
-        public string UserToken { get; set; }
-        public string GameState { get; set; }
-        public string GameBoard { get; set; }
-        public int TimeLeft { get; set; }
-        public int TimeLimit { get; set; }
-        public UserInfo Player1 { get; set; }
-        public UserInfo Player2 { get; set; } 
-        public double StartTime { get; set; }
+        public int StartTime { get; set; }
     }
 
 }
