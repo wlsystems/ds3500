@@ -158,10 +158,58 @@ namespace Boggle
                 return;
             }
         }
-
-        public PendingGame GameStatus(GameStatusQuery gameobj)
+        /// <summary>
+        /// Returns the status of the game. 
+        /// </summary>
+        /// <param name="gameobj"></param>
+        /// <returns></returns>
+        public PendingGame GameStatus(string Brief, string GameID)
         {
-            throw new NotImplementedException();
+            if (!games.ContainsKey(GameID))
+                if (pending.GameID.ToString() != GameID)
+                {
+                SetStatus(Forbidden);
+                return null;
+                }
+            if (games[GameID].GameState == "pending")
+            {
+                PendingGame pg = new PendingGame();
+                pg.GameState = "pending";
+                SetStatus(OK);
+                return pg;
+            }
+            else if (Brief == "yes")
+            {
+                ActiveGameBrief agb = new ActiveGameBrief();
+                agb.GameState = games[GameID].GameState;
+                agb.TimeLeft = games[GameID].TimeLeft;
+                agb.TimeLeft = games[GameID].TimeLeft;
+                agb.Player1.Score = games[GameID].Player1.Score;
+                agb.Player2.Score = games[GameID].Player2.Score;
+                SetStatus(OK);
+                return agb;
+            }
+            else if (games[GameID].GameState == "active")
+            {
+                ActiveGame ag = new ActiveGame();
+                ag.GameState = games[GameID].GameState;
+                ag.Board = games[GameID].Board;
+                ag.TimeLeft = games[GameID].TimeLeft;
+                ag.TimeLimit = games[GameID].TimeLimit;
+                ag.Player1.Nickname = games[GameID].Player1.Nickname;
+                ag.Player1.Score = games[GameID].Player1.Score;
+                ag.Player2.Nickname = games[GameID].Player2.Nickname;
+                ag.Player2.Score = games[GameID].Player2.Score;
+                SetStatus(OK);
+                return ag;
+            }
+            else 
+            {
+                GameCompleted gc = new GameCompleted();
+                gc = games[GameID];
+                SetStatus(OK);
+                return gc;
+            }
         }
     }
 }
