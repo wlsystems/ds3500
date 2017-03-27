@@ -43,7 +43,6 @@ namespace Boggle
                 }
                 else
                 {
-                    SetStatus(Created);
                     string userID = Guid.NewGuid().ToString();
                     PlayerCompleted user = new PlayerCompleted();
                     user.Nickname = newUser.Nickname;
@@ -106,19 +105,19 @@ namespace Boggle
                 SetStatus(Forbidden);
             else if (obj.UserToken == pending.UserToken)
                 SetStatus(Conflict);
-
             if (pending.UserToken == null)
             {
                 pending.GameID = 101;
                 pending.UserToken = "";
             }
 
-            else if (pending.UserToken == "")
+            if (pending.UserToken == "")
             {
                 pending.TimeLimit = obj.TimeLimit;
                 pending.UserToken = obj.UserToken;
-                SetStatus(Accepted);
                 ng.GameID = "" + pending.GameID;
+                SetStatus(Accepted);
+                return ng;
             }
             else
             {
@@ -127,15 +126,15 @@ namespace Boggle
                 g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
-                g.StartTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
+                g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
                 games.Add(ng.GameID, g);
                 pending.UserToken = "";
                 pending.TimeLimit = 0;
                 pending.GameID = pending.GameID + 1;
                 SetStatus(Created);
+                return ng;
             }
-            return ng;
         }
     }
 }

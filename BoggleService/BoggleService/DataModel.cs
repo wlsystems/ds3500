@@ -20,6 +20,10 @@ namespace BoggleList
     {
         public string GameID { get; set; }
     }
+    public class GameStatusQuery:NewGame
+    {
+        public string Brief { get; set; }
+    }
     public class Person
     {
         public string UserToken { get; set; }
