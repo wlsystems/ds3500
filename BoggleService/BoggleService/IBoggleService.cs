@@ -53,6 +53,6 @@ namespace Boggle
         /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 
         /// </summary>
         [WebInvoke(Method = "GET", UriTemplate = "/games")]
-        PendingGame GameStatus(NewGame gameobj);
+        PendingGame GameStatus(GameStatusQuery gameobj);
     }
 }

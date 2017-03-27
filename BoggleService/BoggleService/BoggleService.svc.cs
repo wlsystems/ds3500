@@ -158,5 +158,10 @@ namespace Boggle
                 return;
             }
         }
+
+        public PendingGame GameStatus(GameStatusQuery gameobj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
