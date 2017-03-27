@@ -166,19 +166,19 @@ namespace Boggle
         public PendingGame GameStatus( string GameID, string Brief)
         {
             if (!games.ContainsKey(GameID))
-                if (pending.GameID.ToString() != GameID)
+                if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
                 {
                 SetStatus(Forbidden);
                 return null;
                 }
-            if (pending.GameID.ToString() == GameID)
+            if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
             {
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
                 SetStatus(OK);
                 return pg;
             }
-            else if (Brief == "yes")
+            else if (Brief == "yes")                            //either active or completed game, with brief as a parameter
             {
                 ActiveGameBrief agb = new ActiveGameBrief();
                 agb.GameState = games[GameID].GameState;
@@ -193,7 +193,7 @@ namespace Boggle
                 SetStatus(OK);
                 return agb;
             }
-            else if (games[GameID].GameState == "active")
+            else if (games[GameID].GameState == "active")           //game state is active and not brief
             {
                 ActiveGame ag = new ActiveGame();
                 ag.GameState = games[GameID].GameState;
@@ -213,7 +213,7 @@ namespace Boggle
             }
             else 
             {
-                GameCompleted gc = new GameCompleted();
+                GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
                 gc = games[GameID];
                 SetStatus(OK);
                 return gc;
