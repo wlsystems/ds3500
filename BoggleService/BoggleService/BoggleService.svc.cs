@@ -112,12 +112,13 @@ namespace Boggle
                 pending.UserToken = "";
             }
 
-            else if (pending.UserToken == "")
+            if (pending.UserToken == "")
             {
                 pending.TimeLimit = obj.TimeLimit;
                 pending.UserToken = obj.UserToken;
                 SetStatus(Accepted);
                 ng.GameID = "" + pending.GameID;
+                return ng;
             }
             else
             {
@@ -141,7 +142,6 @@ namespace Boggle
         ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
         ///  in the pending game, they are removed and returns a status response of OK. 
         /// </summary>
-        /// <param name="userToken"></param>
         public void CancelJoin(CancelJoinRequest cancelobj)
         {
             if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)))
