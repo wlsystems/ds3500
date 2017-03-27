@@ -45,14 +45,14 @@ namespace Boggle
         ///  in the pending game, they are removed and returns a status response of OK.  
         /// </summary>
         [WebInvoke(Method = "PUT", UriTemplate = "/games")]
-        void CancelJoin(CancelJoinRequest cancelobj);
+        void CancelJoin(Person cancelobj);
 
         /// <summary>
         /// Registers a new user.
         /// If either user.Name or user.Email is null or is empty after trimming, responds with status code Forbidden.
         /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 
         /// </summary>
-      //  [WebInvoke(Method = "GET", UriTemplate = "/games")]
-   //     PendingGame GameStatus(NewGame gameobj);
+        [WebInvoke(Method = "GET", UriTemplate = "/games")]
+        PendingGame GameStatus(NewGame gameobj);
     }
 }

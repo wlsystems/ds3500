@@ -18,7 +18,7 @@ namespace Boggle
         private readonly static Pending pending = new Pending();
         private readonly static Dictionary<String, PlayerCompleted> users = new Dictionary<String, PlayerCompleted>();
         private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
-        private static readonly object sync = new object();
+        private readonly static object sync = new object();
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when
         /// an http response is sent.
@@ -142,12 +142,12 @@ namespace Boggle
         ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
         ///  in the pending game, they are removed and returns a status response of OK. 
         /// </summary>
-        public void CancelJoin(CancelJoinRequest cancelobj)
+        public void CancelJoin(Person cancelobj)
         {
-            if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)))
+            if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)) | (pending.UserToken != cancelobj.UserToken))
             {
                 SetStatus(Forbidden);
-                
+                return;
             }
 
             if (pending.UserToken == cancelobj.UserToken)
@@ -155,10 +155,7 @@ namespace Boggle
                 pending.UserToken = "";
                 pending.TimeLimit = 0;
                 SetStatus(OK);
-            }
-            else if (pending.UserToken != cancelobj.UserToken)
-            {
-                SetStatus(Forbidden); 
+                return;
             }
         }
     }
