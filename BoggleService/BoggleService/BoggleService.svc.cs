@@ -163,7 +163,7 @@ namespace Boggle
         /// </summary>
         /// <param name="gameobj"></param>
         /// <returns></returns>
-        public PendingGame GameStatus(string Brief, string GameID)
+        public PendingGame GameStatus( string GameID, string Brief)
         {
             if (!games.ContainsKey(GameID))
                 if (pending.GameID.ToString() != GameID)
@@ -171,7 +171,7 @@ namespace Boggle
                 SetStatus(Forbidden);
                 return null;
                 }
-            if (games[GameID].GameState == "pending")
+            if (pending.GameID.ToString() == GameID)
             {
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
@@ -184,8 +184,12 @@ namespace Boggle
                 agb.GameState = games[GameID].GameState;
                 agb.TimeLeft = games[GameID].TimeLeft;
                 agb.TimeLeft = games[GameID].TimeLeft;
-                agb.Player1.Score = games[GameID].Player1.Score;
-                agb.Player2.Score = games[GameID].Player2.Score;
+                Player p1 = new Player();
+                Player p2 = new Player();
+                p1.Score = games[GameID].Player1.Score;
+                p2.Score = games[GameID].Player2.Score;
+                agb.Player1 = p1;
+                agb.Player1 = p2;
                 SetStatus(OK);
                 return agb;
             }
@@ -196,10 +200,14 @@ namespace Boggle
                 ag.Board = games[GameID].Board;
                 ag.TimeLeft = games[GameID].TimeLeft;
                 ag.TimeLimit = games[GameID].TimeLimit;
-                ag.Player1.Nickname = games[GameID].Player1.Nickname;
-                ag.Player1.Score = games[GameID].Player1.Score;
-                ag.Player2.Nickname = games[GameID].Player2.Nickname;
-                ag.Player2.Score = games[GameID].Player2.Score;
+                Player p1 = new Player();
+                Player p2 = new Player();
+                p1.Nickname = games[GameID].Player1.Nickname;
+                p2.Nickname = games[GameID].Player2.Nickname;
+                p1.Score = games[GameID].Player1.Score;
+                p2.Score = games[GameID].Player2.Score;
+                ag.Player1 = p1;
+                ag.Player1 = p2;
                 SetStatus(OK);
                 return ag;
             }
