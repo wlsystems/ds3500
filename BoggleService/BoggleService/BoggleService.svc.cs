@@ -159,7 +159,7 @@ namespace Boggle
             }
             else if (pending.UserToken != cancelobj.UserToken)
             {
-                SetStatus(Forbidden);
+                SetStatus(Forbidden); 
             }
         }
     }
