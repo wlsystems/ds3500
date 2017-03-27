@@ -15,7 +15,7 @@ namespace BoggleList
 
     public class CancelJoinRequest
     {
-        public string UserToken { get; set; }
+        public string UserToken { get; set; } 
 
     }
     public class Pending : NewGameRequest
