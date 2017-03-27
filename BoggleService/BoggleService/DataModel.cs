@@ -12,11 +12,9 @@ namespace BoggleList
         public int TimeLimit { get; set; }
        
     }
-
-    public class CancelJoinRequest
+    public class PlayerWord : Person
     {
-        public string UserToken { get; set; } 
-
+        public string Word { get; set; }
     }
     public class Pending : NewGameRequest
     {
@@ -38,6 +36,10 @@ namespace BoggleList
     public class NewPlayer
     {
         public string Nickname { get; set; }
+    }
+    public class ThisWordScore
+    {
+        public int WordScore { get; set; }
     }
     public class Player : NewPlayer
     {

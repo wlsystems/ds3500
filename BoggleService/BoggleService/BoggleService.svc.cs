@@ -159,9 +159,10 @@ namespace Boggle
             }
         }
 
-        public PendingGame GameStatus(GameStatusQuery gameobj)
+        public PendingGame GameStatus(string gid, string brief)
         {
-            throw new NotImplementedException();
+            PendingGame pg = new PendingGame();
+            return pg;
         }
     }
 }
