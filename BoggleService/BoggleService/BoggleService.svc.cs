@@ -25,8 +25,8 @@ namespace Boggle
         private readonly static Dict dic = new Dict();
 
         /// <summary>
-        /// The most recent call to SetStatus determines the response code used when
-        /// an http response is sent.
+        /// The most recent call to SetStatus determines the response code used when.
+        /// an http response is sent..
         /// </summary>
         /// <param name="status"></param>
         private static void SetStatus(HttpStatusCode status)
@@ -129,7 +129,7 @@ namespace Boggle
             {
                 ng.GameID = "" + pending.GameID;
                 GameItem g = new GameItem();
-                g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
+                g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
                 g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
@@ -178,7 +178,7 @@ namespace Boggle
                 }
             if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
             {
-                ActiveGame pg = new ActiveGame();
+                PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
                 SetStatus(OK);
                 string jsonClient = JsonConvert.SerializeObject(pg);
@@ -239,11 +239,10 @@ namespace Boggle
 
         private int SetTime(int timeLimit, int startTime)
         {
-            if (startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds > timeLimit)
-
+            if (timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime) > timeLimit)
                 return 0;
             else
-                return startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds;
+                return timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime) ;
         }
 
         public WordScore PlayWord(PlayerWord w, string gid)

@@ -230,7 +230,7 @@ namespace PS8
             {
                 view.SetJoinText("Join Game");
                 view.UserRegistered = true;
-                SubmitWord("HOE");
+                GameStatus();
             }
         }
 
@@ -346,12 +346,12 @@ namespace PS8
                     else if (type == 3)                                                         //GET
                         response = await Task.Run(() => client.GetAsync(Name).Result);
                     dynamic obj2 = null;
-                    MessageBox.Show(response.StatusCode.ToString());
+
                     if (response.IsSuccessStatusCode)     // Deal with the response, checks for success status 
                     {
                         string result = "";
                         result = response.Content.ReadAsStringAsync().Result;
-
+                        //MessageBox.Show(result);
                         if (result != "")
                             obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
                         return obj2;
