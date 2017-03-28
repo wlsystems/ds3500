@@ -351,7 +351,7 @@ namespace PS8
                     {
                         string result = "";
                         result = response.Content.ReadAsStringAsync().Result;
-                        //MessageBox.Show(result);
+                        MessageBox.Show(result);
                         if (result != "")
                             obj2 = JsonConvert.DeserializeObject<ExpandoObject>(result, new ExpandoObjectConverter());
                         return obj2;

@@ -170,6 +170,7 @@ namespace Boggle
         /// <returns></returns>
         public Stream GameStatus( string GameID, string Brief)
         {
+            int t = 0;
             if (!games.ContainsKey(GameID))
                 if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
                 {
@@ -186,6 +187,20 @@ namespace Boggle
                     "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
+            if (games.ContainsKey(GameID))
+                t = SetTime(games[GameID].TimeLimit, games[GameID].StartTime); //get the time left
+            if (t <= 0)
+            {
+                GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
+                gc = games[GameID];
+                gc.TimeLeft = 0;
+                SetStatus(OK);
+                string jsonClient = JsonConvert.SerializeObject(gc);
+                WebOperationContext.Current.OutgoingResponse.ContentType =
+                    "application/json; charset=utf-8";
+                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+            }
+
             else if (Brief == "yes")                            //either active or completed game, with brief as a parameter
             {
                 ActiveGameBrief agb = new ActiveGameBrief();
@@ -203,6 +218,7 @@ namespace Boggle
                     "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
+
             else if (games[GameID].GameState == "active")           //game state is active and not brief
             {
                 ActiveGame ag = new ActiveGame();
@@ -224,17 +240,7 @@ namespace Boggle
                     "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
-            else 
-            {
-                GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
-                gc = games[GameID];
-                gc.TimeLeft = 0;
-                SetStatus(OK);
-                string jsonClient = JsonConvert.SerializeObject(gc);
-                WebOperationContext.Current.OutgoingResponse.ContentType =
-                    "application/json; charset=utf-8";
-                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
-            }
+            return null;
         }
 
         private int SetTime(int timeLimit, int startTime)
