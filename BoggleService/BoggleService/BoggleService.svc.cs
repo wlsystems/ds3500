@@ -126,7 +126,7 @@ namespace Boggle
             {
                 ng.GameID = "" + pending.GameID;
                 GameItem g = new GameItem();
-                g.TimeLimit = pending.TimeLimit + obj.TimeLimit / 2;
+                g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
                 g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
@@ -175,7 +175,7 @@ namespace Boggle
                 }
             if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
             {
-                ActiveGame pg = new ActiveGame();
+                PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
                 SetStatus(OK);
                 string jsonClient = JsonConvert.SerializeObject(pg);
@@ -236,11 +236,11 @@ namespace Boggle
 
         private int SetTime(int timeLimit, int startTime)
         {
-            if (startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds > timeLimit)
+            if (timeLimit + startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds <=0 )
 
                 return 0;
             else
-                return startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds;
+                return timeLimit + startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds;
         }
     }
 }
