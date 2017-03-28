@@ -52,6 +52,6 @@ namespace Boggle
         ///  Returns the status of the game.  
         /// </summary>
         [WebGet(UriTemplate = "/games/{GameID}?Brief={Brief}")]
-        object GameStatus(string GameID, string Brief);
+        Stream GameStatus(string GameID, string Brief);
     }
 }
