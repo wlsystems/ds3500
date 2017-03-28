@@ -188,7 +188,6 @@ namespace Boggle
                 ActiveGameBrief agb = new ActiveGameBrief();
                 agb.GameState = games[GameID].GameState;
                 agb.TimeLeft = games[GameID].TimeLeft;
-                agb.TimeLeft = games[GameID].TimeLeft;
                 Player p1 = new Player();
                 Player p2 = new Player();
                 p1.Score = games[GameID].Player1.Score;
@@ -206,7 +205,7 @@ namespace Boggle
                 ActiveGame ag = new ActiveGame();
                 ag.GameState = games[GameID].GameState;
                 ag.Board = games[GameID].Board;
-                ag.TimeLeft = games[GameID].TimeLeft;
+                ag.TimeLeft = SetTime(games[GameID].TimeLimit, games[GameID].StartTime);
                 ag.TimeLimit = games[GameID].TimeLimit;
                 Player p1 = new Player();
                 Player p2 = new Player();
@@ -226,12 +225,22 @@ namespace Boggle
             {
                 GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
                 gc = games[GameID];
+                gc.TimeLeft = 0;
                 SetStatus(OK);
                 string jsonClient = JsonConvert.SerializeObject(gc);
                 WebOperationContext.Current.OutgoingResponse.ContentType =
                     "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
+        }
+
+        private int SetTime(int timeLimit, int startTime)
+        {
+            if (startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds > timeLimit)
+
+                return 0;
+            else
+                return startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds;
         }
     }
 }
