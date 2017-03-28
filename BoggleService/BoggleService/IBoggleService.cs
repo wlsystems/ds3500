@@ -56,12 +56,8 @@ namespace Boggle
         [WebGet(UriTemplate = "/games/{gid}?Brief={brief}")]
         PendingGame GameStatus(string gid, string brief);
 
-        /// <summary>
-        /// Registers a new user.
-        /// If either user.Name or user.Email is null or is empty after trimming, responds with status code Forbidden.
-        /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 
-        /// </summary>
-      //  [WebInvoke(Method = "GET", UriTemplate = "/games")]
-       // ThisWordScore GameStatus(PlayerWord wordobj, string s);
+        [WebInvoke(Method = "PUT", UriTemplate = "/games/{gid}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        WordScore PlayWord(PlayerWord word, string gid);
+
     }
 }
