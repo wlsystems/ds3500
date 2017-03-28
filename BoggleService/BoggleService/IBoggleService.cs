@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Net.Http;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 
@@ -48,16 +49,9 @@ namespace Boggle
         void CancelJoin(Person cancelobj);
 
         /// <summary>
-        /// Registers a new user.
-        /// If either user.Name or user.Email is null or is empty after trimming, responds with status code Forbidden.
-        /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 
+        ///  Returns the status of the game.  
         /// </summary>
-        /// 
-        [WebGet(UriTemplate = "/games/{gid}?Brief={brief}")]
-        PendingGame GameStatus(string gid, string brief);
-
-        [WebInvoke(Method = "PUT", UriTemplate = "/games/{gid}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
-        WordScore PlayWord(PlayerWord word, string gid);
-
+        [WebGet(UriTemplate = "/games/{GameID}?Brief={Brief}")]
+        Stream GameStatus(string GameID, string Brief);
     }
 }

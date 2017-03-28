@@ -1,4 +1,5 @@
 ﻿using BoggleList;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Resources;
 using System.ServiceModel.Web;
+using System.Text;
 using System.Threading;
 using static System.Net.HttpStatusCode;
 
@@ -161,10 +163,87 @@ namespace Boggle
                 return;
             }
         }
-        public PendingGame GameStatus(string gid, string brief)
+        /// <summary>
+        /// Returns the status of the game. 
+        /// </summary>
+        /// <param name="gameobj"></param>
+        /// <returns></returns>
+        public Stream GameStatus( string GameID, string Brief)
         {
-            PendingGame pg = new PendingGame();
-            return pg;
+            if (!games.ContainsKey(GameID))
+                if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
+                {
+                SetStatus(Forbidden);
+                return null;
+                }
+            if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
+            {
+                ActiveGame pg = new ActiveGame();
+                pg.GameState = "pending";
+                SetStatus(OK);
+                string jsonClient = JsonConvert.SerializeObject(pg);
+                WebOperationContext.Current.OutgoingResponse.ContentType =
+                    "application/json; charset=utf-8";
+                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+            }
+            else if (Brief == "yes")                            //either active or completed game, with brief as a parameter
+            {
+                ActiveGameBrief agb = new ActiveGameBrief();
+                agb.GameState = games[GameID].GameState;
+                agb.TimeLeft = games[GameID].TimeLeft;
+                Player p1 = new Player();
+                Player p2 = new Player();
+                p1.Score = games[GameID].Player1.Score;
+                p2.Score = games[GameID].Player2.Score;
+                agb.Player1 = p1;
+                agb.Player2 = p2;
+                SetStatus(OK);
+                string jsonClient = JsonConvert.SerializeObject(agb);
+                WebOperationContext.Current.OutgoingResponse.ContentType =
+                    "application/json; charset=utf-8";
+                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+            }
+            else if (games[GameID].GameState == "active")           //game state is active and not brief
+            {
+                ActiveGame ag = new ActiveGame();
+                ag.GameState = games[GameID].GameState;
+                ag.Board = games[GameID].Board;
+                ag.TimeLeft = SetTime(games[GameID].TimeLimit, games[GameID].StartTime);
+                ag.TimeLimit = games[GameID].TimeLimit;
+                Player p1 = new Player();
+                Player p2 = new Player();
+                p1.Nickname = games[GameID].Player1.Nickname;
+                p2.Nickname = games[GameID].Player2.Nickname;
+                p1.Score = games[GameID].Player1.Score;
+                p2.Score = games[GameID].Player2.Score;
+                ag.Player1 = p1;
+                ag.Player2 = p2;
+                SetStatus(OK);
+                string jsonClient = JsonConvert.SerializeObject(ag);
+                WebOperationContext.Current.OutgoingResponse.ContentType =
+                    "application/json; charset=utf-8";
+                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+            }
+            else 
+            {
+                GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
+                gc = games[GameID];
+                gc.TimeLeft = 0;
+                SetStatus(OK);
+                string jsonClient = JsonConvert.SerializeObject(gc);
+                WebOperationContext.Current.OutgoingResponse.ContentType =
+                    "application/json; charset=utf-8";
+                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+            }
+        }
+
+        private int SetTime(int timeLimit, int startTime)
+        {
+            if (startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds > timeLimit)
+
+                return 0;
+            else
+                return startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds;
         }
 
         public WordScore PlayWord(PlayerWord w, string gid)
