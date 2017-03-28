@@ -1,14 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 
 namespace BoggleList
 
 {
-    public class NewGameRequest
+    public class Dict
     {
-        public string UserToken { get; set; }
+       public static HashSet<string> wordset { get; set; }
+       public Dict()
+       {
+            wordset = new HashSet<string>();
+            string[] FileLines = File.ReadAllLines(HttpRuntime.AppDomainAppPath+"/dictionary.txt");
+            foreach (string s in FileLines)
+               wordset.Add("s");
+        }
+    }
+    public class NewGameRequest:Person
+    {
         public int TimeLimit { get; set; }
        
     }
@@ -29,13 +40,13 @@ namespace BoggleList
         public string UserToken { get; set; }
     }
 
-    public class NewPlayer
+    public class NewPlayer:Person
     {
         public string Nickname { get; set; }
     }
-    public class ThisWordScore
+    public class WordScore
     {
-        public int WordScore { get; set; }
+        public int WScore { get; set; }
     }
     public class Player : NewPlayer
     {
@@ -47,7 +58,7 @@ namespace BoggleList
     }
     public class PlayerCompleted: Player
     {
-        public List<Tuple<string, int>> WordsPlayed { get; set; }
+        public Dictionary<string, int> WordsPlayed { get; set; }
     }
 
 

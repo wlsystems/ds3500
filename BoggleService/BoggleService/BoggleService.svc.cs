@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Net;
+using System.Resources;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading;
@@ -21,6 +22,8 @@ namespace Boggle
         private readonly static Dictionary<String, PlayerCompleted> users = new Dictionary<String, PlayerCompleted>();
         private readonly static Dictionary<String, GameItem> games = new Dictionary<String, GameItem>();
         private readonly static object sync = new object();
+        private readonly static Dict dic = new Dict();
+
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when
         /// an http response is sent.
@@ -241,6 +244,59 @@ namespace Boggle
                 return 0;
             else
                 return timeLimit + startTime - (int)DateTime.Now.TimeOfDay.TotalSeconds;
+        }
+
+        public WordScore PlayWord(PlayerWord w, string gid)
+        {
+            WordScore ws = new WordScore();
+            String word = w.Word.Trim();
+            if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | (!games[gid].Player1.Equals(gid) && !games[gid].Player2.Equals(gid)))
+            {
+                SetStatus(Forbidden);
+                return ws;
+            }
+            else if (games[gid].GameState != "active")
+            {
+                SetStatus(Conflict);
+                return ws;
+            }
+            if (games[gid].Player2.WordsPlayed.ContainsKey(word) | games[gid].Player2.WordsPlayed.ContainsKey(word))
+            {
+                ws.WScore = 0;
+                return ws;
+            }
+            BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
+            if (!bb.CanBeFormed(word.ToUpper()))
+            {
+                ws.WScore = -1;
+                return ws;
+            }
+            else if (Dict.wordset.Contains(word.ToUpper()))
+            {
+                switch (word.Length)
+                {
+                    case 3:
+                        ws.WScore = 1;
+                        break;
+                    case 4:
+                        ws.WScore = 1;
+                        break;
+                    case 5:
+                        ws.WScore = 2;
+                        break;
+                    case 6:
+                        ws.WScore = 3;
+                        break;
+                    case 7:
+                        ws.WScore = 5;
+                        break;
+                    default:
+                        ws.WScore = 11;
+                        break;
+                }
+                return ws;
+            }
+            return ws;
         }
     }
 }

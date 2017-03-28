@@ -230,7 +230,7 @@ namespace PS8
             {
                 view.SetJoinText("Join Game");
                 view.UserRegistered = true;
-                GameStatus();
+                SubmitWord("HOE");
             }
         }
 
