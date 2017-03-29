@@ -192,7 +192,11 @@ namespace Boggle
             if (t <= 0)
             {
                 GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
-                gc = games[GameID];
+                gc.GameState = "completed";
+                gc.Board = games[GameID].Board;
+                gc.Player1 = games[GameID].Player1;
+                gc.Player2 = games[GameID].Player2;
+                gc.TimeLimit = games[GameID].TimeLimit;
                 gc.TimeLeft = 0;
                 SetStatus(OK);
                 string jsonClient = JsonConvert.SerializeObject(gc);
@@ -254,7 +258,7 @@ namespace Boggle
         public WordScore PlayWord(PlayerWord w, string gid)
         {
             WordScore ws = new WordScore();
-            String word = w.Word.Trim();
+            String word = w.Word.Trim().ToUpper();
             if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | (!games[gid].Player1.Equals(gid) && !games[gid].Player2.Equals(gid)))
             {
                 SetStatus(Forbidden);
