@@ -254,7 +254,7 @@ namespace Boggle
         public WordScore PlayWord(PlayerWord w, string gid)
         {
             WordScore ws = new WordScore();
-            String word = w.Word.Trim();
+            String word = w.Word.Trim().ToUpper();
             if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | (!games[gid].Player1.Equals(gid) && !games[gid].Player2.Equals(gid)))
             {
                 SetStatus(Forbidden);
