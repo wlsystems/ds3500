@@ -308,6 +308,8 @@ namespace Boggle
                 | games[gid].Player1.WordsPlayed.Contains(y) | games[gid].Player2.WordsPlayed.Contains(y))
                     ws.WScore = 0;
             }
+            else //havent tested this last else yet so comment out if it cause prob
+                ws.WScore = -1;
             return AddScore(word, gid, ws, player, wpObj);
         }
         public static WordScore AddScore(string word, string gid, WordScore ws, int player, WordsPlayed wpObj)
