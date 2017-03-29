@@ -41,7 +41,7 @@ namespace BoggleList
         public string UserToken { get; set; }
     }
 
-    public class NewPlayer:Person
+    public class NewPlayer
     {
         public string Nickname { get; set; }
     }

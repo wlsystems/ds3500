@@ -177,7 +177,7 @@ namespace Boggle
                 SetStatus(Forbidden);
                 return null;
                 }
-            if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
+            if (pending.GameID.ToString() == GameID)              //pendidng status for player 1 while waiting
             {
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
@@ -192,7 +192,11 @@ namespace Boggle
             if (t <= 0)
             {
                 GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
-                gc = games[GameID];
+                gc.GameState = "completed";
+                gc.Board = games[GameID].Board;
+                gc.Player1 = games[GameID].Player1;
+                gc.Player2 = games[GameID].Player2;
+                gc.TimeLimit = games[GameID].TimeLimit;
                 gc.TimeLeft = 0;
                 SetStatus(OK);
                 string jsonClient = JsonConvert.SerializeObject(gc);

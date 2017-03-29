@@ -182,11 +182,12 @@ namespace PS8
                 dynamic WordsPlayed = new ExpandoObject();
                 WordsPlayed.Word = "";             //Initilizes the Word default
                 WordsPlayed.Score = 0;             //Initilizes the score default
-                foreach (object item in Player1List)            //Iterates though each Wordplayed object in the list. 
-                {
-                    WordsPlayed = (ExpandoObject)item;        //Casts it as an Expando object. 
-                    Player1String.Add(WordsPlayed.Score.ToString() + " " + WordsPlayed.Word.ToString());  //Adds word and score to string list
-                }
+                if (Player1List != null)
+                    foreach (object item in Player1List)            //Iterates though each Wordplayed object in the list. 
+                    {
+                        WordsPlayed = (ExpandoObject)item;        //Casts it as an Expando object. 
+                        Player1String.Add(WordsPlayed.Score.ToString() + " " + WordsPlayed.Word.ToString());  //Adds word and score to string list
+                    }
                 view.ViewPlayer1Word(Player1String);                //Calls method that will set the text panel with the words. 
 
                 //Repeats the above actions for player #2,  gets Wordplayeds and converts the words and scores
@@ -197,12 +198,12 @@ namespace PS8
                 dynamic Words2Played = new ExpandoObject();
                 Words2Played.Word = "";                 //sets Word default
                 WordsPlayed.Score = 0;                  //sets Score default
-                foreach (object item in Player2List)    //iterates though each object in the WordPlayed object list.  
-                {
-                    Words2Played = (ExpandoObject)item;
-                    Player2String.Add(Words2Played.Score.ToString() + " " + Words2Played.Word.ToString());
-
-                }
+                if (Player1List != null)
+                    foreach (object item in Player2List)    //iterates though each object in the WordPlayed object list.  
+                    {
+                        Words2Played = (ExpandoObject)item;
+                        Player2String.Add(Words2Played.Score.ToString() + " " + Words2Played.Word.ToString());
+                    }
                 view.ViewPlayer2Word(Player2String);
                 view.JoinEnabled(true);                 //Game is officially completed, enables player to join again.  
             }
