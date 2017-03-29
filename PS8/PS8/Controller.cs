@@ -198,7 +198,7 @@ namespace PS8
                 dynamic Words2Played = new ExpandoObject();
                 Words2Played.Word = "";                 //sets Word default
                 WordsPlayed.Score = 0;                  //sets Score default
-                if (Player1List != null)
+                if (Player2List != null)
                     foreach (object item in Player2List)    //iterates though each object in the WordPlayed object list.  
                     {
                         Words2Played = (ExpandoObject)item;
@@ -334,7 +334,7 @@ namespace PS8
                 {
                     Uri u = new Uri(url + "/BoggleService.svc/");
                     client.BaseAddress = u;
-                    // Compose and send the request.
+                    // Compose and send the request..
                     tokenSource = new CancellationTokenSource();
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
                     HttpResponseMessage response = null;
