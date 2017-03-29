@@ -9,6 +9,7 @@ using System.Resources;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading;
+using System.Web;
 using static System.Net.HttpStatusCode;
 
 namespace Boggle
@@ -31,7 +32,7 @@ namespace Boggle
         /// <param name="status"></param>
         private static void SetStatus(HttpStatusCode status)
         {
-            WebOperationContext.Current.OutgoingResponse.StatusCode = status;
+            WebOperationContext.Current.OutgoingResponse.StatusCode = status;  
         }
         public Person Register(NewPlayer newUser)
         {
@@ -114,6 +115,7 @@ namespace Boggle
             {
                 pending.GameID = 101;
                 pending.UserToken = "";
+                dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
             }
 
             if (pending.UserToken == "")
@@ -259,7 +261,8 @@ namespace Boggle
         {
             WordScore ws = new WordScore();
             String word = w.Word.Trim().ToUpper();
-            if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | (!games[gid].Player1.Equals(gid) && !games[gid].Player2.Equals(gid)))
+            if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) 
+                | !games.ContainsKey(gid) | (!games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname.ToString()) && !games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname.ToString())))
             {
                 SetStatus(Forbidden);
                 return ws;
@@ -269,18 +272,19 @@ namespace Boggle
                 SetStatus(Conflict);
                 return ws;
             }
-            if (games[gid].Player2.WordsPlayed.ContainsKey(word) | games[gid].Player2.WordsPlayed.ContainsKey(word))
+            if ((games[gid].Player2.WordsPlayed != null && games[gid].Player2.WordsPlayed.ContainsKey(word)) 
+            | (games[gid].Player2.WordsPlayed != null && games[gid].Player2.WordsPlayed.ContainsKey(word)))
             {
                 ws.WScore = 0;
                 return ws;
             }
             BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
-            if (!bb.CanBeFormed(word.ToUpper()))
+            if (!bb.CanBeFormed(word))
             {
                 ws.WScore = -1;
                 return ws;
             }
-            else if (Dict.wordset.Contains(word.ToUpper()))
+            else if (dic.strings.Contains(word))
             {
                 switch (word.Length)
                 {

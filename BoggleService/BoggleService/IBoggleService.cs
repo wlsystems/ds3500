@@ -54,7 +54,7 @@ namespace Boggle
         [WebGet(UriTemplate = "/games/{GameID}?Brief={Brief}")]
         Stream GameStatus(string GameID, string Brief);
 
-        [WebInvoke(Method = "PUT", UriTemplate = "/games/{gid}", BodyStyle = WebMessageBodyStyle.WrappedRequest)]
+        [WebInvoke(Method = "PUT", UriTemplate = "/games/{gid}")]
         WordScore PlayWord(PlayerWord w, string gid);
     }
 }
