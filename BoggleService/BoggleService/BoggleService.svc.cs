@@ -72,7 +72,7 @@ namespace Boggle
         }
 
         /// <summary>
-        /// Demo.  You can delete this.
+        /// Demo.  You can delete this..
         /// </summary>
         public string WordAtIndex(int n)
         {
@@ -116,6 +116,7 @@ namespace Boggle
                 pending.GameID = 101;
                 pending.UserToken = "";
                 dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
+                
             }
 
             if (pending.UserToken == "")
