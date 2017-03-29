@@ -280,12 +280,14 @@ namespace Boggle
             | (games[gid].Player2.WordsPlayed != null && games[gid].Player2.WordsPlayed.ContainsKey(word)))
             {
                 ws.WScore = 0;
+                AddScore(word, gid, ws, player);
                 return ws;
             }
             BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
             if (!bb.CanBeFormed(word))
             {
                 ws.WScore = -1;
+                AddScore(word, gid, ws, player);
                 return ws;
             }
             else if (dic.strings.Contains(word))
@@ -299,7 +301,8 @@ namespace Boggle
                 else if (word.Length == 7)
                     ws.WScore = 5;
                 else
-                    ws.WScore = 11;   
+                    ws.WScore = 11;
+                AddScore(word, gid, ws, player);
             }
                 return ws;
             }
