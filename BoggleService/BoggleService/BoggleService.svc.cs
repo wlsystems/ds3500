@@ -261,8 +261,12 @@ namespace Boggle
         {
             WordScore ws = new WordScore();
             String word = w.Word.Trim().ToUpper();
-            if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) 
-                | !games.ContainsKey(gid) | (!games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname.ToString()) && !games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname.ToString())))
+            int player = 3;
+            if (games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname))
+                player = 1;
+            else if (games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname))
+                player = 2;
+            if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
             {
                 SetStatus(Forbidden);
                 return ws;
@@ -286,30 +290,32 @@ namespace Boggle
             }
             else if (dic.strings.Contains(word))
             {
-                switch (word.Length)
-                {
-                    case 3:
-                        ws.WScore = 1;
-                        break;
-                    case 4:
-                        ws.WScore = 1;
-                        break;
-                    case 5:
-                        ws.WScore = 2;
-                        break;
-                    case 6:
-                        ws.WScore = 3;
-                        break;
-                    case 7:
-                        ws.WScore = 5;
-                        break;
-                    default:
-                        ws.WScore = 11;
-                        break;
-                }
+                if (word.Length == 3 | word.Length == 4)
+                    ws.WScore = 1;
+                else if (word.Length == 5)
+                    ws.WScore = 2;
+                else if (word.Length == 6)
+                    ws.WScore = 3;
+                else if (word.Length == 7)
+                    ws.WScore = 5;
+                else
+                    ws.WScore = 11;   
+            }
                 return ws;
             }
-            return ws;
+        public static void AddScore(string word, string gid, WordScore ws, int player)
+        {
+            if (player == 1)
+            {
+                games[gid].Player1.Score = ws.WScore + games[gid].Player1.Score;
+                games[gid].Player1.WordsPlayed.Add(word, ws.WScore);
+            }
+
+            else if (player == 2)
+            {
+                games[gid].Player2.Score = ws.WScore + games[gid].Player2.Score;
+                games[gid].Player2.WordsPlayed.Add(word, ws.WScore);
+            }
         }
     }
 }
