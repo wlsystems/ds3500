@@ -177,7 +177,7 @@ namespace Boggle
                 SetStatus(Forbidden);
                 return null;
                 }
-            if (pending.GameID.ToString() == GameID)              //penidng status for player 1 while waiting
+            if (pending.GameID.ToString() == GameID)              //pendidng status for player 1 while waiting
             {
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
