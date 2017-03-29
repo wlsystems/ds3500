@@ -9,19 +9,12 @@ namespace BoggleList
 {
     public class Dict
     {
-       public static HashSet<string> wordset { get; set; }
-       public Dict()
-       {
-            wordset = new HashSet<string>();
-            string[] FileLines = File.ReadAllLines(HttpRuntime.AppDomainAppPath+"/dictionary.txt");
-            foreach (string s in FileLines)
-               wordset.Add("s");
-        }
+        public HashSet<string> strings{ get; set; }
+
     }
     public class NewGameRequest:Person
     {
         public int TimeLimit { get; set; }
-       
     }
     public class PlayerWord : Person
     {
