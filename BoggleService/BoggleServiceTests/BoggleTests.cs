@@ -146,19 +146,36 @@ namespace Boggle
             Assert.AreEqual(gameID, game2ID);
 
             //check to see if game status is now active
+            dynamic activegamebrief = new ExpandoObject();
+            r = client.DoGetAsync("games/" + game2ID +"?Brief=yes").Result;
+            activegamebrief = r.Data;
+            Assert.AreEqual("active", (string) activegamebrief.GameState);
+
+            //checks to see if this field is not available to the brief game status
+            Assert.IsNull(activegamebrief.TimeLimit);
+            Assert.IsNull(activegamebrief.Board);
+
+            //check to see if game status is now active
             dynamic activegame = new ExpandoObject();
             r = client.DoGetAsync("games/" + game2ID).Result;
             activegame = r.Data;
-            Assert.AreEqual("active", (string) activegame.GameState);
+            Assert.AreEqual("active", (string)activegame.GameState);
 
             //checks to see if the TimeLimit is the two requested times averaged
             Assert.AreEqual( 7, (int) activegame.TimeLimit);
+            string gameBoard = activegame.Board;
+            string possWord = gameBoard.Substring(0, 4);
 
-            //Checks to see if board is created
-            Assert.IsNotNull(activegame.Board);
+            //tests a potential word on the board, checks for status OK, word may or may not exist
+            dynamic wordPlayed= new ExpandoObject();
+            wordPlayed.UserToken = user2Token;
+            wordPlayed.Word = possWord;
+            r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
+            Assert.AreEqual(OK, r.Status);
+
 
             //Plays a word that is not valid so result in a -1 WS
-            dynamic wordPlayed = new ExpandoObject();
+            wordPlayed = new ExpandoObject();
             wordPlayed.UserToken = userToken;
             wordPlayed.Word = "ftra";
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
@@ -175,6 +192,7 @@ namespace Boggle
             wordPlayed = r.Data;
             ws = wordPlayed.WScore;
             Assert.AreEqual("-1", ws);
+
 
             //plays a word that is empty
             wordPlayed = new ExpandoObject();            ///TODO!!! This is return okay!
@@ -250,6 +268,11 @@ namespace Boggle
 
             //user 2 tries to cancel the pending game but he is not a memeber
             game.UserToken = user2Token;
+            r = client.DoPutAsync(game, "games").Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
+            //another user tries to cancel but the userToken is null
+            game.UserToken = null;
             r = client.DoPutAsync(game, "games").Result;
             Assert.AreEqual(Forbidden, r.Status);
 
