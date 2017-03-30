@@ -185,7 +185,7 @@ namespace Boggle
             Assert.AreEqual("-1", ws);
 
             wordPlayed = new ExpandoObject();
-            wordPlayed.UserToken = userToken;
+            wordPlayed.UserToken = user2Token;
             wordPlayed.Word = "quarantine";
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
             Assert.AreEqual(OK, r.Status);
@@ -208,7 +208,7 @@ namespace Boggle
             r = client.DoGetAsync("games/" + game2ID).Result;
             completedgame = r.Data;
             Assert.AreEqual("completed", (string)completedgame.GameState);
-            Assert.AreEqual("-2", (string) completedgame.Player1.Score);
+            Assert.AreEqual("-1", (string) completedgame.Player1.Score);
 
         }
 
