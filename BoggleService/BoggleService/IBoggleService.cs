@@ -1,4 +1,6 @@
-﻿using BoggleList;
+﻿//Dustin Shiozaki u0054455
+//Tracy King u0040235
+using BoggleList;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
