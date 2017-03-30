@@ -149,7 +149,7 @@ namespace PS8
         /// <summary>
         /// HAndles the game while it is active and finishs the game when the time expires after the status changes to "completed."
         /// </summary>
-        private async void Timer()
+        private async void   Timer()
         {
             tokenSource3 = new CancellationTokenSource();
             CancellationToken ct = tokenSource3.Token;

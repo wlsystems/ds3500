@@ -289,7 +289,7 @@ namespace Boggle
             {
                 ws.WScore = -1;
                 AddScore(word, gid, ws, player);
-                return ws;
+                return ws; 
             }
             else if (dic.strings.Contains(word))
             {
