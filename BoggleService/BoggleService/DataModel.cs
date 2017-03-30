@@ -10,58 +10,84 @@ using System.Web;
 namespace BoggleList
 
 {
+    /// <summary>
+    /// Load dictionary. 
+    /// </summary>
     public class Dict
     {
         public HashSet<string> strings{ get; set; }
-
     }
+    /// <summary>
+    /// Used when the player sends a join game request.
+    /// </summary>
     public class NewGameRequest:Person
     {
         public int TimeLimit { get; set; }
     }
+    /// <summary>
+    /// The objec the user sends to play a word that contains the word to be played and the UserToken
+    /// </summary>
     public class PlayerWord : Person
     {
         public string Word { get; set; }
     }
+    /// <summary>
+    /// Has the time limit and the game ID.
+    /// </summary>
     public class Pending : NewGameRequest
     {
         public int GameID { get; set; }
     }
 
-
+    /// <summary>
+    /// Returns the Game Id to the user.
+    /// </summary>
     public class NewGame
     {
         public string GameID { get; set; }
     }
+    /// <summary>
+    /// Returns the user token to the user.
+    /// </summary>
     public class Person
     {
         public string UserToken { get; set; }
     }
-
+    /// <summary>
+    /// The user sends this object to register.
+    /// </summary>
     public class NewPlayer
     {
         public string Nickname { get; set; }
     }
+    /// <summary>
+    /// Returns the score to the user in this object.
+    /// </summary>
     public class WordScore
     {
         public int WScore { get; set; }
     }
+    /// <summary>
+    /// Player contains the score, and nickname. 
+    /// </summary>
     public class Player : NewPlayer
     {
         public int Score { get; set; }
     }
-    public class Word {}
-    public class Score {}
+
+    /// <summary>
+    /// Contains a list of the words played and the corresponding score.
+    /// </summary>
     public class PlayerCompleted: Player
     {   
         public List<WordsPlayed> WordsPlayed { get; set; }
     }
 
 
-/// <summary>
-/// Response (if game is pending)
-/// </summary>
-public class PendingGame
+    /// <summary>
+    /// Response (if game is pending)
+    /// </summary>
+    public class PendingGame
     {
         public string GameState { get; set; }
     }
@@ -96,11 +122,16 @@ public class PendingGame
         public PlayerCompleted Player2 { get; set; }
     }
 
+    /// <summary>
+    /// GameItem has one extra field that the user won't see.
+    /// </summary>
     public class GameItem: GameCompleted
     {
-        [JsonIgnore]
         public int StartTime { get; set; }
     }
+    /// <summary>
+    /// Contains the word and corresponding score.
+    /// </summary>
     public class WordsPlayed
     {
         public int Score { get; set; }
