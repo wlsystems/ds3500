@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static System.Net.HttpStatusCode;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.Dynamic;
 
 namespace Boggle
 {
@@ -81,6 +82,60 @@ namespace Boggle
 
             string word = (string) r.Data;
             Assert.AreEqual("AAL", word);
+        }
+        /// <summary>
+        ///  Does a basic register method to check for created and for
+        ///  forbidden if nickname is null or an empty string.  
+        /// </summary>
+        [TestMethod]
+        public void TestRegister()
+        {
+            dynamic user = new ExpandoObject();
+            user.Nickname = "Bugs Bunny";
+            Response r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Created, r.Status);
+            
+            user.Nickname = null;
+            r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
+            user.Nickname = "         ";
+            r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
+            user.Nickname = "     Elmo         ";
+            r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Created, r.Status);
+        }
+
+        [TestMethod]
+        public void TestJoinGame()
+        {
+            dynamic user = new ExpandoObject();
+            user.Nickname = "Bugs Bunny";
+            Response r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Created, r.Status);
+            user = r.Data;
+            string userToken = user.userToken;
+
+            dynamic user1 = new ExpandoObject();
+            user1.Nickname = "Bobby";
+            r = client.DoPostAsync("users", user1).Result;
+            Assert.AreEqual(Created, r.Status);
+            user1 = r.Data;
+            string user2Token = user1.userToken;
+
+            dynamic game = new ExpandoObject();
+            game.TimeLimit = 50;
+            game.UserToken = userToken;
+            r = client.DoPostAsync("games", game).Result;
+            Assert.AreEqual(Accepted, r.Status);
+
+            dynamic game1 = new ExpandoObject();
+            game1.TimeLimit = 100;
+            game1.UserToken = user2Token;
+            r = client.DoPostAsync("games", game1).Result;
+            Assert.AreEqual(Created, r.Status);
         }
     }
 }
