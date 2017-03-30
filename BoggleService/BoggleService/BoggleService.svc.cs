@@ -38,10 +38,7 @@ namespace Boggle
         {
             lock (sync)
             {
-                if (newUser.Nickname == "stall")
-                {
-                    Thread.Sleep(5000);
-                }
+
                 if (newUser.Nickname == null || newUser.Nickname.Trim().Length == 0)
                 {
                     SetStatus(Forbidden);
