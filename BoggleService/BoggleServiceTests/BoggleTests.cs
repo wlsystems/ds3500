@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static System.Net.HttpStatusCode;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using BoggleList;
+using System.Dynamic;
 
 namespace Boggle
 {
@@ -81,6 +83,23 @@ namespace Boggle
 
             string word = (string) r.Data;
             Assert.AreEqual("AAL", word);
+        }
+
+        /// <summary>
+        /// Note that DoGetAsync (and the other similar methods) returns a Response object, which contains
+        /// the response Stats and the deserialized JSON response (if any).  See RestTestClient.cs
+        /// for details.
+        /// </summary>
+        [TestMethod]
+        public void TestMethod2()
+        {
+            dynamic test = new ExpandoObject();
+            test.Nickname = "np";
+            Response r = client.DoGetAsync("users", test).Result;
+            Assert.AreEqual(Created, r.Status);
+
+           // string word = (string)r.Data;
+           // Assert.AreEqual("AAL", word);
         }
     }
 }
