@@ -49,6 +49,12 @@ namespace Boggle
         [WebGet(UriTemplate = "/games/{GameID}?Brief={Brief}")]
         Stream GameStatus(string GameID, string Brief);
 
+        /// <summary>
+        /// Returns the score of the word played.
+        /// </summary>
+        /// <param name="w"></param>
+        /// <param name="gid"></param>
+        /// <returns></returns>
         [WebInvoke(Method = "PUT", UriTemplate = "/games/{gid}")]
         WordScore PlayWord(PlayerWord w, string gid);
     }
