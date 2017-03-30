@@ -117,14 +117,16 @@ namespace Boggle
             Response r = client.DoPostAsync("users", user).Result;
             Assert.AreEqual(Created, r.Status);
             user = r.Data;
-            string userToken = user.userToken;
+            string userToken = user.UserToken;
+            Assert.IsNotNull(userToken);
 
-            dynamic user1 = new ExpandoObject();
-            user1.Nickname = "Bobby";
-            r = client.DoPostAsync("users", user1).Result;
+            user = new ExpandoObject();
+            user.Nickname = "Bob";
+            r = client.DoPostAsync("users", user).Result;
             Assert.AreEqual(Created, r.Status);
-            user1 = r.Data;
-            string user2Token = user1.userToken;
+            user = r.Data;
+            string user2Token = user.UserToken;
+            Assert.IsNotNull(user2Token);
 
             dynamic game = new ExpandoObject();
             game.TimeLimit = 50;
@@ -132,11 +134,34 @@ namespace Boggle
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Accepted, r.Status);
 
-            dynamic game1 = new ExpandoObject();
-            game1.TimeLimit = 100;
-            game1.UserToken = user2Token;
-            r = client.DoPostAsync("games", game1).Result;
+            game = new ExpandoObject();
+            game.TimeLimit = 50;
+            game.UserToken = user2Token;
+            r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Created, r.Status);
+
+        }
+
+        [TestMethod]
+        public void TestJoinGameForPlayerwithWrongTime()
+        {
+            dynamic user = new ExpandoObject();
+            user.Nickname = "Bugs Bunny";
+            Response r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Created, r.Status);
+            user = r.Data;
+            string userToken = user.userToken;
+
+            dynamic game = new ExpandoObject();
+            game.TimeLimit = 500;
+            game.UserToken = userToken;
+            r = client.DoPostAsync("games", game).Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
+            game.TimeLimit = 2;
+            r = client.DoPostAsync("games", game).Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
         }
     }
 }

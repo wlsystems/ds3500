@@ -108,9 +108,15 @@ namespace Boggle
         {
             NewGame ng = new NewGame();
             if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)
+            {
                 SetStatus(Forbidden);
+                return null;
+            }
             else if (obj.UserToken == pending.UserToken)
+            {
                 SetStatus(Conflict);
+                return null;
+            }
             if (pending.UserToken == null)
             {
                 pending.GameID = 101;
@@ -132,10 +138,10 @@ namespace Boggle
                 ng.GameID = "" + pending.GameID;
                 GameItem g = new GameItem();
                 g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;
-                g.Player1.Score = 0;
-                g.Player2.Score = 0;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
+                g.Player1.Score = 0;
+                g.Player2.Score = 0;
                 g.Player1.WordsPlayed = new List<WordsPlayed>();
                 g.Player2.WordsPlayed = new List<WordsPlayed>();
                 g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
