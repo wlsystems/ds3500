@@ -9,6 +9,7 @@ using System.Threading;
 
 namespace Boggle
 {
+
     /// <summary>
     /// Provides a way to start and stop the IIS web server from within the test
     /// cases.  If something prevents the test cases from stopping the web server,
@@ -127,6 +128,13 @@ namespace Boggle
             game = r.Data;
             string gameID = game.GameID;
 
+            //tries to join again, get conflict status
+            game = new ExpandoObject();
+            game.TimeLimit = 5;
+            game.UserToken = userToken;
+            r = client.DoPostAsync("games", game).Result;
+            Assert.AreEqual(Conflict, r.Status);
+
             //check to see if game status is pending
             dynamic pendinggame = new ExpandoObject();
             r = client.DoGetAsync("games/"+gameID).Result;
@@ -155,6 +163,13 @@ namespace Boggle
             Assert.IsNull(activegamebrief.TimeLimit);
             Assert.IsNull(activegamebrief.Board);
 
+
+            //tries to check with bogus gameID,  status forbidden
+            activegamebrief = new ExpandoObject();
+            r = client.DoGetAsync("games/999Brief=yes").Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
+            
             //check to see if game status is now active
             dynamic activegame = new ExpandoObject();
             r = client.DoGetAsync("games/" + game2ID).Result;
@@ -184,6 +199,7 @@ namespace Boggle
             string ws = wordPlayed.WScore;
             Assert.AreEqual("-1", ws);
 
+            ///Test the word played method
             wordPlayed = new ExpandoObject();
             wordPlayed.UserToken = user2Token;
             wordPlayed.Word = "quarantine";
@@ -193,6 +209,8 @@ namespace Boggle
             ws = wordPlayed.WScore;
             Assert.AreEqual("-1", ws);
 
+            ///Test the word score method
+            ///
 
             //plays a word that is empty
             wordPlayed = new ExpandoObject();            ///TODO!!! This is return okay!

@@ -48,8 +48,7 @@ namespace BoggleList
     {
         public int Score { get; set; }
     }
-    public class Word {}
-    public class Score {}
+
     public class PlayerCompleted: Player
     {   
         public List<WordsPlayed> WordsPlayed { get; set; }
