@@ -132,6 +132,8 @@ namespace Boggle
                 ng.GameID = "" + pending.GameID;
                 GameItem g = new GameItem();
                 g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;
+                g.Player1.Score = 0;
+                g.Player2.Score = 0;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
                 g.Player1.WordsPlayed = new List<WordsPlayed>();
@@ -267,10 +269,18 @@ namespace Boggle
             wpObj.Word = word;
             var x = new Tuple<string, int>("",0);
             int player = 3;
-            if (games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname))
-                player = 1;
-            else if (games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname))
-                player = 2;
+            if (games.ContainsKey(gid))
+            {
+                if (games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname))
+                    player = 1;
+                else if (games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname))
+                    player = 2;
+            }
+            else
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
             if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
             {
                 SetStatus(Forbidden);
