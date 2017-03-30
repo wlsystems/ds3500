@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using BoggleList;
 using System.Dynamic;
+using System.Threading;
 
 namespace Boggle
 {
@@ -112,10 +113,11 @@ namespace Boggle
         /// <summary>
         /// Adds two unique players,  then has them both join game, checks that
         /// the first player gets status Accepted and the second player gets status
-        /// Created. 
+        /// Created. Checks for status, before, during and after game.  Verifies
+        /// other operations, see comments inside method. 
         /// </summary>
         [TestMethod]
-        public void TestJoinGame()
+        public void TestJoinGameAndMore()
         {
             dynamic user = new ExpandoObject();
             user.Nickname = "Bugs Bunny";
@@ -135,7 +137,7 @@ namespace Boggle
 
             //player 1 joins, get status created
             dynamic game = new ExpandoObject();
-            game.TimeLimit = 50;
+            game.TimeLimit = 5;
             game.UserToken = userToken;
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Accepted, r.Status);
@@ -150,7 +152,7 @@ namespace Boggle
 
             //the second player joins and gets a created status
             game = new ExpandoObject();
-            game.TimeLimit = 100;
+            game.TimeLimit = 10;
             game.UserToken = user2Token;
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Created, r.Status);
@@ -167,10 +169,48 @@ namespace Boggle
             Assert.AreEqual("active", (string) activegame.GameState);
 
             //checks to see if the TimeLimit is the two requested times averaged
-            Assert.AreEqual( 75, (int) activegame.TimeLimit);
+            Assert.AreEqual( 7, (int) activegame.TimeLimit);
 
             //Checks to see if board is created
             Assert.IsNotNull(activegame.Board);
+
+            //Plays a word that is not valid so result in a -1 WS
+            dynamic wordPlayed = new ExpandoObject();
+            wordPlayed.UserToken = userToken;
+            wordPlayed.Word = "ftra";
+            r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
+            Assert.AreEqual(OK, r.Status);
+            wordPlayed = r.Data;
+            string ws = wordPlayed.WScore;
+            Assert.AreEqual("-1", ws);
+
+            //plays a word that is empty
+            wordPlayed = new ExpandoObject();            ///TODO!!! This is return okay!
+            wordPlayed.UserToken = userToken;
+            wordPlayed.Word = "   ";
+            //r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
+            //Assert.AreEqual(Forbidden, r.Status);
+
+
+            //Player plays same word again and gets a score of 0
+            dynamic wordPlayed2 = new ExpandoObject();     //TODO! This is return a -1
+            wordPlayed2.UserToken = userToken;
+            wordPlayed2.Word = "ftra";
+            //r = client.DoPutAsync(wordPlayed2, "games/" + gameID).Result;
+            Assert.AreEqual(OK, r.Status);
+            wordPlayed2 = r.Data;
+            ws = wordPlayed2.WScore;
+            //Assert.AreEqual("0", ws);
+
+            //this puts the thread to sleep for 8 seconds to ensure the game finishes
+            Thread.Sleep(8000);
+
+            //checks that game status is completed                     
+            dynamic completedgame = new ExpandoObject();
+            r = client.DoGetAsync("games/" + game2ID).Result;
+            completedgame = r.Data;
+            Assert.AreEqual("completed", (string)completedgame.GameState);
+            Assert.AreEqual("-1", (string) completedgame.Player1.Score);
 
         }
 
@@ -211,12 +251,14 @@ namespace Boggle
             string userToken = user.UserToken;
             Assert.IsNotNull(userToken);
 
+            //adds player to a game, game will be pending
             dynamic game = new ExpandoObject();
             game.TimeLimit = 50;
             game.UserToken = userToken;
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Accepted, r.Status);
 
+            //does a put to game to cancel join, verifies that status is ok
             r = client.DoPutAsync(game, "games").Result;
             Assert.AreEqual(OK, r.Status);
         }
