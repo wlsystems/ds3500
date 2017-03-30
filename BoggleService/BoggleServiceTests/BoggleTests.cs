@@ -109,6 +109,11 @@ namespace Boggle
             Assert.AreEqual(Created, r.Status);
         }
 
+        /// <summary>
+        /// Adds two unique players,  then has them both join game, checks that
+        /// the first player gets status Accepted and the second player gets status
+        /// Created. 
+        /// </summary>
         [TestMethod]
         public void TestJoinGame()
         {
@@ -128,17 +133,44 @@ namespace Boggle
             string user2Token = user.UserToken;
             Assert.IsNotNull(user2Token);
 
+            //player 1 joins, get status created
             dynamic game = new ExpandoObject();
             game.TimeLimit = 50;
             game.UserToken = userToken;
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Accepted, r.Status);
+            game = r.Data;
+            string gameID = game.GameID;
 
+            //check to see if game status is pending
+            dynamic pendinggame = new ExpandoObject();
+            r = client.DoGetAsync("games/"+gameID).Result;
+            pendinggame = r.Data;
+            Assert.AreEqual("pending", (string) pendinggame.GameState);
+
+            //the second player joins and gets a created status
             game = new ExpandoObject();
-            game.TimeLimit = 50;
+            game.TimeLimit = 100;
             game.UserToken = user2Token;
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Created, r.Status);
+            game = r.Data;
+            string game2ID = game.GameID;
+
+            //check to verify they have the same game ID
+            Assert.AreEqual(gameID, game2ID);
+
+            //check to see if game status is now active
+            dynamic activegame = new ExpandoObject();
+            r = client.DoGetAsync("games/" + game2ID).Result;
+            activegame = r.Data;
+            Assert.AreEqual("active", (string) activegame.GameState);
+
+            //checks to see if the TimeLimit is the two requested times averaged
+            Assert.AreEqual( 75, (int) activegame.TimeLimit);
+
+            //Checks to see if board is created
+            Assert.IsNotNull(activegame.Board);
 
         }
 
@@ -162,6 +194,41 @@ namespace Boggle
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Forbidden, r.Status);
 
+        }
+
+        /// <summary>
+        /// Registers one player, the player joins a pending game, then they cancel.
+        /// Checks for status OK.  
+        /// </summary>
+        [TestMethod]
+        public void TestCancelGame()
+        {
+            dynamic user = new ExpandoObject();
+            user.Nickname = "Bugs Bunny";
+            Response r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Created, r.Status);
+            user = r.Data;
+            string userToken = user.UserToken;
+            Assert.IsNotNull(userToken);
+
+            dynamic game = new ExpandoObject();
+            game.TimeLimit = 50;
+            game.UserToken = userToken;
+            r = client.DoPostAsync("games", game).Result;
+            Assert.AreEqual(Accepted, r.Status);
+
+            r = client.DoPutAsync(game, "games").Result;
+            Assert.AreEqual(OK, r.Status);
+        }
+
+        /// <summary>
+        /// Creates a new boggle board, checks to see if the length is 16.  
+        /// </summary>
+        [TestMethod]
+        public void TestBoggleBoard()
+        {
+            BoggleBoard bb = new BoggleBoard();
+            Assert.AreEqual(16, bb.ToString().Length);
         }
     }
 }
