@@ -25,6 +25,8 @@ namespace BoggleList
     {
         public int GameID { get; set; }
     }
+
+
     public class NewGame
     {
         public string GameID { get; set; }
@@ -46,20 +48,18 @@ namespace BoggleList
     {
         public int Score { get; set; }
     }
-    public class WordsPlayed
-    {
-        
-    }
+    public class Word {}
+    public class Score {}
     public class PlayerCompleted: Player
-    {
-        public Dictionary<string, int> WordsPlayed { get; set; }
+    {   
+        public List<WordsPlayed> WordsPlayed { get; set; }
     }
 
 
-    /// <summary>
-    /// Response (if game is pending)
-    /// </summary>
-    public class PendingGame
+/// <summary>
+/// Response (if game is pending)
+/// </summary>
+public class PendingGame
     {
         public string GameState { get; set; }
     }
@@ -99,5 +99,9 @@ namespace BoggleList
         [JsonIgnore]
         public int StartTime { get; set; }
     }
-
+    public class WordsPlayed
+    {
+        public int Score { get; set; }
+        public string Word { get; set; }
+    }
 }

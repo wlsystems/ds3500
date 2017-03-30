@@ -116,7 +116,6 @@ namespace Boggle
                 pending.GameID = 101;
                 pending.UserToken = "";
                 dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
-                
             }
 
             if (pending.UserToken == "")
@@ -135,6 +134,8 @@ namespace Boggle
                 g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;
                 g.Player1 = users[pending.UserToken];
                 g.Player2 = users[obj.UserToken];
+                g.Player1.WordsPlayed = new List<WordsPlayed>();
+                g.Player2.WordsPlayed = new List<WordsPlayed>();
                 g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
                 g.GameState = "active";
                 g.Board = new BoggleBoard().ToString();
@@ -261,7 +262,10 @@ namespace Boggle
         public WordScore PlayWord(PlayerWord w, string gid)
         {
             WordScore ws = new WordScore();
+            WordsPlayed wpObj = new WordsPlayed();
             String word = w.Word.Trim().ToUpper();
+            wpObj.Word = word;
+            var x = new Tuple<string, int>("",0);
             int player = 3;
             if (games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname))
                 player = 1;
@@ -277,19 +281,12 @@ namespace Boggle
                 SetStatus(Conflict);
                 return ws;
             }
-            if ((games[gid].Player2.WordsPlayed != null && games[gid].Player2.WordsPlayed.ContainsKey(word)) 
-            | (games[gid].Player2.WordsPlayed != null && games[gid].Player2.WordsPlayed.ContainsKey(word)))
-            {
-                ws.WScore = 0;
-                AddScore(word, gid, ws, player);
-                return ws;
-            }
             BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
             if (!bb.CanBeFormed(word))
             {
                 ws.WScore = -1;
-                AddScore(word, gid, ws, player);
-                return ws; 
+                wpObj.Score = -1;
+                return AddScore(word, gid, ws, player, wpObj);
             }
             else if (dic.strings.Contains(word))
             {
@@ -303,23 +300,32 @@ namespace Boggle
                     ws.WScore = 5;
                 else
                     ws.WScore = 11;
-                AddScore(word, gid, ws, player);
+                wpObj.Score = ws.WScore;
+                WordsPlayed y = new WordsPlayed();
+                y.Word = word;
+                y.Score = 0;
+                if (games[gid].Player1.WordsPlayed.Contains(wpObj) | games[gid].Player2.WordsPlayed.Contains(wpObj)
+                | games[gid].Player1.WordsPlayed.Contains(y) | games[gid].Player2.WordsPlayed.Contains(y))
+                    ws.WScore = 0;
             }
-                return ws;
-            }
-        public static void AddScore(string word, string gid, WordScore ws, int player)
+            else //havent tested this last else yet so comment out if it cause prob
+                ws.WScore = -1;
+            return AddScore(word, gid, ws, player, wpObj);
+        }
+        public static WordScore AddScore(string word, string gid, WordScore ws, int player, WordsPlayed wpObj)
         {
             if (player == 1)
             {
                 games[gid].Player1.Score = ws.WScore + games[gid].Player1.Score;
-                games[gid].Player1.WordsPlayed.Add(word, ws.WScore);
+                games[gid].Player1.WordsPlayed.Add(wpObj);
             }
 
             else if (player == 2)
             {
                 games[gid].Player2.Score = ws.WScore + games[gid].Player2.Score;
-                games[gid].Player2.WordsPlayed.Add(word, ws.WScore);
+                games[gid].Player2.WordsPlayed.Add(wpObj);
             }
+            return ws;
         }
     }
 }
