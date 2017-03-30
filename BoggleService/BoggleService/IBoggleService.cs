@@ -17,6 +17,7 @@ namespace Boggle
         [WebGet(UriTemplate = "/api")]
         Stream API();
 
+
         /// <summary>
         /// Registers a new user.
         /// If either user.Name or user.Email is null or is empty after trimming, responds with status code Forbidden.
