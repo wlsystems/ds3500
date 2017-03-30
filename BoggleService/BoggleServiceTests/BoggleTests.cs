@@ -184,23 +184,21 @@ namespace Boggle
             string ws = wordPlayed.WScore;
             Assert.AreEqual("-1", ws);
 
+            wordPlayed = new ExpandoObject();
+            wordPlayed.UserToken = userToken;
+            wordPlayed.Word = "quarantine";
+            r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
+            Assert.AreEqual(OK, r.Status);
+            wordPlayed = r.Data;
+            ws = wordPlayed.WScore;
+            Assert.AreEqual("-1", ws);
+
             //plays a word that is empty
             wordPlayed = new ExpandoObject();            ///TODO!!! This is return okay!
             wordPlayed.UserToken = userToken;
             wordPlayed.Word = "   ";
-            //r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
-            //Assert.AreEqual(Forbidden, r.Status);
-
-
-            //Player plays same word again and gets a score of 0
-            dynamic wordPlayed2 = new ExpandoObject();     //TODO! This is return a -1
-            wordPlayed2.UserToken = userToken;
-            wordPlayed2.Word = "ftra";
-            //r = client.DoPutAsync(wordPlayed2, "games/" + gameID).Result;
-            Assert.AreEqual(OK, r.Status);
-            wordPlayed2 = r.Data;
-            ws = wordPlayed2.WScore;
-            //Assert.AreEqual("0", ws);
+            r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
+            Assert.AreEqual(Forbidden, r.Status);
 
             //this puts the thread to sleep for 8 seconds to ensure the game finishes
             Thread.Sleep(8000);
@@ -210,7 +208,7 @@ namespace Boggle
             r = client.DoGetAsync("games/" + game2ID).Result;
             completedgame = r.Data;
             Assert.AreEqual("completed", (string)completedgame.GameState);
-            Assert.AreEqual("-1", (string) completedgame.Player1.Score);
+            Assert.AreEqual("-2", (string) completedgame.Player1.Score);
 
         }
 
@@ -251,14 +249,29 @@ namespace Boggle
             string userToken = user.UserToken;
             Assert.IsNotNull(userToken);
 
-            //adds player to a game, game will be pending
+            //adds a second registered user
+            user = new ExpandoObject();
+            user.Nickname = "Bob";
+            r = client.DoPostAsync("users", user).Result;
+            Assert.AreEqual(Created, r.Status);
+            user = r.Data;
+            string user2Token = user.UserToken;
+            Assert.IsNotNull(user2Token);
+
+            //adds first user to a game, game will be pending
             dynamic game = new ExpandoObject();
             game.TimeLimit = 50;
             game.UserToken = userToken;
             r = client.DoPostAsync("games", game).Result;
             Assert.AreEqual(Accepted, r.Status);
 
-            //does a put to game to cancel join, verifies that status is ok
+            //user 2 tries to cancel the pending game but he is not a memeber
+            game.UserToken = user2Token;
+            r = client.DoPutAsync(game, "games").Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
+            //does a put to game to cancel join with correct user, verifies that status is ok
+            game.UserToken = userToken;
             r = client.DoPutAsync(game, "games").Result;
             Assert.AreEqual(OK, r.Status);
         }
@@ -272,5 +285,7 @@ namespace Boggle
             BoggleBoard bb = new BoggleBoard();
             Assert.AreEqual(16, bb.ToString().Length);
         }
+
     }
+
 }

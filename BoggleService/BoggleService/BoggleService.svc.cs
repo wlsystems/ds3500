@@ -287,7 +287,7 @@ namespace Boggle
                 SetStatus(Forbidden);
                 return null;
             }
-            if (word == null | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
+            if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
             {
                 SetStatus(Forbidden);
                 return ws;
