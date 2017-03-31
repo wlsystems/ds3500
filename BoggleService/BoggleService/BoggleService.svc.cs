@@ -298,10 +298,16 @@ namespace Boggle
                 int player = 3;
                 if (games.ContainsKey(gid))
                 {
+                    if (!users.ContainsKey(w.UserToken))
+                    {
+                        SetStatus(Forbidden);
+                        return null;
+                    }
                     if (games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname))
                         player = 1;
                     else if (games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname))
                         player = 2;
+
                 }
                 else
                 {

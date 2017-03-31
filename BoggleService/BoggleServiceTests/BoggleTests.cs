@@ -196,6 +196,13 @@ namespace Boggle
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
             Assert.AreEqual(Forbidden, r.Status);
 
+            //tests that an invaild gameID  is returned a forbidden status
+            wordPlayed = new ExpandoObject();
+            wordPlayed.UserToken = userToken;
+            wordPlayed.Word = "kitty";
+            r = client.DoPutAsync(wordPlayed, "games/128").Result;
+            Assert.AreEqual(Forbidden, r.Status);
+
 
             //Plays a word that is not valid so result in a -1 WS
             wordPlayed = new ExpandoObject();
