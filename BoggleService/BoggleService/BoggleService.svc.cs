@@ -227,6 +227,7 @@ namespace Boggle
                 {
                     GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns the full game item
                     gc.GameState = "completed";
+                    games[GameID].GameState = "completed";
                     gc.Board = games[GameID].Board;
                     gc.Player1 = games[GameID].Player1;
                     gc.Player2 = games[GameID].Player2;
