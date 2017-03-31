@@ -188,6 +188,13 @@ namespace Boggle
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
             Assert.AreEqual(OK, r.Status);
 
+            //tests that an invalid userToken is returned a forbidden status
+            wordPlayed = new ExpandoObject();         
+            wordPlayed.UserToken = "1234";
+            wordPlayed.Word = "kitty";
+            r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
+            //Assert.AreEqual(Forbidden, r.Status);
+
 
             //Plays a word that is not valid so result in a -1 WS
             wordPlayed = new ExpandoObject();
@@ -209,8 +216,6 @@ namespace Boggle
             ws = wordPlayed.WScore;
             Assert.AreEqual("-1", ws);
 
-            ///Test the word score method
-            ///
 
             //plays a word that is empty
             wordPlayed = new ExpandoObject();            ///TODO!!! This is return okay!
@@ -229,6 +234,13 @@ namespace Boggle
             Assert.AreEqual("completed", (string)completedgame.GameState);
             Assert.AreEqual("-1", (string) completedgame.Player1.Score);
 
+
+            //try to submits a word after game is over
+            wordPlayed = new ExpandoObject();           
+            wordPlayed.UserToken = userToken;
+            wordPlayed.Word = "hello";
+            r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
+            Assert.AreEqual(Conflict, r.Status);
         }
 
         [TestMethod]
