@@ -80,7 +80,7 @@ namespace Boggle
             user.Nickname = "Bugs Bunny";
             Response r = client.DoPostAsync("users", user).Result;
             Assert.AreEqual(Created, r.Status);
-            
+
             user.Nickname = null;
             r = client.DoPostAsync("users", user).Result;
             Assert.AreEqual(Forbidden, r.Status);
@@ -137,9 +137,9 @@ namespace Boggle
 
             //check to see if game status is pending
             dynamic pendinggame = new ExpandoObject();
-            r = client.DoGetAsync("games/"+gameID).Result;
+            r = client.DoGetAsync("games/" + gameID).Result;
             pendinggame = r.Data;
-            Assert.AreEqual("pending", (string) pendinggame.GameState);
+            Assert.AreEqual("pending", (string)pendinggame.GameState);
 
             //the second player joins and gets a created status
             game = new ExpandoObject();
@@ -155,9 +155,9 @@ namespace Boggle
 
             //check to see if game status is now active
             dynamic activegamebrief = new ExpandoObject();
-            r = client.DoGetAsync("games/" + game2ID +"?Brief=yes").Result;
+            r = client.DoGetAsync("games/" + game2ID + "?Brief=yes").Result;
             activegamebrief = r.Data;
-            Assert.AreEqual("active", (string) activegamebrief.GameState);
+            Assert.AreEqual("active", (string)activegamebrief.GameState);
 
             //checks to see if this field is not available to the brief game status
             Assert.IsNull(activegamebrief.TimeLimit);
@@ -169,7 +169,7 @@ namespace Boggle
             r = client.DoGetAsync("games/999Brief=yes").Result;
             Assert.AreEqual(Forbidden, r.Status);
 
-            
+
             //check to see if game status is now active
             dynamic activegame = new ExpandoObject();
             r = client.DoGetAsync("games/" + game2ID).Result;
@@ -177,12 +177,12 @@ namespace Boggle
             Assert.AreEqual("active", (string)activegame.GameState);
 
             //checks to see if the TimeLimit is the two requested times averaged
-            Assert.AreEqual( 7, (int) activegame.TimeLimit);
+            Assert.AreEqual(7, (int)activegame.TimeLimit);
             string gameBoard = activegame.Board;
             string possWord = gameBoard.Substring(0, 4);
 
             //tests a potential word on the board, checks for status OK, word may or may not exist
-            dynamic wordPlayed= new ExpandoObject();
+            dynamic wordPlayed = new ExpandoObject();
             wordPlayed.UserToken = user2Token;
             wordPlayed.Word = possWord;
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
@@ -190,7 +190,7 @@ namespace Boggle
 
             //tests that an invalid userToken is returned a forbidden status
             wordPlayed = new ExpandoObject();
-            string user3Token = Guid.NewGuid().ToString();        
+            string user3Token = Guid.NewGuid().ToString();
             wordPlayed.UserToken = user3Token;
             wordPlayed.Word = "kitty";
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
@@ -240,11 +240,11 @@ namespace Boggle
             r = client.DoGetAsync("games/" + game2ID).Result;
             completedgame = r.Data;
             Assert.AreEqual("completed", (string)completedgame.GameState);
-            Assert.AreEqual("-1", (string) completedgame.Player1.Score);
+            Assert.AreEqual("-1", (string)completedgame.Player1.Score);
 
 
             //try to submits a word after game is over
-            wordPlayed = new ExpandoObject();           
+            wordPlayed = new ExpandoObject();
             wordPlayed.UserToken = userToken;
             wordPlayed.Word = "hello";
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;

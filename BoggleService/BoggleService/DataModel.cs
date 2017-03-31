@@ -15,12 +15,12 @@ namespace BoggleList
     /// </summary>
     public class Dict
     {
-        public HashSet<string> strings{ get; set; }
+        public HashSet<string> strings { get; set; }
     }
     /// <summary>
     /// Used when the player sends a join game request.
     /// </summary>
-    public class NewGameRequest:Person
+    public class NewGameRequest : Person
     {
         public int TimeLimit { get; set; }
     }
@@ -78,8 +78,8 @@ namespace BoggleList
     /// <summary>
     /// Contains a list of the words played and the corresponding score.
     /// </summary>
-    public class PlayerCompleted: Player
-    {   
+    public class PlayerCompleted : Player
+    {
         public List<WordsPlayed> WordsPlayed { get; set; }
     }
 
@@ -96,7 +96,7 @@ namespace BoggleList
     /// </summary>
     public class ActiveGameBrief : PendingGame
     {
-        public Player Player1 {get; set; }
+        public Player Player1 { get; set; }
         public Player Player2 { get; set; }
         public int TimeLeft { get; set; }
     }
@@ -106,7 +106,7 @@ namespace BoggleList
     /// </summary>
     public class ActiveGame : ActiveGameBrief
     {
-        public int TimeLimit{ get; set; }
+        public int TimeLimit { get; set; }
         public string Board { get; set; }
     }
 
@@ -125,7 +125,7 @@ namespace BoggleList
     /// <summary>
     /// GameItem has one extra field that the user won't see.
     /// </summary>
-    public class GameItem: GameCompleted
+    public class GameItem : GameCompleted
     {
         public int StartTime { get; set; }
     }
