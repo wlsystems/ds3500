@@ -37,7 +37,7 @@ namespace Boggle
         /// <param name="status"></param>
         private static void SetStatus(HttpStatusCode status)
         {
-            WebOperationContext.Current.OutgoingResponse.StatusCode = status;  
+            WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
         /// <summary>
         /// Join a game. 
@@ -52,20 +52,20 @@ namespace Boggle
         {
             lock (sync)
             {
-                if (newUser.Nickname == null || newUser.Nickname.Trim().Length == 0)
+                if (newUser.Nickname == null || newUser.Nickname.Trim().Length == 0)  
                 {
-                    SetStatus(Forbidden);
+                    SetStatus(Forbidden);   //if user nickname was null or nickname is empty string
                     return null;
                 }
                 else
                 {
-                    string userID = Guid.NewGuid().ToString();
-                    PlayerCompleted user = new PlayerCompleted();
-                    user.Nickname = newUser.Nickname;
-                    users.Add(userID, user);
-                    Person p = new Person();
+                    string userID = Guid.NewGuid().ToString();      //creates a random user ID 
+                    PlayerCompleted user = new PlayerCompleted();   //creates an object for the dictionary
+                    user.Nickname = newUser.Nickname;           
+                    users.Add(userID, user);                //adds user to dictionary,  userID is the key value
+                    Person p = new Person();                //object returned to user with userID
                     p.UserToken = userID;
-                    SetStatus(Created);
+                    SetStatus(Created);     //user was successfully registed 
                     return p;
                 }
             }
@@ -96,54 +96,53 @@ namespace Boggle
             lock (sync)
             {
                 NewGame ng = new NewGame();
-                if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)
+                if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)   //token is null or time is invalid
                 {
                     SetStatus(Forbidden);
                     return null;
                 }
-                else if (obj.UserToken == pending.UserToken)
+                else if (obj.UserToken == pending.UserToken)    //user is already in pending game, so returns status conflict
                 {
                     SetStatus(Conflict);
                     return null;
                 }
-                if (pending.UserToken == null)
+                if (pending.UserToken == null)      //this is run the very first time only,  loads dictionary and sets initial gameID to 101
                 {
-                    pending.GameID = 101;
-                    pending.UserToken = "";
+                    pending.GameID = 101;           //first gameID
+                    pending.UserToken = "";     
                     dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
                 }
 
                 if (pending.UserToken == "")
                 {
-                    pending.TimeLimit = obj.TimeLimit;
-                    pending.UserToken = obj.UserToken;
-                    ng.GameID = "" + pending.GameID;
-                    SetStatus(Accepted);
-                    ng.GameID = "" + pending.GameID;
+                    pending.UserToken = obj.UserToken;     //player 1 waits in a pending game
+                    pending.TimeLimit = obj.TimeLimit;     //this adds the time limit requested by player 1          
+                    ng.GameID = "" + pending.GameID;      //sets gameID
+                    SetStatus(Accepted);                  //player 1 gets Accepted status 
                     return ng;
                 }
                 else
                 {
                     ng.GameID = "" + pending.GameID;
-                    GameItem g = new GameItem();
-                    g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;
-                    g.Player1 = users[pending.UserToken];
-                    g.Player2 = users[obj.UserToken];
-                    g.Player1.Score = 0;
+                    GameItem g = new GameItem();               //this creates an actual game to be added to the games dictionary
+                    g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;     //averages time
+                    g.Player1 = users[pending.UserToken];                      //adds player 1 token
+                    g.Player2 = users[obj.UserToken];                           //adds player 2 token
+                    g.Player1.Score = 0;                                        //sets score to zero,  important for resettting if player plays again
                     g.Player2.Score = 0;
-                    g.Player1.WordsPlayed = new List<WordsPlayed>();
+                    g.Player1.WordsPlayed = new List<WordsPlayed>();             //adds WordsPlayed object for each player
                     g.Player2.WordsPlayed = new List<WordsPlayed>();
-                    g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
-                    g.GameState = "active";
-                    g.Board = new BoggleBoard().ToString();
-                    games.Add(ng.GameID, g);
-                    pending.UserToken = "";
+                    g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;         //sets start time
+                    g.GameState = "active";                                         //changes status to active
+                    g.Board = new BoggleBoard().ToString();                         //adds a gameboard 
+                    games.Add(ng.GameID, g);                                    
+                    pending.UserToken = "";                                       //nulls out pending game item
                     pending.TimeLimit = 0;
-                    pending.GameID = pending.GameID + 1;
-                    SetStatus(Created);
-                    return ng;
+                    pending.GameID = pending.GameID + 1;                        //increments pending game
+                    SetStatus(Created);                                         //returns status Created to player two
+                    return ng;                                                   //returns gameID object for player two
                 }
-            }  
+            }
         }
         /// <summary>
         ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
@@ -155,10 +154,11 @@ namespace Boggle
             {
                 if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)) | (pending.UserToken != cancelobj.UserToken))
                 {
-                    SetStatus(Forbidden);
+                    SetStatus(Forbidden);      //the userToken was null, the user is not registered or they are not in the pending game
                     return;
                 }
 
+                //user is in the penidng game,  returns status OK,  removes userToken and resets time back to zero 
                 if (pending.UserToken == cancelobj.UserToken)
                 {
                     pending.UserToken = "";
@@ -166,8 +166,10 @@ namespace Boggle
                     SetStatus(OK);
                     return;
                 }
-            } 
+            }
         }
+
+
         /// <summary>
         /// Get game status information. 
         ///If GameID is invalid, responds with status 403 (Forbidden). 
@@ -175,49 +177,41 @@ namespace Boggle
         /// </summary>
         /// <param name="gameobj"></param>
         /// <returns></returns>
-        public Stream GameStatus( string GameID, string Brief)
+        public Stream GameStatus(string GameID, string Brief)
         {
             lock (sync)
             {
                 int t = 0;
+                string jsonClient= null;
                 if (!games.ContainsKey(GameID))
                     if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
                     {
                         SetStatus(Forbidden);
                         return null;
                     }
-                if (pending.GameID.ToString() == GameID)              //pendidng status for player 1 while waiting
+                if (pending.GameID.ToString() == GameID)              //the game status requested is for the pending game
                 {
                     PendingGame pg = new PendingGame();
                     pg.GameState = "pending";
                     SetStatus(OK);
-                    string jsonClient = JsonConvert.SerializeObject(pg);
-                    WebOperationContext.Current.OutgoingResponse.ContentType =
-                        "application/json; charset=utf-8";
-                    return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
-                }
-                if (games.ContainsKey(GameID))
-                    t = SetTime(games[GameID].TimeLimit, games[GameID].StartTime); //get the time left
-                if (t <= 0)
-                {
-                    GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns gameitem minus start time
-                    gc.GameState = "completed";
-                    gc.Board = games[GameID].Board;
-                    gc.Player1 = games[GameID].Player1;
-                    gc.Player2 = games[GameID].Player2;
-                    gc.TimeLimit = games[GameID].TimeLimit;
-                    gc.TimeLeft = 0;
-                    SetStatus(OK);
-                    string jsonClient = JsonConvert.SerializeObject(gc);
+                    jsonClient = JsonConvert.SerializeObject(pg);
                     WebOperationContext.Current.OutgoingResponse.ContentType =
                         "application/json; charset=utf-8";
                     return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
                 }
 
-                else if (Brief == "yes")                            //either active or completed game, with brief as a parameter
+
+                if (games.ContainsKey(GameID))            //checks the time left, to see if game is completed;
+                    t = SetTime(games[GameID].TimeLimit, games[GameID].StartTime); 
+
+                if (Brief == "yes")                            //either active or completed game, with brief as a parameter
                 {
                     ActiveGameBrief agb = new ActiveGameBrief();
                     agb.GameState = games[GameID].GameState;
+                    if (t<=0)
+                    {
+                        agb.GameState = "completed";
+                    }
                     agb.TimeLeft = games[GameID].TimeLeft;
                     Player p1 = new Player();
                     Player p2 = new Player();
@@ -226,11 +220,21 @@ namespace Boggle
                     agb.Player1 = p1;
                     agb.Player2 = p2;
                     SetStatus(OK);
-                    string jsonClient = JsonConvert.SerializeObject(agb);
-                    WebOperationContext.Current.OutgoingResponse.ContentType =
-                        "application/json; charset=utf-8";
-                    return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+                    jsonClient = JsonConvert.SerializeObject(agb);
                 }
+                else if (t <= 0)
+                {
+                    GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns the full game item
+                    gc.GameState = "completed";
+                    gc.Board = games[GameID].Board;
+                    gc.Player1 = games[GameID].Player1;
+                    gc.Player2 = games[GameID].Player2;
+                    gc.TimeLimit = games[GameID].TimeLimit;
+                    gc.TimeLeft = 0;                            //game is over
+                    SetStatus(OK);
+                    jsonClient = JsonConvert.SerializeObject(gc);
+                }
+
 
                 else if (games[GameID].GameState == "active")           //game state is active and not brief
                 {
@@ -248,12 +252,11 @@ namespace Boggle
                     ag.Player1 = p1;
                     ag.Player2 = p2;
                     SetStatus(OK);
-                    string jsonClient = JsonConvert.SerializeObject(ag);
-                    WebOperationContext.Current.OutgoingResponse.ContentType =
-                        "application/json; charset=utf-8";
-                    return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+                    jsonClient = JsonConvert.SerializeObject(ag);
                 }
-                return null;
+                //serializes which ever game was pulled and returns a stream
+                WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
+                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
         }
 
@@ -337,7 +340,7 @@ namespace Boggle
                     y.Word = word;
                     y.Score = 0;
                     if (player == 1)
-                        if (games[gid].Player1.WordsPlayed.Contains(wpObj) | games[gid].Player1.WordsPlayed.Contains(y) )
+                        if (games[gid].Player1.WordsPlayed.Contains(wpObj) | games[gid].Player1.WordsPlayed.Contains(y))
                             ws.WScore = 0;
                     if (player == 2)
                         if (games[gid].Player2.WordsPlayed.Contains(wpObj) | games[gid].Player2.WordsPlayed.Contains(y))
