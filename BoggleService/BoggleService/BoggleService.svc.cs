@@ -53,7 +53,7 @@ namespace Boggle
         {
             lock (sync)
             {
-                if (newUser.Nickname == null || newUser.Nickname.Trim().Length == 0)
+                if (newUser.Nickname == null || newUser.Nickname.Trim(' ').Length == 0)  
                 {
                     SetStatus(Forbidden);   //if user nickname was null or nickname is empty string
                     return null;
@@ -338,15 +338,25 @@ namespace Boggle
                     SetStatus(Conflict);
                     return ws;
                 }
-                BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
-                if (!bb.CanBeFormed(word))
+                if (word.Length <= 2)
                 {
-                    ws.WScore = -1;
-                    wpObj.Score = -1;
+                    ws.WScore = 0;
+                    wpObj.Score = 0;
                     return AddScore(word, gid, ws, player, wpObj);
                 }
-                else if (dic.strings.Contains(word))
+
+
+                BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
+                if (CheckSetDup(player, gid, word, ws, wpObj, bb) == 0)
                 {
+                    ws.WScore = 0;
+                    wpObj.Score = 0;
+                    return AddScore(word, gid, ws, player, wpObj);
+                }
+
+                if (dic.strings.Contains(word) && bb.CanBeFormed(word))
+                {
+
                     if (word.Length == 3 | word.Length == 4)
                         ws.WScore = 1;
                     else if (word.Length == 5)
@@ -355,27 +365,12 @@ namespace Boggle
                         ws.WScore = 3;
                     else if (word.Length == 7)
                         ws.WScore = 5;
-                    else
+                    else if (word.Length > 7)
                         ws.WScore = 11;
                     wpObj.Score = ws.WScore;
-                    WordsPlayed y = new WordsPlayed();
-                    y.Word = word;
-                    y.Score = 0;
-                    IEnumerator<WordsPlayed> iwp;
-                    iwp = games[gid].Player1.WordsPlayed.GetEnumerator();
-                    if (player == 2)
-                        iwp = games[gid].Player2.WordsPlayed.GetEnumerator();
-                    while (iwp.MoveNext())
-                        if (iwp.Current.Word.Equals(word))
-                        {
-                            ws.WScore = 0;
-                            wpObj.Score = 0;
-                        }
-                           
                 }
-                else //havent tested this last else yet so comment out if it cause prob
+                else
                 {
-
                     ws.WScore = -1;
                     wpObj.Score = -1;
                 }
@@ -383,6 +378,22 @@ namespace Boggle
             }
         }
 
+        public static int CheckSetDup(int player, string gid, string word, WordScore ws, WordsPlayed wpObj, BoggleBoard bb)
+        {
+            lock (sync)
+            {
+                IEnumerator<WordsPlayed> iwp;
+                iwp = games[gid].Player1.WordsPlayed.GetEnumerator();
+                if (player == 2)
+                    iwp = games[gid].Player2.WordsPlayed.GetEnumerator();
+                while (iwp.MoveNext())
+                {
+                    if (iwp.Current.Word.Equals(word))
+                        return 0;
+                }
+                    return -100;
+            }
+        }
         /// <summary>
         /// Add the score of the word to the list of WordsPlayed. 
         /// Update the total score of the player for this game.
@@ -397,6 +408,7 @@ namespace Boggle
         {
             lock (sync)
             {
+                SetStatus(OK);
                 if (player == 1)
                 {
                     games[gid].Player1.Score = ws.WScore + games[gid].Player1.Score;
