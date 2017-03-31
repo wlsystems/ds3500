@@ -62,7 +62,7 @@ namespace Boggle
                 {
                     string userID = Guid.NewGuid().ToString();      //creates a random user ID 
                     PlayerCompleted user = new PlayerCompleted();   //creates an object for the dictionary
-                    user.Nickname = newUser.Nickname;           
+                    user.Nickname = newUser.Nickname;
                     users.Add(userID, user);                //adds user to dictionary,  userID is the key value
                     Person p = new Person();                //object returned to user with userID
                     p.UserToken = userID;
@@ -110,7 +110,7 @@ namespace Boggle
                 if (pending.UserToken == null)      //this is run the very first time only,  loads dictionary and sets initial gameID to 101
                 {
                     pending.GameID = 101;           //first gameID
-                    pending.UserToken = "";     
+                    pending.UserToken = "";
                     dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
                 }
 
@@ -136,7 +136,7 @@ namespace Boggle
                     g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;         //sets start time
                     g.GameState = "active";                                         //changes status to active
                     g.Board = new BoggleBoard().ToString();                         //adds a gameboard 
-                    games.Add(ng.GameID, g);                                    
+                    games.Add(ng.GameID, g);
                     pending.UserToken = "";                                       //nulls out pending game item
                     pending.TimeLimit = 0;
                     pending.GameID = pending.GameID + 1;                        //increments pending game
@@ -182,8 +182,14 @@ namespace Boggle
         {
             lock (sync)
             {
+                GameID = GameID.Trim(' ');
+                if (GameID == null || GameID == "")  //this is checking for null or empty gameIDs
+                {
+                    SetStatus(Forbidden);
+                    return null;
+                }
                 int t = 0;
-                string jsonClient= null;
+                string jsonClient = null;
                 if (!games.ContainsKey(GameID))
                     if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
                     {
@@ -203,13 +209,13 @@ namespace Boggle
 
 
                 if (games.ContainsKey(GameID))            //checks the time left, to see if game is completed;
-                    t = SetTime(games[GameID].TimeLimit, games[GameID].StartTime); 
+                    t = SetTime(games[GameID].TimeLimit, games[GameID].StartTime);
 
                 if (Brief == "yes")                            //either active or completed game, with brief as a parameter
                 {
                     ActiveGameBrief agb = new ActiveGameBrief();
                     agb.GameState = games[GameID].GameState;
-                    if (t<=0)
+                    if (t <= 0)
                     {
                         agb.GameState = "completed";
                     }
@@ -291,6 +297,13 @@ namespace Boggle
         {
             lock (sync)
             {
+                gid = gid.Trim(' ');
+                if (gid == null || gid == "")  //this is checking for null or empty gameIDs
+                {
+                    SetStatus(Forbidden);
+                    return null;
+                }
+
                 WordScore ws = new WordScore();
                 WordsPlayed wpObj = new WordsPlayed();
                 String word = w.Word.Trim(' ').ToUpper();
@@ -298,16 +311,23 @@ namespace Boggle
                 int player = 3;
                 if (games.ContainsKey(gid))
                 {
+                    if (!users.ContainsKey(w.UserToken))
+                    {
+                        SetStatus(Forbidden);
+                        return null;
+                    }
                     if (games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname))
                         player = 1;
                     else if (games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname))
                         player = 2;
+
                 }
                 else
                 {
                     SetStatus(Forbidden);
                     return null;
                 }
+
                 if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
                 {
                     SetStatus(Forbidden);
@@ -403,5 +423,6 @@ namespace Boggle
                 return ws;
             }
         }
+
     }
 }
