@@ -189,11 +189,12 @@ namespace Boggle
             Assert.AreEqual(OK, r.Status);
 
             //tests that an invalid userToken is returned a forbidden status
-            wordPlayed = new ExpandoObject();         
-            wordPlayed.UserToken = "1234";
+            wordPlayed = new ExpandoObject();
+            string user3Token = Guid.NewGuid().ToString();        
+            wordPlayed.UserToken = user3Token;
             wordPlayed.Word = "kitty";
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
-            //Assert.AreEqual(Forbidden, r.Status);
+            Assert.AreEqual(Forbidden, r.Status);
 
 
             //Plays a word that is not valid so result in a -1 WS
