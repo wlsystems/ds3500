@@ -367,10 +367,18 @@ namespace Boggle
                         iwp = games[gid].Player2.WordsPlayed.GetEnumerator();
                     while (iwp.MoveNext())
                         if (iwp.Current.Word.Equals(word))
+                        {
                             ws.WScore = 0;
+                            wpObj.Score = 0;
+                        }
+                           
                 }
                 else //havent tested this last else yet so comment out if it cause prob
+                {
+
                     ws.WScore = -1;
+                    wpObj.Score = -1;
+                }
                 return AddScore(word, gid, ws, player, wpObj);
             }
         }
