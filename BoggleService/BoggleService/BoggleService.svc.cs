@@ -207,6 +207,7 @@ namespace Boggle
                     gc.Player1 = games[GameID].Player1;
                     gc.Player2 = games[GameID].Player2;
                     gc.TimeLimit = games[GameID].TimeLimit;
+                    gc.GameState = "completed";
                     gc.TimeLeft = 0;
                     SetStatus(OK);
                     string jsonClient = JsonConvert.SerializeObject(gc);
