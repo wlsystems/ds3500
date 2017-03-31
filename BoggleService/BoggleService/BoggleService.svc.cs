@@ -182,6 +182,12 @@ namespace Boggle
         {
             lock (sync)
             {
+                GameID = GameID.Trim(' ');
+                if (GameID == null || GameID == "")  //this is checking for null or empty gameIDs
+                {
+                    SetStatus(Forbidden);
+                    return null;
+                }
                 int t = 0;
                 string jsonClient= null;
                 if (!games.ContainsKey(GameID))
@@ -291,6 +297,13 @@ namespace Boggle
         {
             lock (sync)
             {
+                gid = gid.Trim(' ');
+                if (gid == null || gid == "")  //this is checking for null or empty gameIDs
+                {
+                    SetStatus(Forbidden);
+                    return null;
+                }
+
                 WordScore ws = new WordScore();
                 WordsPlayed wpObj = new WordsPlayed();
                 String word = w.Word.Trim(' ').ToUpper();
@@ -314,6 +327,7 @@ namespace Boggle
                     SetStatus(Forbidden);
                     return null;
                 }
+
                 if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
                 {
                     SetStatus(Forbidden);
@@ -389,5 +403,6 @@ namespace Boggle
                 return ws;
             }
         }
+        
     }
 }
