@@ -1,5 +1,6 @@
 ﻿using BoggleList;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -339,11 +340,12 @@ namespace Boggle
                     WordsPlayed y = new WordsPlayed();
                     y.Word = word;
                     y.Score = 0;
-                    if (player == 1)
-                        if (games[gid].Player1.WordsPlayed.Contains(wpObj) | games[gid].Player1.WordsPlayed.Contains(y))
-                            ws.WScore = 0;
+                    IEnumerator<WordsPlayed> iwp;
+                    iwp = games[gid].Player1.WordsPlayed.GetEnumerator();
                     if (player == 2)
-                        if (games[gid].Player2.WordsPlayed.Contains(wpObj) | games[gid].Player2.WordsPlayed.Contains(y))
+                        iwp = games[gid].Player2.WordsPlayed.GetEnumerator();  
+                    while (iwp.MoveNext())
+                        if (iwp.Current.Word.Equals(word))
                             ws.WScore = 0;
                 }
                 else //havent tested this last else yet so comment out if it cause prob
