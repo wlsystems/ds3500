@@ -135,13 +135,13 @@ namespace Boggle
             {
                 SetStatus(Forbidden);
                 return null;
-                
+
             }
             using (SqlConnection conn = new SqlConnection(BoggleDB))
             {
                 // Connections must be opened
                 conn.Open();
-         
+
                 using (SqlTransaction trans = conn.BeginTransaction())
                 {
                     using (SqlCommand command =
@@ -239,8 +239,8 @@ namespace Boggle
             {
                 SetStatus(Forbidden);
             }
-            
-             return ws;      
+
+            return ws;
         }
 
     }
