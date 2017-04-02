@@ -339,7 +339,10 @@ namespace PS8
                     StringContent content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
                     HttpResponseMessage response = null;
                     if (type == 1)
+                    {
                         response = await Task.Run(() => client.PostAsync(Name, content, tokenSource.Token).Result);   //POST
+                        MessageBox.Show(response.StatusCode.ToString());
+                    }
                     else if (type == 2)
                     {
                         response = await Task.Run(() => client.PutAsync(Name, content, tokenSource.Token).Result);  //PUT
