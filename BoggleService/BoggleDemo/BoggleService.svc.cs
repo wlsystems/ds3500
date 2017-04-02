@@ -1,6 +1,7 @@
 ﻿using BoggleList;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Net;
@@ -23,6 +24,12 @@ namespace Boggle
         private int GameID = 101;
         private readonly static Dict dic = new Dict();
 
+
+        static BoggleService()
+        {
+            //Data Source =(LocalDB)\MSSQLLocalDB;AttachDbFilename="|DataDirectory|\BoggleDB.mdf";Integrated Security = True;
+            BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
+        }
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when.
         /// an http response is sent..
