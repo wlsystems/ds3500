@@ -27,7 +27,6 @@ namespace Boggle
 
         static BoggleService()
         {
-            //Data Source =(LocalDB)\MSSQLLocalDB;AttachDbFilename="|DataDirectory|\BoggleDB.mdf";Integrated Security = True;
             BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
         }
         /// <summary>

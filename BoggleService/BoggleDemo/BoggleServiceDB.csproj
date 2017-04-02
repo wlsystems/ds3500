@@ -95,7 +95,6 @@
     </Content>
     <Content Include="dictionary.txt" />
     <Content Include="index.html" />
-    <Content Include="Service1.svc" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -103,10 +102,6 @@
     <Compile Include="BoggleService.svc.cs" />
     <Compile Include="DataModel.cs" />
     <Compile Include="IBoggleService.cs" />
-    <Compile Include="Service1.svc.cs">
-      <DependentUpon>Service1.svc</DependentUpon>
-    </Compile>
-    <Compile Include="IService1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
