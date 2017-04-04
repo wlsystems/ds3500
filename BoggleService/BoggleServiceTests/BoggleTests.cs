@@ -255,7 +255,7 @@ namespace Boggle
         public void TestJoinGameForPlayerwithWrongTime()
         {
             dynamic user = new ExpandoObject();
-            user.Nickname = "Bugs Bunny";
+            user.Nickname = "Bugs Bunny"; 
             Response r = client.DoPostAsync("users", user).Result;
             Assert.AreEqual(Created, r.Status);
             user = r.Data;

@@ -94,7 +94,7 @@ namespace Boggle
         /// <returns></returns>
         public NewGame JoinGame(NewGameRequest obj)
         {
-            lock (sync)
+            lock (sync) 
             {
                 NewGame ng = new NewGame();
                 if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120 | !users.ContainsKey(obj.UserToken))   //token is null or time is invalid
