@@ -159,12 +159,11 @@ namespace Boggle
                     if (pending.UserToken == null)  //very first request, initializes pending
                     {
                         pending.UserToken = "";
-                        pending.GameID = 101;
                     }
                     if (pending.UserToken == "")
                     {
                         // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
-                        // We are asking the DB to send back the auto-generated ItemID.
+                        // We are asking the DB to send back the auto-generated GameID.
                         using (SqlCommand command = new SqlCommand("insert into Games (Player1) output inserted.GameID values(@Player1)", conn, trans))
                         {
                             command.Parameters.AddWithValue("@Player1", obj.UserToken);
@@ -172,15 +171,17 @@ namespace Boggle
                             // We execute the command with the ExecuteScalar method, which will return to
                             // us the requested auto-generated ItemID.
                             string gameID = command.ExecuteScalar().ToString();
+                            pending.TimeLimit = obj.TimeLimit;
                             SetStatus(Accepted);
-                            ng.GameID = gameID;
+                            ng.GameID = gameID.ToString();
+                            pending.GameID = int.Parse(gameID);
                             pending.UserToken = obj.UserToken;
                             trans.Commit();
                         }
                     }
                     else
                     {
-                        using (SqlCommand command = new SqlCommand("update into Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime where GameID=@GameID", conn, trans))
+                        using (SqlCommand command = new SqlCommand("update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime where GameID=@GameID", conn, trans))
                         {
                             int time = (pending.TimeLimit + obj.TimeLimit) / 2;
                             int startTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
@@ -191,7 +192,6 @@ namespace Boggle
                             command.ExecuteNonQuery();
                             SetStatus(Created);
                             ng.GameID = pending.GameID.ToString();
-                            pending.GameID = pending.GameID + 1;
                             pending.UserToken = "";
                             trans.Commit();
                         }
@@ -220,10 +220,12 @@ namespace Boggle
                     using (SqlTransaction trans = conn.BeginTransaction())
                     {
                         // Here we're doing a delete command.
-                        using (SqlCommand command = new SqlCommand("delete Player1 from Games where GamesID = @GameID", conn, trans))
+                        using (SqlCommand command = new SqlCommand("delete from Games where GameID = @GameID", conn, trans))
                         {
                             command.Parameters.AddWithValue("@GameID", pending.GameID);
                             command.ExecuteNonQuery();
+                            pending.UserToken = "";
+                            pending.TimeLimit = 0;
                             SetStatus(OK);
                             trans.Commit();
                         }
