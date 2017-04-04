@@ -157,7 +157,7 @@ namespace Boggle
                     }
                     // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
                     // We are asking the DB to send back the auto-generated ItemID.
-                    using (SqlCommand command = new SqlCommand("insert into Games (Player1) output inserted.ItemID values(@UserID)", conn, trans))
+                    using (SqlCommand command = new SqlCommand("insert into Games (Player1) output inserted.GameID values(@UserID)", conn, trans))
                     {
                         command.Parameters.AddWithValue("@Player1", obj.UserToken);
 
