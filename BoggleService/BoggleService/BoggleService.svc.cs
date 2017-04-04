@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.IO;
@@ -33,6 +34,11 @@ namespace Boggle
         private readonly static object sync = new object();
         private readonly static Dict dic = new Dict();
 
+        static BoggleService()
+        {
+            BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
+
+        }
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when.
         /// an http response is sent..
@@ -51,7 +57,7 @@ namespace Boggle
         /// </summary>
         /// <param name="newUser"></param>
         /// <returns></returns>
-        public Person Register(NewPlayer user)
+        public Person  Register(NewPlayer user)
         {
             if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
             {
@@ -112,56 +118,59 @@ namespace Boggle
         /// <returns></returns>
         public NewGame JoinGame(NewGameRequest obj)
         {
-            lock (sync)
+            NewGame ng = new NewGame();
+            if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)   //token is null or time is invalid
             {
-                NewGame ng = new NewGame();
-                if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120 | !users.ContainsKey(obj.UserToken))   //token is null or time is invalid
+                SetStatus(Forbidden);
+                return null;
+            }
+            else if (obj.UserToken == pending.UserToken)    //user is already in pending game, so returns status conflict
+            {
+                SetStatus(Conflict);
+                return null;
+            }
+            using (SqlConnection conn = new SqlConnection(BoggleDB))
+            {
+                conn.Open();
+                using (SqlTransaction trans = conn.BeginTransaction())
                 {
-                    SetStatus(Forbidden);
-                    return null;
-                }
-                else if (obj.UserToken == pending.UserToken)    //user is already in pending game, so returns status conflict
-                {
-                    SetStatus(Conflict);
-                    return null;
-                }
-                if (pending.UserToken == null)      //this is run the very first time only,  loads dictionary and sets initial gameID to 101
-                {
-                    pending.GameID = 101;           //first gameID
-                    pending.UserToken = "";
-                    dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
-                }
 
-                if (pending.UserToken == "")
-                {
-                    pending.UserToken = obj.UserToken;     //player 1 waits in a pending game
-                    pending.TimeLimit = obj.TimeLimit;     //this adds the time limit requested by player 1          
-                    ng.GameID = "" + pending.GameID;      //sets gameID
-                    SetStatus(Accepted);                  //player 1 gets Accepted status 
-                    return ng;
-                }
-                else
-                {
-                    ng.GameID = "" + pending.GameID;
-                    GameItem g = new GameItem();               //this creates an actual game to be added to the games dictionary
-                    g.TimeLimit = (pending.TimeLimit + obj.TimeLimit) / 2;     //averages time
-                    g.Player1 = users[pending.UserToken];                      //adds player 1 token
-                    g.Player2 = users[obj.UserToken];                           //adds player 2 token
-                    g.Player1.Score = 0;                                        //sets score to zero,  important for resettting if player plays again
-                    g.Player2.Score = 0;
-                    g.Player1.WordsPlayed = new List<WordsPlayed>();             //adds WordsPlayed object for each player
-                    g.Player2.WordsPlayed = new List<WordsPlayed>();
-                    g.StartTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;         //sets start time
-                    g.GameState = "active";                                         //changes status to active
-                    g.Board = new BoggleBoard().ToString();                         //adds a gameboard 
-                    games.Add(ng.GameID, g);
-                    pending.UserToken = "";                                       //nulls out pending game item
-                    pending.TimeLimit = 0;
-                    pending.GameID = pending.GameID + 1;                        //increments pending game
-                    SetStatus(Created);                                         //returns status Created to player two
-                    return ng;                                                   //returns gameID object for player two
+                    // Here, the SqlCommand is a select query.  We are interested in whether item.UserID exists in
+                    // the Users table.
+                    using (SqlCommand command = new SqlCommand("select UserID from Users where UserID = @UserID", conn, trans))
+                    {
+                        command.Parameters.AddWithValue("@UserID", obj.UserToken);
+
+                        // This executes a query (i.e. a select statement).  The result is an
+                        // SqlDataReader that you can use to iterate through the rows in the response.
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            // Check to see user is in table, set forbidden if not
+                            if (!reader.HasRows)
+                            {
+                                SetStatus(Forbidden);
+                                trans.Commit();
+                                return null;
+                            }
+                        }
+
+                    }
+                    // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
+                    // We are asking the DB to send back the auto-generated ItemID.
+                    using (SqlCommand command = new SqlCommand("insert into Games (Player1) output inserted.ItemID values(@UserID)", conn, trans))
+                    {
+                        command.Parameters.AddWithValue("@Player1", obj.UserToken);
+
+                        // We execute the command with the ExecuteScalar method, which will return to
+                        // us the requested auto-generated ItemID.
+                        string gameID= command.ExecuteScalar().ToString();
+                        SetStatus(Created);
+                        ng.GameID = gameID;
+                        trans.Commit();
+                    }
                 }
             }
+            return ng;
         }
         /// <summary>
         ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
