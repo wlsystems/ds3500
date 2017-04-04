@@ -97,7 +97,7 @@ namespace Boggle
             lock (sync)
             {
                 NewGame ng = new NewGame();
-                if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)   //token is null or time is invalid
+                if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120 | !users.ContainsKey(obj.UserToken))   //token is null or time is invalid
                 {
                     SetStatus(Forbidden);
                     return null;
@@ -327,7 +327,6 @@ namespace Boggle
                     SetStatus(Forbidden);
                     return null;
                 }
-
                 if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
                 {
                     SetStatus(Forbidden);
@@ -340,7 +339,7 @@ namespace Boggle
                 }
                 if (word.Length <= 2)
                 {
-                    ws.WScore = 0;
+                    ws.Score = 0;
                     wpObj.Score = 0;
                     return AddScore(word, gid, ws, player, wpObj);
                 }
@@ -349,7 +348,7 @@ namespace Boggle
                 BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
                 if (CheckSetDup(player, gid, word, ws, wpObj, bb) == 0)
                 {
-                    ws.WScore = 0;
+                    ws.Score = 0;
                     wpObj.Score = 0;
                     return AddScore(word, gid, ws, player, wpObj);
                 }
@@ -358,20 +357,20 @@ namespace Boggle
                 {
 
                     if (word.Length == 3 | word.Length == 4)
-                        ws.WScore = 1;
+                        ws.Score = 1;
                     else if (word.Length == 5)
-                        ws.WScore = 2;
+                        ws.Score = 2;
                     else if (word.Length == 6)
-                        ws.WScore = 3;
+                        ws.Score = 3;
                     else if (word.Length == 7)
-                        ws.WScore = 5;
+                        ws.Score = 5;
                     else if (word.Length > 7)
-                        ws.WScore = 11;
-                    wpObj.Score = ws.WScore;
+                        ws.Score = 11;
+                    wpObj.Score = ws.Score;
                 }
                 else
                 {
-                    ws.WScore = -1;
+                    ws.Score = -1;
                     wpObj.Score = -1;
                 }
                 return AddScore(word, gid, ws, player, wpObj);
@@ -411,13 +410,13 @@ namespace Boggle
                 SetStatus(OK);
                 if (player == 1)
                 {
-                    games[gid].Player1.Score = ws.WScore + games[gid].Player1.Score;
+                    games[gid].Player1.Score = ws.Score + games[gid].Player1.Score;
                     games[gid].Player1.WordsPlayed.Add(wpObj);
                 }
 
                 else if (player == 2)
                 {
-                    games[gid].Player2.Score = ws.WScore + games[gid].Player2.Score;
+                    games[gid].Player2.Score = ws.Score + games[gid].Player2.Score;
                     games[gid].Player2.WordsPlayed.Add(wpObj);
                 }
                 return ws;

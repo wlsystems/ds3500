@@ -211,7 +211,7 @@ namespace Boggle
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
             Assert.AreEqual(OK, r.Status);
             wordPlayed = r.Data;
-            string ws = wordPlayed.WScore;
+            string ws = wordPlayed.Score;
             Assert.AreEqual("-1", ws);
 
             ///Test the word played method
@@ -221,7 +221,7 @@ namespace Boggle
             r = client.DoPutAsync(wordPlayed, "games/" + gameID).Result;
             Assert.AreEqual(OK, r.Status);
             wordPlayed = r.Data;
-            ws = wordPlayed.WScore;
+            ws = wordPlayed.Score;
             Assert.AreEqual("-1", ws);
 
 
