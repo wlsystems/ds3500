@@ -149,24 +149,52 @@ namespace Boggle
                             if (!reader.HasRows)
                             {
                                 SetStatus(Forbidden);
+                                reader.Close();
                                 trans.Commit();
                                 return null;
                             }
                         }
 
                     }
-                    // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
-                    // We are asking the DB to send back the auto-generated ItemID.
-                    using (SqlCommand command = new SqlCommand("insert into Games (Player1) output inserted.GameID values(@UserID)", conn, trans))
+                    if (pending.UserToken == null)  //very first request, initializes pending
                     {
-                        command.Parameters.AddWithValue("@Player1", obj.UserToken);
+                        pending.UserToken = "";
+                        pending.GameID = 101;
+                    }
+                    if (pending.UserToken == "")
+                    {
+                        // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
+                        // We are asking the DB to send back the auto-generated ItemID.
+                        using (SqlCommand command = new SqlCommand("insert into Games (Player1) output inserted.GameID values(@Player1)", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@Player1", obj.UserToken);
 
-                        // We execute the command with the ExecuteScalar method, which will return to
-                        // us the requested auto-generated ItemID.
-                        string gameID= command.ExecuteScalar().ToString();
-                        SetStatus(Created);
-                        ng.GameID = gameID;
-                        trans.Commit();
+                            // We execute the command with the ExecuteScalar method, which will return to
+                            // us the requested auto-generated ItemID.
+                            string gameID = command.ExecuteScalar().ToString();
+                            SetStatus(Accepted);
+                            ng.GameID = gameID;
+                            pending.UserToken = obj.UserToken;
+                            trans.Commit();
+                        }
+                    }
+                    else
+                    {
+                        using (SqlCommand command = new SqlCommand("update into Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime where GameID=@GameID", conn, trans))
+                        {
+                            int time = (pending.TimeLimit + obj.TimeLimit) / 2;
+                            int startTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
+                            command.Parameters.AddWithValue("@Player2", obj.UserToken);
+                            command.Parameters.AddWithValue("@GameID", pending.GameID);
+                            command.Parameters.AddWithValue("@TimeLimit", time);
+                            command.Parameters.AddWithValue("@StartTime", startTime);
+                            command.ExecuteNonQuery();
+                            SetStatus(Created);
+                            ng.GameID = pending.GameID.ToString();
+                            pending.GameID = pending.GameID + 1;
+                            pending.UserToken = "";
+                            trans.Commit();
+                        }
                     }
                 }
             }
@@ -180,19 +208,26 @@ namespace Boggle
         {
             lock (sync)
             {
-                if ((cancelobj.UserToken == null) || !(users.ContainsKey(cancelobj.UserToken)) | (pending.UserToken != cancelobj.UserToken))
+                if ((cancelobj.UserToken == null) | (pending.UserToken != cancelobj.UserToken))
                 {
                     SetStatus(Forbidden);      //the userToken was null, the user is not registered or they are not in the pending game
                     return;
                 }
 
-                //user is in the penidng game,  returns status OK,  removes userToken and resets time back to zero 
-                if (pending.UserToken == cancelobj.UserToken)
+                using (SqlConnection conn = new SqlConnection(BoggleDB))
                 {
-                    pending.UserToken = "";
-                    pending.TimeLimit = 0;
-                    SetStatus(OK);
-                    return;
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
+                    {
+                        // Here we're doing a delete command.
+                        using (SqlCommand command = new SqlCommand("delete Player1 from Games where GamesID = @GameID", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@GameID", pending.GameID);
+                            command.ExecuteNonQuery();
+                            SetStatus(OK);
+                            trans.Commit();
+                        }
+                    }
                 }
             }
         }
