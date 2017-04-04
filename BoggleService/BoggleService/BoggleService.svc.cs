@@ -110,9 +110,9 @@ namespace Boggle
                 }
                 if (pending.UserToken == null)      //this is run the very first time only,  loads dictionary and sets initial gameID to 101
                 {
-                    pending.GameID = 101;           //first gameID
+                     pending.GameID = 101;           //first gameID
                     pending.UserToken = "";
-                    dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
+                    dic.strings = new HashSet<s | !users.ContainsKey(obj.UserTokene)AppDomainAppPath + "/dictionary.txt"));
                 }
 
                 if (pending.UserToken == "")
@@ -344,16 +344,9 @@ namespace Boggle
                     ws.WScore = 0;
                     wpObj.Score = 0;
                     return AddScore(word, gid, ws, player, wpObj);
-                }
-
-
-                BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
-                if (CheckSetDup(player, gid, word, ws, wpObj, bb) == 0)
-                {
-                    ws.WScore = 0;
-                    wpObj.Score = 0;
-                    return AddScore(word, gid, ws, player, wpObj);
-                }
+                      ws.WScore = 0;
+    Forbidden       wpObj.Score = 0;
+                    return Add               }
 
                 if (dic.strings.Contains(word) && bb.CanBeFormed(word))
                 {

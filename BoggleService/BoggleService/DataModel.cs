@@ -66,7 +66,7 @@ namespace BoggleList
     /// </summary>
     public class WordScore
     {
-        public int WScore { get; set; }
+        public int WWScore { get; set; }
     }
     /// <summary>
     /// Player contains the score, and nickname. 
