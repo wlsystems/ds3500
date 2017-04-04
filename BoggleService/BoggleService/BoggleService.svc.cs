@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.IO;
@@ -24,6 +23,9 @@ namespace Boggle
     /// </summary>
     public class BoggleService : IBoggleService
     {
+        /// <summary>
+        /// Keeps track of the currently pending game
+        /// </summary>
         private static string BoggleDB;
         private readonly static Pending pending = new Pending();
         private readonly static Dictionary<String, PlayerCompleted> users = new Dictionary<String, PlayerCompleted>();
@@ -31,10 +33,6 @@ namespace Boggle
         private readonly static object sync = new object();
         private readonly static Dict dic = new Dict();
 
-        static BoggleService()
-        {
-            BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
-        }
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when.
         /// an http response is sent..
@@ -44,31 +42,50 @@ namespace Boggle
         {
             WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
-
         /// <summary>
-        /// Register a new user
+        /// Join a game. 
+        ///If UserToken is invalid, TimeLimit< 5, or TimeLimit> 120, responds with status 403 (Forbidden).
+        ///Otherwise, if UserToken is already a player in the pending game, responds with status 409 (Conflict). 
+        ///Otherwise, if there is already one player in the pending game, adds UserToken as the second player.The pending game becomes active and a new pending game with no players is created.The active game's time limit is the integer average of the time limits requested by the two players. Returns the new active game's GameID(which should be the same as the old pending game's GameID). Responds with status 201 (Created). 
+        ///Otherwise, adds UserToken as the first player of the pending game, and the TimeLimit as the pending game's requested time limit. Returns the pending game's GameID. Responds with status 202 (Accepted). 
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="newUser"></param>
         /// <returns></returns>
-        public Person Register(NewPlayer newUser)
+        public Person Register(NewPlayer user)
         {
-            lock (sync)
+            if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
             {
-                if (newUser.Nickname == null || newUser.Nickname.Trim(' ').Length == 0)
+                SetStatus(Forbidden);
+                return null;
+            }
+
+            using (SqlConnection conn = new SqlConnection(BoggleDB))
+            {
+                //open connection
+                conn.Open();
+
+                using (SqlTransaction trans = conn.BeginTransaction())
                 {
-                    SetStatus(Forbidden);   //if user nickname was null or nickname is empty string
-                    return null;
-                }
-                else
-                {
-                    string userID = Guid.NewGuid().ToString();      //creates a random user ID 
-                    PlayerCompleted user = new PlayerCompleted();   //creates an object for the dictionary
-                    user.Nickname = newUser.Nickname;
-                    users.Add(userID, user);                //adds user to dictionary,  userID is the key value
-                    Person p = new Person();                //object returned to user with userID
-                    p.UserToken = userID;
-                    SetStatus(Created);     //user was successfully registed 
-                    return p;
+                    using (SqlCommand command =
+                        new SqlCommand("insert into Users (UserID, Nickname) values(@UserID, @Nickname)",
+                                        conn,
+                                        trans))
+                    {
+                        // We generate the userID to use.
+                        string userID = Guid.NewGuid().ToString();
+
+                        // This is where the placeholders are replaced.
+                        command.Parameters.AddWithValue("@UserID", userID);
+                        command.Parameters.AddWithValue("@Nickname", user.Nickname.Trim());
+
+                        command.ExecuteNonQuery();
+                        SetStatus(Created);
+
+                        trans.Commit();
+                        Person p = new Person();
+                        p.UserToken = userID;
+                        return p;
+                    }
                 }
             }
         }
@@ -98,7 +115,7 @@ namespace Boggle
             lock (sync)
             {
                 NewGame ng = new NewGame();
-                if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)   //token is null or time is invalid
+                if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120 | !users.ContainsKey(obj.UserToken))   //token is null or time is invalid
                 {
                     SetStatus(Forbidden);
                     return null;
@@ -110,9 +127,9 @@ namespace Boggle
                 }
                 if (pending.UserToken == null)      //this is run the very first time only,  loads dictionary and sets initial gameID to 101
                 {
-                     pending.GameID = 101;           //first gameID
+                    pending.GameID = 101;           //first gameID
                     pending.UserToken = "";
-                    dic.strings = new HashSet<s | !users.ContainsKey(obj.UserTokene)AppDomainAppPath + "/dictionary.txt"));
+                    dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
                 }
 
                 if (pending.UserToken == "")
@@ -325,10 +342,15 @@ namespace Boggle
                 }
                 else
                 {
+                    if (pending.GameID.ToString() == gid)
+                    {
+                        SetStatus(Conflict);
+                            return null;
+                    }
                     SetStatus(Forbidden);
                     return null;
                 }
-
+                GameStatus(gid, "y");
                 if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
                 {
                     SetStatus(Forbidden);
@@ -341,31 +363,38 @@ namespace Boggle
                 }
                 if (word.Length <= 2)
                 {
-                    ws.WScore = 0;
+                    ws.Score = 0;
                     wpObj.Score = 0;
                     return AddScore(word, gid, ws, player, wpObj);
-                      ws.WScore = 0;
-    Forbidden       wpObj.Score = 0;
-                    return Add               }
+                }
+
+
+                BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
+                if (CheckSetDup(player, gid, word, ws, wpObj, bb) == 0)
+                {
+                    ws.Score = 0;
+                    wpObj.Score = 0;
+                    return AddScore(word, gid, ws, player, wpObj);
+                }
 
                 if (dic.strings.Contains(word) && bb.CanBeFormed(word))
                 {
 
                     if (word.Length == 3 | word.Length == 4)
-                        ws.WScore = 1;
+                        ws.Score = 1;
                     else if (word.Length == 5)
-                        ws.WScore = 2;
+                        ws.Score = 2;
                     else if (word.Length == 6)
-                        ws.WScore = 3;
+                        ws.Score = 3;
                     else if (word.Length == 7)
-                        ws.WScore = 5;
+                        ws.Score = 5;
                     else if (word.Length > 7)
-                        ws.WScore = 11;
-                    wpObj.Score = ws.WScore;
+                        ws.Score = 11;
+                    wpObj.Score = ws.Score;
                 }
                 else
                 {
-                    ws.WScore = -1;
+                    ws.Score = -1;
                     wpObj.Score = -1;
                 }
                 return AddScore(word, gid, ws, player, wpObj);
@@ -405,13 +434,13 @@ namespace Boggle
                 SetStatus(OK);
                 if (player == 1)
                 {
-                    games[gid].Player1.Score = ws.WScore + games[gid].Player1.Score;
+                    games[gid].Player1.Score = ws.Score + games[gid].Player1.Score;
                     games[gid].Player1.WordsPlayed.Add(wpObj);
                 }
 
                 else if (player == 2)
                 {
-                    games[gid].Player2.Score = ws.WScore + games[gid].Player2.Score;
+                    games[gid].Player2.Score = ws.Score + games[gid].Player2.Score;
                     games[gid].Player2.WordsPlayed.Add(wpObj);
                 }
                 return ws;
