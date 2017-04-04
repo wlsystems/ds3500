@@ -17,7 +17,7 @@ namespace Boggle
         /// Sends back index.html as the response body.
         /// </summary>
         [WebGet(UriTemplate = "/api")]
-        Stream API();
+        Stream API(); 
 
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Boggle
         /// Otherwise, creates a user, returns the user's token, and responds with status code Created. 
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/users")]
-        Person Register(NewPlayer newUser);
+        Person Register(NewPlayer user);
 
         /// <summary>
         /// Registers a new user.

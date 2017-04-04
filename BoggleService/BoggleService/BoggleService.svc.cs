@@ -44,6 +44,7 @@ namespace Boggle
         {
             WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
+
         /// <summary>
         /// Register a new user
         /// </summary>
