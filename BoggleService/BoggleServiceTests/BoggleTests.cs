@@ -242,7 +242,7 @@ namespace Boggle
             Assert.AreEqual("completed", (string)completedgame.GameState);
             Assert.AreEqual("-1", (string)completedgame.Player1.Score);
 
-
+            
             //try to submits a word after game is over
             wordPlayed = new ExpandoObject();
             wordPlayed.UserToken = userToken;
@@ -318,6 +318,11 @@ namespace Boggle
             game.UserToken = userToken;
             r = client.DoPutAsync(game, "games").Result;
             Assert.AreEqual(OK, r.Status);
+
+
+            //game.UserToken = "xyzzy123";
+            //r = client.DoPutAsync(game, "games").Result;
+            //Assert.AreEqual(Forbidden, r.Status);
         }
 
         /// <summary>
