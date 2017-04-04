@@ -50,41 +50,25 @@ namespace Boggle
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public Person Register(NewPlayer user)
+        public Person Register(NewPlayer newUser)
         {
-            if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
+            lock (sync)
             {
-                SetStatus(Forbidden);
-                return null;
-            }
-
-            using (SqlConnection conn = new SqlConnection(BoggleDB))
-            {
-                //open connection
-                conn.Open();
-
-                using (SqlTransaction trans = conn.BeginTransaction())
+                if (newUser.Nickname == null || newUser.Nickname.Trim(' ').Length == 0)
                 {
-                    using (SqlCommand command =
-                        new SqlCommand("insert into Users (UserID, Nickname) values(@UserID, @Nickname)",
-                                        conn,
-                                        trans))
-                    {
-                        // We generate the userID to use.
-                        string userID = Guid.NewGuid().ToString();
-
-                        // This is where the placeholders are replaced.
-                        command.Parameters.AddWithValue("@UserID", userID);
-                        command.Parameters.AddWithValue("@Nickname", user.Nickname.Trim());
-
-                        command.ExecuteNonQuery();
-                        SetStatus(Created);
-
-                        trans.Commit();
-                        Person p = new Person();
-                        p.UserToken = userID;
-                        return p;
-                    }
+                    SetStatus(Forbidden);   //if user nickname was null or nickname is empty string
+                    return null;
+                }
+                else
+                {
+                    string userID = Guid.NewGuid().ToString();      //creates a random user ID 
+                    PlayerCompleted user = new PlayerCompleted();   //creates an object for the dictionary
+                    user.Nickname = newUser.Nickname;
+                    users.Add(userID, user);                //adds user to dictionary,  userID is the key value
+                    Person p = new Person();                //object returned to user with userID
+                    p.UserToken = userID;
+                    SetStatus(Created);     //user was successfully registed 
+                    return p;
                 }
             }
         }
