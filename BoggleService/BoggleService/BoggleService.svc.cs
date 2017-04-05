@@ -181,7 +181,8 @@ namespace Boggle
                     }
                     else
                     {
-                        using (SqlCommand command = new SqlCommand("update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime where GameID=@GameID", conn, trans))
+                        string board = new BoggleBoard().ToString();
+                        using (SqlCommand command = new SqlCommand("update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime, Board=@Board where GameID=@GameID", conn, trans))
                         {
                             int time = (pending.TimeLimit + obj.TimeLimit) / 2;
                             int startTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
@@ -189,10 +190,12 @@ namespace Boggle
                             command.Parameters.AddWithValue("@GameID", pending.GameID);
                             command.Parameters.AddWithValue("@TimeLimit", time);
                             command.Parameters.AddWithValue("@StartTime", startTime);
+                            command.Parameters.AddWithValue("@Board", board);
                             command.ExecuteNonQuery();
                             SetStatus(Created);
                             ng.GameID = pending.GameID.ToString();
                             pending.UserToken = "";
+                            pending.GameID = 0;
                             trans.Commit();
                         }
                     }
@@ -244,93 +247,221 @@ namespace Boggle
         /// <returns></returns>
         public Stream GameStatus(string GameID, string Brief)
         {
-            lock (sync)
+            GameID = GameID.Trim(' ');
+            if (GameID == null || GameID == "")  //this is checking for null or empty gameIDs
             {
-                GameID = GameID.Trim(' ');
-                if (GameID == null || GameID == "")  //this is checking for null or empty gameIDs
+                SetStatus(Forbidden);
+                return null;
+            }
+            ///TODO CALL HELPER TO CHECK IF GAMEID IS BOGUS
+            int t = 0; 
+            string jsonClient = null;
+
+            if (pending.GameID.ToString() == GameID)              //the game status requested is for the pending game
+            {
+                PendingGame pg = new PendingGame();
+                pg.GameState = "pending";
+                SetStatus(OK);
+                jsonClient = JsonConvert.SerializeObject(pg);
+                WebOperationContext.Current.OutgoingResponse.ContentType =
+                    "application/json; charset=utf-8";
+                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+            }
+
+            //t = SetTime(GameID);
+
+            if (Brief == "yes")                            //either active or completed game, with brief as a parameter
+            {
+                ActiveGameBrief agb = new ActiveGameBrief();
+                if (t <= 0)
                 {
-                    SetStatus(Forbidden);
-                    return null;
+                    agb.GameState = "completed";
                 }
-                int t = 0;
-                string jsonClient = null;
-                if (!games.ContainsKey(GameID))
-                    if (pending.GameID.ToString() != GameID)           // game is not in dictionary and not pending
+                else
+                {
+                    agb.GameState = "active";
+                }
+
+                //agb.TimeLeft = SetTime(GameID);
+                Player p1 = new Player();
+                Player p2 = new Player();
+                string player1;
+                string player2;
+                using (SqlConnection conn = new SqlConnection(BoggleDB))
+                {
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
                     {
-                        SetStatus(Forbidden);
-                        return null;
+
+                        using (SqlCommand command = new SqlCommand("select * from Games where GameID = @GameID", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@GameID", GameID);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                player1 = reader["Player1"].ToString();
+                                player2 = reader["Player2"].ToString();
+                                reader.Close();
+                                trans.Commit();
+                            }
+
+                        }
                     }
-                if (pending.GameID.ToString() == GameID)              //the game status requested is for the pending game
-                {
-                    PendingGame pg = new PendingGame();
-                    pg.GameState = "pending";
-                    SetStatus(OK);
-                    jsonClient = JsonConvert.SerializeObject(pg);
-                    WebOperationContext.Current.OutgoingResponse.ContentType =
-                        "application/json; charset=utf-8";
-                    return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
                 }
-
-
-                if (games.ContainsKey(GameID))            //checks the time left, to see if game is completed;
-                    t = SetTime(games[GameID].TimeLimit, games[GameID].StartTime);
-
-                if (Brief == "yes")                            //either active or completed game, with brief as a parameter
+                using (SqlConnection conn = new SqlConnection(BoggleDB))
                 {
-                    ActiveGameBrief agb = new ActiveGameBrief();
-                    agb.GameState = games[GameID].GameState;
-                    if (t <= 0)
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
                     {
-                        agb.GameState = "completed";
+
+                        using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@UserID", player1);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                p1.Score = int.Parse(reader["Score"].ToString());
+                                reader.Close();
+                                trans.Commit();
+                            }
+
+                        }
                     }
-                    agb.TimeLeft = games[GameID].TimeLeft;
-                    Player p1 = new Player();
-                    Player p2 = new Player();
-                    p1.Score = games[GameID].Player1.Score;
-                    p2.Score = games[GameID].Player2.Score;
-                    agb.Player1 = p1;
-                    agb.Player2 = p2;
-                    SetStatus(OK);
-                    jsonClient = JsonConvert.SerializeObject(agb);
                 }
-                else if (t <= 0)
+                using (SqlConnection conn = new SqlConnection(BoggleDB))
                 {
-                    GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns the full game item
-                    gc.GameState = "completed";
-                    games[GameID].GameState = "completed";
-                    gc.Board = games[GameID].Board;
-                    gc.Player1 = games[GameID].Player1;
-                    gc.Player2 = games[GameID].Player2;
-                    gc.TimeLimit = games[GameID].TimeLimit;
-                    gc.TimeLeft = 0;                            //game is over
-                    SetStatus(OK);
-                    jsonClient = JsonConvert.SerializeObject(gc);
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
+                    {
+
+                        using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@UserID", player2);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                p2.Score = int.Parse(reader["Score"].ToString());
+                                reader.Close();
+                                trans.Commit();
+                            }
+
+                        }
+                    }
                 }
+                agb.Player1 = p1;
+                agb.Player2 = p2;
+                SetStatus(OK);
+                jsonClient = JsonConvert.SerializeObject(agb);
+            }
+
+            //         else if (t <= 0)
+            //         {
+            //             GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns the full game item
+            //             gc.GameState = "completed";
+            //             gc.TimeLeft = 0;
+            //         using (SqlConnection conn = new SqlConnection(BoggleDB))
+            //         {
+            //             conn.Open();
+            //             using (SqlTransaction trans = conn.BeginTransaction())
+            //             {
+
+            //                 using (SqlCommand command = new SqlCommand("select * from Games where GameID = @GameID", conn, trans))
+            //                 {
+            //                     command.Parameters.AddWithValue("@GameID", GameID);
+            //                     using (SqlDataReader reader = command.ExecuteReader())
+            //                     {
+            //                         gc.Board = reader["Board"].ToString();
+            //                         gc.TimeLimit= int.Parse(reader["TimeLimit"].ToString());
+
+            //                     }
+
+            //                 }
+            //             }
+            //         }
+            //             gc.Player1 = games[GameID].Player1;
+            //             gc.Player2 = games[GameID].Player2;
+            //             SetStatus(OK);
+            //             jsonClient = JsonConvert.SerializeObject(gc);
+            //         }
 
 
-                else if (games[GameID].GameState == "active")           //game state is active and not brief
+            else      //game state is active and not brief
+            {
+                ActiveGame ag = new ActiveGame();
+                //ag.TimeLeft = SetTime(GameID);
+                Player p1 = new Player();
+                Player p2 = new Player();
+                string player1;
+                string player2;
+                using (SqlConnection conn = new SqlConnection(BoggleDB))
                 {
-                    ActiveGame ag = new ActiveGame();
-                    ag.GameState = games[GameID].GameState;
-                    ag.Board = games[GameID].Board;
-                    ag.TimeLeft = SetTime(games[GameID].TimeLimit, games[GameID].StartTime);
-                    ag.TimeLimit = games[GameID].TimeLimit;
-                    Player p1 = new Player();
-                    Player p2 = new Player();
-                    p1.Nickname = games[GameID].Player1.Nickname;
-                    p2.Nickname = games[GameID].Player2.Nickname;
-                    p1.Score = games[GameID].Player1.Score;
-                    p2.Score = games[GameID].Player2.Score;
-                    ag.Player1 = p1;
-                    ag.Player2 = p2;
-                    SetStatus(OK);
-                    jsonClient = JsonConvert.SerializeObject(ag);
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
+                    {
+
+                        using (SqlCommand command = new SqlCommand("select * from Games where GameID = @GameID", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@GameID", GameID);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                ag.Board = reader["Board"].ToString();
+                                ag.TimeLimit = int.Parse(reader["TimeLimit"].ToString());
+                                player1 = reader["Player1"].ToString();
+                                player2 = reader["Player2"].ToString();
+                                reader.Close();
+                                trans.Commit();
+                            }
+
+                        }
+                    }
                 }
+                using (SqlConnection conn = new SqlConnection(BoggleDB))
+                {
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
+                    {
+
+                        using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@UserID", player1);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                p1.Score = int.Parse(reader["Score"].ToString());
+                                p1.Nickname = reader["Nickname"].ToString();
+                                reader.Close();
+                                trans.Commit();
+                            }
+
+                        }
+                    }
+                }
+                using (SqlConnection conn = new SqlConnection(BoggleDB))
+                {
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
+                    {
+
+                        using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
+                        {
+                            command.Parameters.AddWithValue("@UserID", player2);
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                p2.Score = int.Parse(reader["Score"].ToString());
+                                p2.Nickname = reader["Nickname"].ToString();
+                                reader.Close();
+                                trans.Commit();
+                            }
+
+                        }
+                    }
+                }
+                ag.Player1 = p1;
+                ag.Player2 = p2;
+                SetStatus(OK);
+                jsonClient = JsonConvert.SerializeObject(ag);
+            }
                 //serializes which ever game was pulled and returns a stream
                 WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
-        }
+        
 
         /// <summary>
         /// Calculate and set the time left.
@@ -338,15 +469,37 @@ namespace Boggle
         /// <param name="timeLimit"></param>
         /// <param name="startTime"></param>
         /// <returns></returns>
-        private int SetTime(int timeLimit, int startTime)
+        private int SetTime(string gameID)
         {
-            lock (sync)
+            int timeLimit;
+            int startTime;
+            using (SqlConnection conn = new SqlConnection(BoggleDB))
             {
-                if (timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime) > timeLimit)
+                conn.Open();
+                using (SqlTransaction trans = conn.BeginTransaction())
+                {
+
+                    using (SqlCommand command = new SqlCommand("select TimeLimit, StartTime from Games where GameID = @GameID", conn, trans))
+                    {
+                        command.Parameters.AddWithValue("@GameID", gameID);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            string t = reader["TimeLimit"].ToString();
+                            string s = reader["StartTime"].ToString();
+                            timeLimit = int.Parse(t);
+                            startTime = int.Parse(s);
+                            reader.Close();
+                            trans.Commit();
+                        }
+
+                    }
+                }
+            }
+            
+                    if (timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime) > timeLimit)
                     return 0;
                 else
                     return timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime);
-            }
         }
         /// <summary>
         /// Play a word in a game. 
