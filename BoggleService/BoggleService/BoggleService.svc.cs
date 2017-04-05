@@ -183,7 +183,7 @@ namespace Boggle
                     {
                         string board = new BoggleBoard().ToString();
                         using (SqlCommand command = new SqlCommand("update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime, Board=@Board where GameID=@GameID", conn, trans))
-                        { 
+                        {
                             int time = (pending.TimeLimit + obj.TimeLimit) / 2;
                             int startTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
                             command.Parameters.AddWithValue("@Player2", obj.UserToken);
