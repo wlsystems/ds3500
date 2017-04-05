@@ -76,38 +76,6 @@ namespace Boggle
             return p;
         }
 
-        public Boolean ContainsKey(string cmd, Dictionary<string, dynamic> coms)
-        {
-            using (SqlConnection conn = new SqlConnection(BoggleDB))
-            {
-                conn.Open();
-                using (SqlTransaction trans = conn.BeginTransaction())
-                {
-                    // Here, the SqlCommand is a select query.  We are interested in whether item.UserID exists in
-                    // the Users table.
-                    using (SqlCommand command = new SqlCommand(cmd, conn, trans))
-                    {
-                        foreach (KeyValuePair<string, dynamic> entry in coms)
-                            command.Parameters.AddWithValue(entry.Key, entry.Value);
-                        // This executes a query (i.e. a select statement).  The result is an
-                        // SqlDataReader that you can use to iterate through the rows in the response.
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            // Check to see user is in table, set forbidden if not
-                            if (!reader.HasRows)
-                            {
-                                reader.Close();
-                                trans.Commit();
-                                return false;
-                            }
-                            else
-                                return true;
-                        }
-                    }
-                }
-            }
-        }
-
         public dynamic Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
         {
             using (SqlConnection conn = new SqlConnection(BoggleDB))
@@ -121,7 +89,6 @@ namespace Boggle
                                         conn,
                                         trans))
                     {
-                        string gameID = "";
                         foreach (KeyValuePair<string, dynamic> entry in coms)
                             command.Parameters.AddWithValue(entry.Key, entry.Value);
                         if (type == 1)
@@ -129,6 +96,21 @@ namespace Boggle
                         if (type == 2)
                             return command.ExecuteScalar().ToString();
                         trans.Commit();
+                        if (type == 3)
+                        {
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                // Check to see user is in table, set forbidden if not
+                                if (!reader.HasRows)
+                                {
+                                    reader.Close();
+                                    trans.Commit();
+                                    return false;
+                                }
+                                else
+                                    return true;
+                            }
+                        }
                     }
                 }
                 return null;
@@ -174,7 +156,7 @@ namespace Boggle
             // the Users table.
             cmd = "select UserID from Users where UserID = @UserID";
             placeholders.Add("@UserID", obj.UserToken);
-            if (!ContainsKey(cmd, placeholders))
+            if (!Helper(cmd, placeholders,3))
             {
                 SetStatus(Forbidden);
                 return null;
@@ -225,32 +207,18 @@ namespace Boggle
         /// </summary>
         public void CancelJoin(Person cancelobj)
         {
-            lock (sync)
+            if ((cancelobj.UserToken == null) | (pending.UserToken != cancelobj.UserToken))
             {
-                if ((cancelobj.UserToken == null) | (pending.UserToken != cancelobj.UserToken))
-                {
-                    SetStatus(Forbidden);      //the userToken was null, the user is not registered or they are not in the pending game
-                    return;
-                }
-
-                using (SqlConnection conn = new SqlConnection(BoggleDB))
-                {
-                    conn.Open();
-                    using (SqlTransaction trans = conn.BeginTransaction())
-                    {
-                        // Here we're doing a delete command.
-                        using (SqlCommand command = new SqlCommand("delete from Games where GameID = @GameID", conn, trans))
-                        {
-                            command.Parameters.AddWithValue("@GameID", pending.GameID);
-                            command.ExecuteNonQuery();
-                            pending.UserToken = "";
-                            pending.TimeLimit = 0;
-                            SetStatus(OK);
-                            trans.Commit();
-                        }
-                    }
-                }
+                SetStatus(Forbidden);      //the userToken was null, the user is not registered or they are not in the pending game
+                return;
             }
+            string sql = "delete from Games where GameID = @GameID";
+            Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
+            placeholders.Add("@GameID", pending.GameID);
+            Helper(sql, placeholders, 1);
+            pending.UserToken = "";
+            pending.TimeLimit = 0;
+            SetStatus(OK);
         }
 
 
