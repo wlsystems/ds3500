@@ -403,6 +403,10 @@ namespace Boggle
                 else
                 {
                     timeLeft = SetTime(Int32.Parse(obj2[4]), Int32.Parse(obj2[5]));
+                    if (timeLeft >= 0)
+                    {
+                        
+                    }
                 }
                     
                         
