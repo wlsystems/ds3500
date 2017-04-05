@@ -57,42 +57,63 @@ namespace Boggle
         /// </summary>
         /// <param name="newUser"></param>
         /// <returns></returns>
-        public Person  Register(NewPlayer user)
+        public Person Register(NewPlayer user)
         {
+            Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
             if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
             {
                 SetStatus(Forbidden);
                 return null;
             }
+            dynamic userID = Guid.NewGuid().ToString();
+            placeholders.Add("@UserID", userID);
+            placeholders.Add("@Nickname", user.Nickname);
+            string sql = "insert into Users (UserID, Nickname) values(@UserID, @Nickname)";
+            Person p = new Person();
+            p.UserToken = userID;
+            SetStatus(Created);
+            Helper(sql, placeholders, 1);
+            return p;
+        }
 
+        public dynamic Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
+        {
             using (SqlConnection conn = new SqlConnection(BoggleDB))
             {
                 //open connection
                 conn.Open();
-
                 using (SqlTransaction trans = conn.BeginTransaction())
                 {
                     using (SqlCommand command =
-                        new SqlCommand("insert into Users (UserID, Nickname) values(@UserID, @Nickname)",
+                        new SqlCommand(strCommand,
                                         conn,
                                         trans))
                     {
-                        // We generate the userID to use.
-                        string userID = Guid.NewGuid().ToString();
-
-                        // This is where the placeholders are replaced.
-                        command.Parameters.AddWithValue("@UserID", userID);
-                        command.Parameters.AddWithValue("@Nickname", user.Nickname.Trim());
-
-                        command.ExecuteNonQuery();
-                        SetStatus(Created);
-
+                        foreach (KeyValuePair<string, dynamic> entry in coms)
+                            command.Parameters.AddWithValue(entry.Key, entry.Value);
+                        if (type == 1)
+                            command.ExecuteNonQuery();
+                        if (type == 2)
+                            return command.ExecuteScalar().ToString();
                         trans.Commit();
-                        Person p = new Person();
-                        p.UserToken = userID;
-                        return p;
+                        if (type == 3)
+                        {
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                // Check to see user is in table, set forbidden if not
+                                if (!reader.HasRows)
+                                {
+                                    reader.Close();
+                                    trans.Commit();
+                                    return false;
+                                }
+                                else
+                                    return true;
+                            }
+                        }
                     }
                 }
+                return null;
             }
         }
 
@@ -118,6 +139,8 @@ namespace Boggle
         /// <returns></returns>
         public NewGame JoinGame(NewGameRequest obj)
         {
+            string cmd = "";
+            Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
             NewGame ng = new NewGame();
             if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)   //token is null or time is invalid
             {
@@ -129,77 +152,52 @@ namespace Boggle
                 SetStatus(Conflict);
                 return null;
             }
-            using (SqlConnection conn = new SqlConnection(BoggleDB))
+            // Here, the SqlCommand is a select query.  We are interested in whether item.UserID exists in
+            // the Users table.
+            cmd = "select UserID from Users where UserID = @UserID";
+            placeholders.Add("@UserID", obj.UserToken);
+            if (!Helper(cmd, placeholders,3))
             {
-                conn.Open();
-                using (SqlTransaction trans = conn.BeginTransaction())
-                {
-
-                    // Here, the SqlCommand is a select query.  We are interested in whether item.UserID exists in
-                    // the Users table.
-                    using (SqlCommand command = new SqlCommand("select UserID from Users where UserID = @UserID", conn, trans))
-                    {
-                        command.Parameters.AddWithValue("@UserID", obj.UserToken);
-
-                        // This executes a query (i.e. a select statement).  The result is an
-                        // SqlDataReader that you can use to iterate through the rows in the response.
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            // Check to see user is in table, set forbidden if not
-                            if (!reader.HasRows)
-                            {
-                                SetStatus(Forbidden);
-                                reader.Close();
-                                trans.Commit();
-                                return null;
-                            }
-                        }
-
-                    }
-                    if (pending.UserToken == null)  //very first request, initializes pending
-                    {
-                        pending.UserToken = "";
-                    }
-                    if (pending.UserToken == "")
-                    {
-                        // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
-                        // We are asking the DB to send back the auto-generated GameID.
-                        using (SqlCommand command = new SqlCommand("insert into Games (Player1) output inserted.GameID values(@Player1)", conn, trans))
-                        {
-                            command.Parameters.AddWithValue("@Player1", obj.UserToken);
-
-                            // We execute the command with the ExecuteScalar method, which will return to
-                            // us the requested auto-generated ItemID.
-                            string gameID = command.ExecuteScalar().ToString();
-                            pending.TimeLimit = obj.TimeLimit;
-                            SetStatus(Accepted);
-                            ng.GameID = gameID.ToString();
-                            pending.GameID = int.Parse(gameID);
-                            pending.UserToken = obj.UserToken;
-                            trans.Commit();
-                        }
-                    }
-                    else
-                    {
-                        string board = new BoggleBoard().ToString();
-                        using (SqlCommand command = new SqlCommand("update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime, Board=@Board where GameID=@GameID", conn, trans))
-                        { 
-                            int time = (pending.TimeLimit + obj.TimeLimit) / 2;
-                            int startTime = (int) DateTime.Now.TimeOfDay.TotalSeconds;
-                            command.Parameters.AddWithValue("@Player2", obj.UserToken);
-                            command.Parameters.AddWithValue("@GameID", pending.GameID);
-                            command.Parameters.AddWithValue("@TimeLimit", time);
-                            command.Parameters.AddWithValue("@StartTime", startTime);
-                            command.Parameters.AddWithValue("@Board", board);
-                            command.ExecuteNonQuery();
-                            SetStatus(Created);
-                            ng.GameID = pending.GameID.ToString();
-                            pending.UserToken = "";
-                            pending.GameID = 0;
-                            trans.Commit();
-                        }
-                    }
-                }
+                SetStatus(Forbidden);
+                return null;
+            }
+            if (pending.UserToken == null)  //very first request, initializes pending
+            {
+                pending.UserToken = "";
+            }
+            if (pending.UserToken == "")
+            {
+                // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
+                // We are asking the DB to send back the auto-generated GameID.
+                cmd = "insert into Games (Player1) output inserted.GameID values(@Player1)";
+                placeholders.Clear();
+                placeholders.Add("@Player1", obj.UserToken);
+                // We execute the command with the ExecuteScalar method, which will return to
+                // us the requested auto-generated ItemID.
+                string gameID = Helper(cmd, placeholders, 2);
+                pending.TimeLimit = obj.TimeLimit;
+                SetStatus(Accepted);
+                ng.GameID = gameID.ToString();
+                pending.GameID = int.Parse(gameID);
+                pending.UserToken = obj.UserToken;
+            }
+            else
+            {
+                string board = new BoggleBoard().ToString();
+                cmd = "update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime, Board=@Board where GameID=@GameID";
+                placeholders.Clear();
+                int time = (pending.TimeLimit + obj.TimeLimit) / 2;
+                int startTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
+                placeholders.Add("@Player2", obj.UserToken);
+                placeholders.Add("@GameID", pending.GameID);
+                placeholders.Add("@TimeLimit", time);
+                placeholders.Add("@StartTime", startTime);
+                placeholders.Add("@Board", board);
+                Helper(cmd, placeholders, 1);
+                SetStatus(Created);
+                ng.GameID = pending.GameID.ToString();
+                pending.UserToken = "";
+                pending.GameID = 0;
             }
             return ng;
         }
@@ -209,32 +207,18 @@ namespace Boggle
         /// </summary>
         public void CancelJoin(Person cancelobj)
         {
-            lock (sync)
+            if ((cancelobj.UserToken == null) | (pending.UserToken != cancelobj.UserToken))
             {
-                if ((cancelobj.UserToken == null) | (pending.UserToken != cancelobj.UserToken))
-                {
-                    SetStatus(Forbidden);      //the userToken was null, the user is not registered or they are not in the pending game
-                    return;
-                }
-
-                using (SqlConnection conn = new SqlConnection(BoggleDB))
-                {
-                    conn.Open();
-                    using (SqlTransaction trans = conn.BeginTransaction())
-                    {
-                        // Here we're doing a delete command.
-                        using (SqlCommand command = new SqlCommand("delete from Games where GameID = @GameID", conn, trans))
-                        {
-                            command.Parameters.AddWithValue("@GameID", pending.GameID);
-                            command.ExecuteNonQuery();
-                            pending.UserToken = "";
-                            pending.TimeLimit = 0;
-                            SetStatus(OK);
-                            trans.Commit();
-                        }
-                    }
-                }
+                SetStatus(Forbidden);      //the userToken was null, the user is not registered or they are not in the pending game
+                return;
             }
+            string sql = "delete from Games where GameID = @GameID";
+            Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
+            placeholders.Add("@GameID", pending.GameID);
+            Helper(sql, placeholders, 1);
+            pending.UserToken = "";
+            pending.TimeLimit = 0;
+            SetStatus(OK);
         }
 
 
@@ -254,7 +238,7 @@ namespace Boggle
                 return null;
             }
             ///TODO CALL HELPER TO CHECK IF GAMEID IS BOGUS
-            int t = 0; 
+            int t = 0;
             string jsonClient = null;
 
             if (pending.GameID.ToString() == GameID)              //the game status requested is for the pending game
@@ -457,11 +441,11 @@ namespace Boggle
                 SetStatus(OK);
                 jsonClient = JsonConvert.SerializeObject(ag);
             }
-                //serializes which ever game was pulled and returns a stream
-                WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
-                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
-            }
-        
+            //serializes which ever game was pulled and returns a stream
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
+            return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+        }
+
 
         /// <summary>
         /// Calculate and set the time left.
@@ -495,11 +479,11 @@ namespace Boggle
                     }
                 }
             }
-            
-                    if (timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime) > timeLimit)
-                    return 0;
-                else
-                    return timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime);
+
+            if (timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime) > timeLimit)
+                return 0;
+            else
+                return timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime);
         }
         /// <summary>
         /// Play a word in a game. 
@@ -544,7 +528,7 @@ namespace Boggle
                     if (pending.GameID.ToString() == gid)
                     {
                         SetStatus(Conflict);
-                            return null;
+                        return null;
                     }
                     SetStatus(Forbidden);
                     return null;
@@ -613,7 +597,7 @@ namespace Boggle
                     if (iwp.Current.Word.Equals(word))
                         return 0;
                 }
-                    return -100;
+                return -100;
             }
         }
         /// <summary>
