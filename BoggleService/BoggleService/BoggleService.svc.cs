@@ -343,8 +343,6 @@ namespace Boggle
                 //ag.TimeLeft = SetTime(GameID);
                 Player p1 = new Player();
                 Player p2 = new Player();
-                string player1;
-                string player2;
 
                 sql = "select * from Games where CAST (GameID as nvarchar(50)) = @GameID";
                 d = new Dictionary<string, dynamic>();
