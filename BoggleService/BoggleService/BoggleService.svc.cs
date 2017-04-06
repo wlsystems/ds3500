@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 using System.Dynamic;
 using System.IO;
 using System.Net;
-using System.Resources;
+using System.Resources; 
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading;
@@ -326,7 +326,21 @@ namespace Boggle
                 Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
                 obj4 = Helper(sql, d, 3);
                 p2.Nickname = obj4[0]["Nickname"];
-                gc.Player1 = p1;
+                ///looking up player words
+                sql = "select * from Word where CAST (UserID as nvarchar(50)) = @UserId";
+                d.Clear();
+                d.Add("@UserID", user1);
+                Dictionary<string, dynamic>[] obj5 = new Dictionary<string, dynamic>[100];
+                obj5 = Helper(sql, d, 3);
+                d.Clear();
+                d.Add("@UserID", user2);
+                Dictionary<string, dynamic>[] obj6 = new Dictionary<string, dynamic>[100];
+                obj6 = Helper(sql, d, 3);
+                foreach (var row in obj5) 
+                { 
+                    
+                }
+                gc.Player1 = p1;  
                 gc.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(gc);
             }
