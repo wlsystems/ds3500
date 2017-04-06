@@ -275,12 +275,25 @@ namespace Boggle
             d.Add("@GameID", GameID);
             Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
             obj2 = Helper(sql, d, 3);
+
             int timeLeft = 0;
             if (obj2 == null)    //the obj is empty so GameID is not in the the table
             {
                 SetStatus(Forbidden);
                 return null;
             }
+
+            Dictionary<string, dynamic>[] nickname1 = new Dictionary<string, dynamic>[100];
+            Dictionary<string, dynamic>[] nickname2 = new Dictionary<string, dynamic>[100];
+            sql = "select * from Users where UserID = @UserId";
+            d.Clear();
+            string UserID = obj2[0]["Player1"];
+            d.Add("@UserID", UserID);
+            nickname1 = Helper(sql, d, 3);
+            d.Clear();
+            UserID = obj2[0]["Player2"];
+            d.Add("@UserID", UserID);
+            nickname2 = Helper(sql, d, 3);
 
             timeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), Int32.Parse(obj2[0]["StartTime"]));
 
@@ -313,21 +326,12 @@ namespace Boggle
                 PlayerCompleted p2 = new PlayerCompleted();
                 p1.Score = int.Parse(obj2[0]["Player1Score"]);
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
-                string UserID = obj2[0]["Player1"];
-                sql = "select * from Users where UserID = @UserId";
-                d.Clear();
-                d.Add("@UserID", UserID);
-                obj2 = Helper(sql, d, 3);
-                p1.Nickname = obj2[0]["Nickname"];
-                d.Clear();
-                UserID = obj2[0]["Player2"];
-                d.Add("@UserID", UserID);
-                obj2 = Helper(sql, d, 3);
-                p2.Nickname = obj2[0]["Nickname"];
+                p1.Nickname = nickname1[0]["Nickname"];
+                p2.Nickname = nickname2[0]["Nickname"];
                 ///looking up player words
-                sql = "select * from Word where UserID = @UserId";
+                sql = "select Word, Score from Words where UserID = @UserId";
                 d.Clear();
-                d.Add("@GameID", GameID);
+                d.Add("@GameID", GameID); //first lookup player 2 using previously stored GameID
                 d.Add("@Player", UserID);
                 obj2 = Helper(sql, d, 3);
                 p2.WordsPlayed = new List<WordsPlayed>();
@@ -351,21 +355,10 @@ namespace Boggle
                 ag.Board = obj2[0]["Board"];
                 Player p1 = new Player();
                 Player p2 = new Player();
+                p1.Nickname = nickname1[0]["Nickname"];
+                p2.Nickname = nickname2[0]["Nickname"];
                 p1.Score =  int.Parse(obj2[0]["Player1Score"]);
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
-                string user1 = obj2[0]["Player1"];
-                string user2 = obj2[0]["Player2"];
-                sql = "select * from Users where UserID = @UserId";
-                d.Clear();
-                d.Add("@UserID", user1);
-                Dictionary<string, dynamic>[] obj3 = new Dictionary<string, dynamic>[100];
-                obj3 = Helper(sql, d, 3);
-                p1.Nickname = obj3[0]["Nickname"];
-                d.Clear();
-                d.Add("@UserID", user2);
-                Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
-                obj4 = Helper(sql, d, 3);
-                p2.Nickname = obj4[0]["Nickname"];
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(ag);
