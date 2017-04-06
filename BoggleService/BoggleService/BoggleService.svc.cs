@@ -333,12 +333,12 @@ namespace Boggle
                 string user2 = obj2[0]["Player1"];
                 sql = "select * from Games where CAST (UserID as nvarchar(50)) = @UserId)";
                 d.Clear();
-                d.Add("@User1", user1);
+                d.Add("@UserID", user1);
                 Dictionary<string, dynamic>[] obj3 = new Dictionary<string, dynamic>[100];
                 obj3 = Helper(sql, d, 3);
                 p1.Nickname = obj3[0]["Nickname"];
                 d.Clear();
-                d.Add("@USer2", user2);
+                d.Add("@UserID", user2);
                 Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
                 obj4 = Helper(sql, d, 3);
                 p2.Nickname = obj4[0]["Nickname"];
