@@ -340,7 +340,7 @@ namespace Boggle
                 d.Clear();
                 d.Add("@USer2", user2);
                 Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
-                obj3 = Helper(sql, d, 3);
+                obj4 = Helper(sql, d, 3);
                 p2.Nickname = obj4[0]["Nickname"];
                 ag.Player1 = p1;
                 ag.Player2 = p2;
