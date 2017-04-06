@@ -201,15 +201,19 @@ namespace Boggle
             else
             {
                 string board = new BoggleBoard().ToString();
-                cmd = "update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@startTime, Board=@Board where GameID=@GameID";
+                cmd = "update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@startTime, Board=@Board, Player1Score=@Player1Score, Player2Score=@Player2Score where GameID=@GameID";
                 placeholders.Clear();
                 int time = (pending.TimeLimit + obj.TimeLimit) / 2;
                 int startTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
+                int score = 0;
                 placeholders.Add("@Player2", obj.UserToken);
                 placeholders.Add("@GameID", pending.GameID);
                 placeholders.Add("@TimeLimit", time);
                 placeholders.Add("@StartTime", startTime);
                 placeholders.Add("@Board", board);
+                placeholders.Add("@Board", board);
+                placeholders.Add("@Player1Score", score);
+                placeholders.Add("@Player2Score", score);
                 Helper(cmd, placeholders, 1);
                 SetStatus(Created);
                 ng.GameID = pending.GameID.ToString();
