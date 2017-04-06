@@ -330,8 +330,8 @@ namespace Boggle
                 p1.Score =  int.Parse(obj2[0]["Player1Score"]);
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
                 string user1 = obj2[0]["Player1"];
-                string user2 = obj2[0]["Player1"];
-                sql = "select * from Games where CAST (UserID as nvarchar(50)) = @UserId)";
+                string user2 = obj2[0]["Player2"];
+                sql = "select * from Users where CAST (UserID as nvarchar(50)) = @UserId";
                 d.Clear();
                 d.Add("@UserID", user1);
                 Dictionary<string, dynamic>[] obj3 = new Dictionary<string, dynamic>[100];
