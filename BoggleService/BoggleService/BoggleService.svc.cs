@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.IO;
@@ -76,8 +77,9 @@ namespace Boggle
             return p;
         }
 
-        public dynamic Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
+        public String[] Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
         {
+            String[] obj = new String[6];
             using (SqlConnection conn = new SqlConnection(BoggleDB))
             {
                 //open connection
@@ -91,11 +93,14 @@ namespace Boggle
                     {
                         foreach (KeyValuePair<string, dynamic> entry in coms)
                             command.Parameters.AddWithValue(entry.Key, entry.Value);
+                        trans.Commit();
                         if (type == 1)
                             command.ExecuteNonQuery();
                         if (type == 2)
-                            return command.ExecuteScalar().ToString();
-                        trans.Commit();
+                        {
+                            obj[0] = command.ExecuteScalar().ToString();
+                            return obj;
+                        }
                         if (type == 3)
                         {
                             using (SqlDataReader reader = command.ExecuteReader())
@@ -104,11 +109,18 @@ namespace Boggle
                                 if (!reader.HasRows)
                                 {
                                     reader.Close();
-                                    trans.Commit();
-                                    return false;
+                                    return null;
                                 }
                                 else
-                                    return true;
+                                {
+                                    while (reader.Read())
+                                    {
+                                        for (int i = 0; i < reader.FieldCount; i++)
+                                            if (reader.GetValue(i) != null)
+                                                obj[i] = reader.GetValue(i).ToString();
+                                        return obj;
+                                    }
+                                }
                             }
                         }
                     }
@@ -156,7 +168,7 @@ namespace Boggle
             // the Users table.
             cmd = "select UserID from Users where UserID = @UserID";
             placeholders.Add("@UserID", obj.UserToken);
-            if (!Helper(cmd, placeholders,3))
+            if (Helper(cmd, placeholders,3) == null)
             {
                 SetStatus(Forbidden);
                 return null;
@@ -170,21 +182,23 @@ namespace Boggle
                 // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
                 // We are asking the DB to send back the auto-generated GameID.
                 cmd = "insert into Games (Player1) output inserted.GameID values(@Player1)";
+                String[] obj2 = new String[6];
+                obj2[0] = "";
                 placeholders.Clear();
                 placeholders.Add("@Player1", obj.UserToken);
                 // We execute the command with the ExecuteScalar method, which will return to
                 // us the requested auto-generated ItemID.
-                string gameID = Helper(cmd, placeholders, 2);
+                obj2 = Helper(cmd, placeholders, 2);
                 pending.TimeLimit = obj.TimeLimit;
                 SetStatus(Accepted);
-                ng.GameID = gameID.ToString();
-                pending.GameID = int.Parse(gameID);
+                ng.GameID = obj2[0];
+                pending.GameID = Int32.Parse(obj2[0]);
                 pending.UserToken = obj.UserToken;
             }
             else
             {
                 string board = new BoggleBoard().ToString();
-                cmd = "update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime, Board=@Board where GameID=@GameID";
+                cmd = "update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@startTime, Board=@Board where GameID=@GameID";
                 placeholders.Clear();
                 int time = (pending.TimeLimit + obj.TimeLimit) / 2;
                 int startTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
@@ -377,28 +391,30 @@ namespace Boggle
                 Player p2 = new Player();
                 string player1;
                 string player2;
-                using (SqlConnection conn = new SqlConnection(BoggleDB))
+
+                string sql = "select * from Games where CAST (GameID as nvarchar(50)) = @GameID";
+                Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
+                d.Add("@GameID", GameID);
+                String[] obj2 = new String[5];
+                obj2 = Helper(sql, d, 3);
+                int timeLeft = 0;
+                if (obj2 == null)
                 {
-                    conn.Open();
-                    using (SqlTransaction trans = conn.BeginTransaction())
+                    SetStatus(Forbidden);
+                    return null;
+                }
+                else
+                {
+                    timeLeft = SetTime(Int32.Parse(obj2[4]), Int32.Parse(obj2[5]));
+                    if (timeLeft >= 0)
                     {
-
-                        using (SqlCommand command = new SqlCommand("select * from Games where GameID = @GameID", conn, trans))
-                        {
-                            command.Parameters.AddWithValue("@GameID", GameID);
-                            using (SqlDataReader reader = command.ExecuteReader())
-                            {
-                                ag.Board = reader["Board"].ToString();
-                                ag.TimeLimit = int.Parse(reader["TimeLimit"].ToString());
-                                player1 = reader["Player1"].ToString();
-                                player2 = reader["Player2"].ToString();
-                                reader.Close();
-                                trans.Commit();
-                            }
-
-                        }
+                        
                     }
                 }
+                    
+                        
+
+
                 using (SqlConnection conn = new SqlConnection(BoggleDB))
                 {
                     conn.Open();
@@ -407,7 +423,7 @@ namespace Boggle
 
                         using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
                         {
-                            command.Parameters.AddWithValue("@UserID", player1);
+                            //command.Parameters.AddWithValue("@UserID", player1);
                             using (SqlDataReader reader = command.ExecuteReader())
                             {
                                 p1.Score = int.Parse(reader["Score"].ToString());
@@ -427,7 +443,7 @@ namespace Boggle
 
                         using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
                         {
-                            command.Parameters.AddWithValue("@UserID", player2);
+                           // command.Parameters.AddWithValue("@UserID", player2);
                             using (SqlDataReader reader = command.ExecuteReader())
                             {
                                 p2.Score = int.Parse(reader["Score"].ToString());
@@ -456,33 +472,8 @@ namespace Boggle
         /// <param name="timeLimit"></param>
         /// <param name="startTime"></param>
         /// <returns></returns>
-        private int SetTime(string gameID)
+        private int SetTime(int timeLimit, int startTime)
         {
-            int timeLimit;
-            int startTime;
-            using (SqlConnection conn = new SqlConnection(BoggleDB))
-            {
-                conn.Open();
-                using (SqlTransaction trans = conn.BeginTransaction())
-                {
-
-                    using (SqlCommand command = new SqlCommand("select TimeLimit, StartTime from Games where GameID = @GameID", conn, trans))
-                    {
-                        command.Parameters.AddWithValue("@GameID", gameID);
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            string t = reader["TimeLimit"].ToString();
-                            string s = reader["StartTime"].ToString();
-                            timeLimit = int.Parse(t);
-                            startTime = int.Parse(s);
-                            reader.Close();
-                            trans.Commit();
-                        }
-
-                    }
-                }
-            }
-
             if (timeLimit - ((int)DateTime.Now.TimeOfDay.TotalSeconds - startTime) > timeLimit)
                 return 0;
             else
