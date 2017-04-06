@@ -306,6 +306,8 @@ namespace Boggle
             {
                 GameCompleted gc = new GameCompleted();     //game state is completed and not brief, returns the full game item
                 gc.GameState = "completed";
+                gc.TimeLimit = obj2[0]["TimeLimit"];
+                gc.Board = obj2[0]["Board"];
                 gc.TimeLeft = 0;
                 jsonClient = JsonConvert.SerializeObject(gc);
             }
@@ -314,10 +316,12 @@ namespace Boggle
             {
                 ActiveGame ag = new ActiveGame();
                 ag.TimeLeft = timeLeft;
+                ag.TimeLimit = obj2[0]["TimeLimit"];
                 ag.GameState = "active";
                 ag.Board = obj2[0]["Board"];
                 Player p1 = new Player();
                 Player p2 = new Player();
+                p1.Score =  obj2[0]["Player1Score"];
                 p2.Score = obj2[0]["Player2Score"];
                 ag.Player1 = p1;
                 ag.Player2 = p2;
