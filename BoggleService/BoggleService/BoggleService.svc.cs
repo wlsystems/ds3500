@@ -291,18 +291,15 @@ namespace Boggle
                     using (SqlTransaction trans = conn.BeginTransaction())
                     {
 
-                        using (SqlCommand command = new SqlCommand("select Games where GameID = @GameID", conn, trans))
+                        using (SqlCommand command = new SqlCommand("select * from Games where GameID = @GameID", conn, trans))
                         {
                             command.Parameters.AddWithValue("@GameID", GameID);
                             using (SqlDataReader reader = command.ExecuteReader())
                             {
-                                while (reader.Read())
-                                {
-                                    player1 = reader["Player1"].ToString();
-                                    player2 = reader["Player2"].ToString();
-                                    reader.Close();
-                                    trans.Commit();
-                                }
+                                player1 = reader["Player1"].ToString();
+                                player2 = reader["Player2"].ToString();
+                                reader.Close();
+                                trans.Commit();
                             }
 
                         }
@@ -314,7 +311,7 @@ namespace Boggle
                     using (SqlTransaction trans = conn.BeginTransaction())
                     {
 
-                        using (SqlCommand command = new SqlCommand("select Users where UserID = @UserID", conn, trans))
+                        using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
                         {
                             command.Parameters.AddWithValue("@UserID", player1);
                             using (SqlDataReader reader = command.ExecuteReader())
@@ -408,11 +405,11 @@ namespace Boggle
                     timeLeft = SetTime(Int32.Parse(obj2[4]), Int32.Parse(obj2[5]));
                     if (timeLeft >= 0)
                     {
-                        
+
                     }
                 }
-                    
-                        
+
+
 
 
                 using (SqlConnection conn = new SqlConnection(BoggleDB))
@@ -443,7 +440,7 @@ namespace Boggle
 
                         using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
                         {
-                           // command.Parameters.AddWithValue("@UserID", player2);
+                            // command.Parameters.AddWithValue("@UserID", player2);
                             using (SqlDataReader reader = command.ExecuteReader())
                             {
                                 p2.Score = int.Parse(reader["Score"].ToString());
