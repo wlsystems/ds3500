@@ -270,7 +270,7 @@ namespace Boggle
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
 
-            string sql = "select * from Games where CAST (GameID as nvarchar(50)) = @GameID";
+            string sql = "select * from Games where GameID = @GameID";
             Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
             d.Add("@GameID", GameID);
             Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
@@ -313,6 +313,19 @@ namespace Boggle
                 PlayerCompleted p2 = new PlayerCompleted();
                 p1.Score = int.Parse(obj2[0]["Player1Score"]);
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
+                string user1 = obj2[0]["Player1"];
+                string user2 = obj2[0]["Player2"];
+                sql = "select * from Users where UserID = @UserId";
+                d.Clear();
+                d.Add("@UserID", user1);
+                Dictionary<string, dynamic>[] obj3 = new Dictionary<string, dynamic>[100];
+                obj3 = Helper(sql, d, 3);
+                p1.Nickname = obj3[0]["Nickname"];
+                d.Clear();
+                d.Add("@UserID", user2);
+                Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
+                obj4 = Helper(sql, d, 3);
+                p2.Nickname = obj4[0]["Nickname"];
                 gc.Player1 = p1;
                 gc.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(gc);
@@ -331,7 +344,7 @@ namespace Boggle
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
                 string user1 = obj2[0]["Player1"];
                 string user2 = obj2[0]["Player2"];
-                sql = "select * from Users where CAST (UserID as nvarchar(50)) = @UserId";
+                sql = "select * from Users where UserID = @UserId";
                 d.Clear();
                 d.Add("@UserID", user1);
                 Dictionary<string, dynamic>[] obj3 = new Dictionary<string, dynamic>[100];
