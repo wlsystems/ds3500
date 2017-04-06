@@ -257,7 +257,6 @@ namespace Boggle
                 SetStatus(Forbidden);
                 return null;
             }
-            ///TODO CALL HELPER TO CHECK IF GAMEID IS BOGUS
             int t = 0;
             string jsonClient = null;
 
@@ -401,7 +400,7 @@ namespace Boggle
                 Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
                 obj2 = Helper(sql, d, 3);
                 int timeLeft = 0;
-                if (obj2 == null)
+                if (obj2 == null)    //the obj is empty so GameID is not in the the table
                 {
                     SetStatus(Forbidden);
                     return null;
@@ -462,12 +461,12 @@ namespace Boggle
                         }
                     }
                 }
-                ag.Player1 = p1;
-                ag.Player2 = p2;
-                SetStatus(OK);
+                //ag.Player1 = p1;
+                //ag.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(ag);
             }
             //serializes which ever game was pulled and returns a stream
+            SetStatus(OK);
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
         }
