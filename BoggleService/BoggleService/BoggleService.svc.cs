@@ -77,10 +77,9 @@ namespace Boggle
             return p;
         }
 
-        public Dictionary<string, dynamic>[] Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
+        public List<Dictionary<string, dynamic>> Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
         {
-            Dictionary<string, dynamic>[] obj = new Dictionary<string, dynamic>[100];
-            obj[0] = new Dictionary<string, dynamic>(); //sets it up to work with type == 2.
+            List<Dictionary<string, dynamic>> obj = new List<Dictionary<string, dynamic>>();
             using (SqlConnection conn = new SqlConnection(BoggleDB))
             {
                 //open connection
@@ -99,7 +98,9 @@ namespace Boggle
                             command.ExecuteNonQuery();
                         if (type == 2)
                         {
-                            obj[0].Add("GameID", command.ExecuteScalar().ToString());
+                            Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
+                            d.Add("GameID", command.ExecuteScalar().ToString());
+                            obj.Add(d);
                             return obj;
                         }
                         if (type == 3)
@@ -115,12 +116,15 @@ namespace Boggle
                                 else
                                 {
                                     int j = 0;
-                                    obj[j] = new Dictionary<string, dynamic>();
                                     while (reader.Read())
                                     {
+                                        Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
                                         for (int i = 0; i < reader.FieldCount; i++)
                                             if (reader.GetValue(i) != null)
-                                                obj[j].Add(reader.GetName(i), reader.GetValue(i).ToString());
+                                            {
+                                                d.Add(reader.GetName(i), reader.GetValue(i).ToString());
+                                                obj.Add(d);
+                                            }   
                                         j = j + 1;
                                     }
                                     return obj;
@@ -186,8 +190,8 @@ namespace Boggle
                 // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
                 // We are asking the DB to send back the auto-generated GameID.
                 cmd = "insert into Games (Player1) output inserted.GameID values(@Player1)";
-                Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[1];
-                placeholders.Clear();
+                List<Dictionary<string, dynamic>> obj2 = new List<Dictionary<string, dynamic>>();
+                placeholders.Clear(); 
                 placeholders.Add("@Player1", obj.UserToken);
                 // We execute the command with the ExecuteScalar method, which will return to
                 // us the requested auto-generated ItemID.
@@ -273,7 +277,7 @@ namespace Boggle
             string sql = "select * from Games where GameID = @GameID";
             Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
             d.Add("@GameID", GameID);
-            Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
+            List<Dictionary<string, dynamic>> obj2 = new List<Dictionary<string, dynamic>>();
             obj2 = Helper(sql, d, 3);
 
             int timeLeft = 0;
@@ -283,8 +287,8 @@ namespace Boggle
                 return null;
             }
 
-            Dictionary<string, dynamic>[] nickname1 = new Dictionary<string, dynamic>[100];
-            Dictionary<string, dynamic>[] nickname2 = new Dictionary<string, dynamic>[100];
+            List<Dictionary<string, dynamic>> nickname1 = new List<Dictionary<string, dynamic>>();
+            List<Dictionary<string, dynamic>> nickname2 = new List<Dictionary<string, dynamic>>();
             sql = "select * from Users where UserID = @UserId";
             d.Clear();
             string UserID = obj2[0]["Player1"];
@@ -368,7 +372,7 @@ namespace Boggle
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
         }
-        public WordsPlayed GetWordList(Dictionary<string, dynamic>[] obj)
+        public WordsPlayed GetWordList(List<Dictionary<string, dynamic>> obj)
         {
             WordsPlayed wp = new WordsPlayed();
             foreach (var row in obj)
@@ -417,6 +421,7 @@ namespace Boggle
                 String word = w.Word.Trim(' ').ToUpper();
                 wpObj.Word = word;
                 int player = 3;
+                List<Dictionary<string, dynamic>> obj = new List<Dictionary<string, dynamic>>();
                 if (games.ContainsKey(gid))
                 {
                     if (!users.ContainsKey(w.UserToken))
