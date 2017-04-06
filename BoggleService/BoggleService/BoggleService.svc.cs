@@ -211,7 +211,6 @@ namespace Boggle
                 placeholders.Add("@TimeLimit", time);
                 placeholders.Add("@StartTime", startTime);
                 placeholders.Add("@Board", board);
-                placeholders.Add("@Board", board);
                 placeholders.Add("@Player1Score", score);
                 placeholders.Add("@Player2Score", score);
                 Helper(cmd, placeholders, 1);
