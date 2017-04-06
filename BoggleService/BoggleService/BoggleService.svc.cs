@@ -383,7 +383,7 @@ namespace Boggle
             //         }
 
 
-            else      //game state is active and not brief
+            else if     //game state is active and not brief
             {
                 ActiveGame ag = new ActiveGame();
                 //ag.TimeLeft = SetTime(GameID);
