@@ -172,7 +172,7 @@ namespace Boggle
             // the Users table.
             cmd = "select UserID from Users where UserID = @UserID";
             placeholders.Add("@UserID", obj.UserToken);
-            if (Helper(cmd, placeholders, 3) == null)
+            if (Helper(cmd, placeholders,3) == null)
             {
                 SetStatus(Forbidden);
                 return null;
@@ -289,7 +289,7 @@ namespace Boggle
                 ActiveGameBrief agb = new ActiveGameBrief();
                 Player p1 = new Player();
                 Player p2 = new Player();
-                agb.TimeLeft = timeLeft;
+                agb.TimeLeft = timeLeft;                    
                 if (timeLeft > 0)                       //checks time to decide if game is active or completed
                 {
                     agb.GameState = "active";
@@ -321,18 +321,27 @@ namespace Boggle
             else      //game state is active and not brief
             {
                 ActiveGame ag = new ActiveGame();
-                string UserID = obj2[0]["Player1"];
-                sql = "select * from Users where CAST (User1 as nvarchar(50)) = @UserID";
-
                 ag.TimeLeft = timeLeft;
                 ag.TimeLimit = int.Parse(obj2[0]["TimeLimit"]);
                 ag.GameState = "active";
                 ag.Board = obj2[0]["Board"];
                 Player p1 = new Player();
                 Player p2 = new Player();
-
-                p1.Score = int.Parse(obj2[0]["Player1Score"]);
+                p1.Score =  int.Parse(obj2[0]["Player1Score"]);
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
+                string user1 = obj2[0]["Player1"];
+                string user2 = obj2[0]["Player1"];
+                sql = "select * from Games where CAST (UserID as nvarchar(50)) = @UserId)";
+                d.Clear();
+                d.Add("@UserID", user1);
+                Dictionary<string, dynamic>[] obj3 = new Dictionary<string, dynamic>[100];
+                obj3 = Helper(sql, d, 3);
+                p1.Nickname = obj3[0]["Nickname"];
+                d.Clear();
+                d.Add("@UserID", user2);
+                Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
+                obj4 = Helper(sql, d, 3);
+                p2.Nickname = obj4[0]["Nickname"];
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(ag);
