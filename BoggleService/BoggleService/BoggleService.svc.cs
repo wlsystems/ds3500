@@ -341,7 +341,7 @@ namespace Boggle
                 d.Add("@USer2", user2);
                 Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
                 obj3 = Helper(sql, d, 3);
-                p1.Nickname = obj4[0]["Nickname"];
+                p2.Nickname = obj4[0]["Nickname"];
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(ag);
