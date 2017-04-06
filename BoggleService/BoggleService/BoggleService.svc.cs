@@ -271,83 +271,38 @@ namespace Boggle
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
 
-            //t = SetTime(GameID);
+            string sql = "select * from Games where CAST (GameID as nvarchar(50)) = @GameID";
+            Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
+            d.Add("@GameID", GameID);
+            Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
+            obj2 = Helper(sql, d, 3);
+            int timeLeft = 0;
+            string gs;
+            if (obj2 == null)    //the obj is empty so GameID is not in the the table
+            {
+                SetStatus(Forbidden);
+                return null;
+            }
+            else
+            {
+                timeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), Int32.Parse(obj2[0]["StartTime"]));
+
+            }
 
             if (Brief == "yes")                            //either active or completed game, with brief as a parameter
             {
                 ActiveGameBrief agb = new ActiveGameBrief();
-                if (t <= 0)
-                {
-                    agb.GameState = "completed";
-                }
-                else
+                Player p1 = new Player();
+                Player p2 = new Player();
+                agb.TimeLeft = timeLeft;
+                if (timeLeft > 0)
                 {
                     agb.GameState = "active";
                 }
-
-                //agb.TimeLeft = SetTime(GameID);
-                Player p1 = new Player();
-                Player p2 = new Player();
-                string player1;
-                string player2;
-                using (SqlConnection conn = new SqlConnection(BoggleDB))
-                {
-                    conn.Open();
-                    using (SqlTransaction trans = conn.BeginTransaction())
-                    {
-
-                        using (SqlCommand command = new SqlCommand("select * from Games where GameID = @GameID", conn, trans))
-                        {
-                            command.Parameters.AddWithValue("@GameID", GameID);
-                            using (SqlDataReader reader = command.ExecuteReader())
-                            {
-                                player1 = reader["Player1"].ToString();
-                                player2 = reader["Player2"].ToString();
-                                reader.Close();
-                                trans.Commit();
-                            }
-
-                        }
-                    }
-                }
-                using (SqlConnection conn = new SqlConnection(BoggleDB))
-                {
-                    conn.Open();
-                    using (SqlTransaction trans = conn.BeginTransaction())
-                    {
-
-                        using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
-                        {
-                            command.Parameters.AddWithValue("@UserID", player1);
-                            using (SqlDataReader reader = command.ExecuteReader())
-                            {
-                                p1.Score = int.Parse(reader["Score"].ToString());
-                                reader.Close();
-                                trans.Commit();
-                            }
-
-                        }
-                    }
-                }
-                using (SqlConnection conn = new SqlConnection(BoggleDB))
-                {
-                    conn.Open();
-                    using (SqlTransaction trans = conn.BeginTransaction())
-                    {
-
-                        using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
-                        {
-                            command.Parameters.AddWithValue("@UserID", player2);
-                            using (SqlDataReader reader = command.ExecuteReader())
-                            {
-                                p2.Score = int.Parse(reader["Score"].ToString());
-                                reader.Close();
-                                trans.Commit();
-                            }
-
-                        }
-                    }
-                }
+                else
+                    agb.GameState = "completed";
+                p1.Score = obj2[0]["Player1Score"];
+                p2.Score = obj2[0]["Player2Score"];
                 agb.Player1 = p1;
                 agb.Player2 = p2;
                 SetStatus(OK);
@@ -394,12 +349,11 @@ namespace Boggle
                 string player1;
                 string player2;
 
-                string sql = "select * from Games where CAST (GameID as nvarchar(50)) = @GameID";
-                Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
-                d.Add("@GameID", GameID);
-                Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
+                sql = "select * from Games where CAST (GameID as nvarchar(50)) = @GameID";
+                d = new Dictionary<string, dynamic>();
+                d.Add("@GameID", GameID);obj2 = new Dictionary<string, dynamic>[100];
                 obj2 = Helper(sql, d, 3);
-                int timeLeft = 0;
+                timeLeft = 0;
                 if (obj2 == null)    //the obj is empty so GameID is not in the the table
                 {
                     SetStatus(Forbidden);
@@ -413,7 +367,7 @@ namespace Boggle
 
                     if (timeLeft >= 0)
                     {
-                        ag.GameState = "active";
+                        string gs = "active";
                         jsonClient = JsonConvert.SerializeObject(ag);
                     }
                 }
