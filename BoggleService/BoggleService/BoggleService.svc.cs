@@ -336,9 +336,10 @@ namespace Boggle
                 d.Add("@UserID", user2);
                 Dictionary<string, dynamic>[] obj6 = new Dictionary<string, dynamic>[100];
                 obj6 = Helper(sql, d, 3);
+                List<WordsPlayed>  wp = new List<WordsPlayed>();
                 foreach (var row in obj5) 
                 { 
-                    
+
                 }
                 gc.Player1 = p1;  
                 gc.Player2 = p2;
