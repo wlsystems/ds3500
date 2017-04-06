@@ -77,9 +77,10 @@ namespace Boggle
             return p;
         }
 
-        public String[] Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
+        public Dictionary<string, dynamic>[] Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
         {
-            String[] obj = new String[6];
+            Dictionary<string, dynamic>[] obj = new Dictionary<string, dynamic>[100];
+            obj[0] = new Dictionary<string, dynamic>(); //sets it up to work with type == 2.
             using (SqlConnection conn = new SqlConnection(BoggleDB))
             {
                 //open connection
@@ -98,7 +99,7 @@ namespace Boggle
                             command.ExecuteNonQuery();
                         if (type == 2)
                         {
-                            obj[0] = command.ExecuteScalar().ToString();
+                            obj[0].Add("GameID", command.ExecuteScalar().ToString());
                             return obj;
                         }
                         if (type == 3)
@@ -113,13 +114,16 @@ namespace Boggle
                                 }
                                 else
                                 {
+                                    int j = 0;
+                                    obj[j] = new Dictionary<string, dynamic>();
                                     while (reader.Read())
                                     {
                                         for (int i = 0; i < reader.FieldCount; i++)
                                             if (reader.GetValue(i) != null)
-                                                obj[i] = reader.GetValue(i).ToString();
-                                        return obj;
+                                                obj[j].Add(reader.GetName(i), reader.GetValue(i).ToString());
+                                        j = j + 1;
                                     }
+                                    return obj;
                                 }
                             }
                         }
@@ -182,8 +186,7 @@ namespace Boggle
                 // Here we are executing an insert command, but notice the "output inserted.ItemID" portion.  
                 // We are asking the DB to send back the auto-generated GameID.
                 cmd = "insert into Games (Player1) output inserted.GameID values(@Player1)";
-                String[] obj2 = new String[6];
-                obj2[0] = "";
+                Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[1];
                 placeholders.Clear();
                 placeholders.Add("@Player1", obj.UserToken);
                 // We execute the command with the ExecuteScalar method, which will return to
@@ -191,8 +194,8 @@ namespace Boggle
                 obj2 = Helper(cmd, placeholders, 2);
                 pending.TimeLimit = obj.TimeLimit;
                 SetStatus(Accepted);
-                ng.GameID = obj2[0];
-                pending.GameID = Int32.Parse(obj2[0]);
+                ng.GameID = obj2[0]["GameID"];
+                pending.GameID = Int32.Parse(obj2[0]["GameID"]);
                 pending.UserToken = obj.UserToken;
             }
             else
@@ -392,7 +395,7 @@ namespace Boggle
                 string sql = "select * from Games where CAST (GameID as nvarchar(50)) = @GameID";
                 Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
                 d.Add("@GameID", GameID);
-                String[] obj2 = new String[5];
+                Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
                 obj2 = Helper(sql, d, 3);
                 int timeLeft = 0;
                 if (obj2 == null)
@@ -402,14 +405,18 @@ namespace Boggle
                 }
                 else
                 {
-                    timeLeft = SetTime(Int32.Parse(obj2[4]), Int32.Parse(obj2[5]));
+                    timeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), Int32.Parse(obj2[0]["StartTime"]));
+                    sql = "select Word, Player,Score from Words where CAST (GameID as nvarchar(50)) = @GameID";
+                    d.Clear();
+
                     if (timeLeft >= 0)
                     {
-
+                        ag.GameState = "active";
+                        jsonClient = JsonConvert.SerializeObject(ag);
                     }
                 }
-
-
+                    
+                        
 
 
                 using (SqlConnection conn = new SqlConnection(BoggleDB))
@@ -440,7 +447,7 @@ namespace Boggle
 
                         using (SqlCommand command = new SqlCommand("select * from Users where UserID = @UserID", conn, trans))
                         {
-                            // command.Parameters.AddWithValue("@UserID", player2);
+                           // command.Parameters.AddWithValue("@UserID", player2);
                             using (SqlDataReader reader = command.ExecuteReader())
                             {
                                 p2.Score = int.Parse(reader["Score"].ToString());
