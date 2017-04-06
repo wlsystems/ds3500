@@ -314,6 +314,8 @@ namespace Boggle
             {
                 ActiveGame ag = new ActiveGame();
                 ag.TimeLeft = timeLeft;
+                ag.GameState = "active";
+                ag.Board = obj2[0]["Board"];
                 Player p1 = new Player();
                 Player p2 = new Player();
                 p2.Score = obj2[0]["Player2Score"];
