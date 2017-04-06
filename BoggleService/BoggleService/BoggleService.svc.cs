@@ -313,33 +313,30 @@ namespace Boggle
                 PlayerCompleted p2 = new PlayerCompleted();
                 p1.Score = int.Parse(obj2[0]["Player1Score"]);
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
-                string user1 = obj2[0]["Player1"];
-                string user2 = obj2[0]["Player2"];
+                string UserID = obj2[0]["Player1"];
                 sql = "select * from Users where UserID = @UserId";
                 d.Clear();
-                d.Add("@UserID", user1);
-                Dictionary<string, dynamic>[] obj3 = new Dictionary<string, dynamic>[100];
-                obj3 = Helper(sql, d, 3);
-                p1.Nickname = obj3[0]["Nickname"];
+                d.Add("@UserID", UserID);
+                obj2 = Helper(sql, d, 3);
+                p1.Nickname = obj2[0]["Nickname"];
                 d.Clear();
-                d.Add("@UserID", user2);
-                Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
-                obj4 = Helper(sql, d, 3);
-                p2.Nickname = obj4[0]["Nickname"];
+                UserID = obj2[0]["Player2"];
+                d.Add("@UserID", UserID);
+                obj2 = Helper(sql, d, 3);
+                p2.Nickname = obj2[0]["Nickname"];
                 ///looking up player words
-                sql = "select * from Word where CAST (UserID as nvarchar(50)) = @UserId";
+                sql = "select * from Word where UserID = @UserId";
                 d.Clear();
-                d.Add("@UserID", user1);
-                Dictionary<string, dynamic>[] obj5 = new Dictionary<string, dynamic>[100];
-                obj5 = Helper(sql, d, 3);
+                d.Add("@GameID", GameID);
+                d.Add("@Player", UserID);
+                obj2 = Helper(sql, d, 3);
+                p2.WordsPlayed = new List<WordsPlayed>();
+                p2.WordsPlayed.Add(GetWordList(obj2));
                 d.Clear();
-                d.Add("@UserID", user2);
-                Dictionary<string, dynamic>[] obj6 = new Dictionary<string, dynamic>[100];
-                obj6 = Helper(sql, d, 3);
-                foreach (var row in obj5) 
-                { 
-                    
-                }
+                UserID = obj2[0]["Player1"];
+                d.Add("@Player", UserID);
+                obj2 = Helper(sql, d, 3);
+                p1.WordsPlayed.Add(GetWordList(obj2));
                 gc.Player1 = p1;  
                 gc.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(gc);
@@ -378,7 +375,16 @@ namespace Boggle
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
         }
-
+        public WordsPlayed GetWordList(Dictionary<string, dynamic>[] obj)
+        {
+            WordsPlayed wp = new WordsPlayed();
+            foreach (var row in obj)
+            {
+                wp.Word = row["Word"];
+                wp.Score = row["Score"];
+            }
+            return wp;
+        }
 
         /// <summary>
         /// Calculate and set the time left.
