@@ -257,7 +257,6 @@ namespace Boggle
                 SetStatus(Forbidden);
                 return null;
             }
-            int t = 0;
             string jsonClient = null;
 
             if (pending.GameID.ToString() == GameID)              //the game status requested is for the pending game
@@ -277,7 +276,6 @@ namespace Boggle
             Dictionary<string, dynamic>[] obj2 = new Dictionary<string, dynamic>[100];
             obj2 = Helper(sql, d, 3);
             int timeLeft = 0;
-            string gs;
             if (obj2 == null)    //the obj is empty so GameID is not in the the table
             {
                 SetStatus(Forbidden);
