@@ -333,18 +333,17 @@ namespace Boggle
                 p1.Nickname = nickname1[0]["Nickname"];
                 p2.Nickname = nickname2[0]["Nickname"];
                 ///looking up player words
-                sql = "select Word, Score from Words where UserID = @UserId";
+                sql = "select Word, Score from Words where GameID = @GameId AND Player = @UserID";
                 d.Clear();
                 d.Add("@GameID", GameID); //first lookup player 2 using previously stored GameID
-                d.Add("@Player", UserID);
+                d.Add("@UserID", UserID);
                 obj2 = Helper(sql, d, 3);
-                p2.WordsPlayed = new List<WordsPlayed>();
-                p2.WordsPlayed.Add(GetWordList(obj2));
+                p2.WordsPlayed = GetWordList(obj2);
                 d.Clear();
                 UserID = obj2[0]["Player1"];
                 d.Add("@Player", UserID);
                 obj2 = Helper(sql, d, 3);
-                p1.WordsPlayed.Add(GetWordList(obj2));
+                p1.WordsPlayed = GetWordList(obj2);
                 gc.Player1 = p1;  
                 gc.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(gc);
@@ -372,13 +371,15 @@ namespace Boggle
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
         }
-        public WordsPlayed GetWordList(List<Dictionary<string, dynamic>> obj)
+        public List<WordsPlayed> GetWordList(List<Dictionary<string, dynamic>> obj)
         {
-            WordsPlayed wp = new WordsPlayed();
+            List<WordsPlayed> wp = new List<WordsPlayed>();
             foreach (var row in obj)
             {
-                wp.Word = row["Word"];
-                wp.Score = row["Score"];
+                WordsPlayed thisWord = new WordsPlayed();
+                thisWord.Word = row["Word"];
+                thisWord.Score = row["Score"];
+                wp.Add(thisWord);
             }
             return wp;
         }
@@ -415,43 +416,63 @@ namespace Boggle
                     SetStatus(Forbidden);
                     return null;
                 }
-
                 WordScore ws = new WordScore();
                 WordsPlayed wpObj = new WordsPlayed();
                 String word = w.Word.Trim(' ').ToUpper();
                 wpObj.Word = word;
                 int player = 3;
-                List<Dictionary<string, dynamic>> obj = new List<Dictionary<string, dynamic>>();
-                if (games.ContainsKey(gid))
+                Dictionary<string, dynamic> dd = new Dictionary<string, dynamic>();
+                List<Dictionary<string, dynamic>> game = new List<Dictionary<string, dynamic>>();
+                List<Dictionary<string, dynamic>> words = new List<Dictionary<string, dynamic>>();
+                string sql = "select * from Games where GameID = @GameID";
+                dd.Add("@GameID", gid);
+                game = Helper(sql, dd, 3);
+                sql = "select * from Users where UserID = @UserID";
+                int playerScore = 0;
+                if (pending.GameID.ToString() == gid)
                 {
-                    if (!users.ContainsKey(w.UserToken))
+                    SetStatus(Conflict);
+                    return null;
+                }
+                if (game != null)
+                {
+
+                    dd.Clear();
+                    dd.Add("@UserID", w.UserToken);
+                    if (Helper(sql, dd, 3) == null)
                     {
                         SetStatus(Forbidden);
                         return null;
                     }
-                    if (games[gid].Player1.Nickname.Equals(users[w.UserToken].Nickname))
+                    int i;
+                    if (game[0]["Player1"].Equals(w.UserToken))
+                    {
                         player = 1;
-                    else if (games[gid].Player2.Nickname.Equals(users[w.UserToken].Nickname))
+                        if (Int32.TryParse(game[0]["Player1Score"], out i))
+                            playerScore = i;
+                    }
+                    else if (game[0]["Player2"].Equals(w.UserToken))
+                    {
                         player = 2;
-
+                        if (Int32.TryParse(game[0]["Player2Score"], out i))
+                            playerScore = i;
+                    }
                 }
                 else
                 {
-                    if (pending.GameID.ToString() == gid)
-                    {
-                        SetStatus(Conflict);
-                        return null;
-                    }
                     SetStatus(Forbidden);
                     return null;
                 }
+                dd.Add("@GameID", gid);
+                sql = "select Word, Score from Words where GameID = @GameId AND Player = @UserID";
+                words = Helper(sql, dd, 3);
                 GameStatus(gid, "y");
-                if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !games.ContainsKey(gid) | player == 3)
+                if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !game[0]["GameID"] == null | player == 3)
                 {
                     SetStatus(Forbidden);
                     return ws;
                 }
-                else if (games[gid].GameState != "active")
+                else if (game[0]["GameState"] != "active")
                 {
                     SetStatus(Conflict);
                     return ws;
@@ -460,21 +481,19 @@ namespace Boggle
                 {
                     ws.Score = 0;
                     wpObj.Score = 0;
-                    return AddScore(word, gid, ws, player, wpObj);
+                    return AddScore(gid, ws, player, wpObj, playerScore, w.UserToken);
                 }
 
-
-                BoggleBoard bb = new BoggleBoard(games[gid].Board.ToString());
-                if (CheckSetDup(player, gid, word, ws, wpObj, bb) == 0)
+                BoggleBoard bb = new BoggleBoard(game[0]["Board"]);
+                if (CheckSetDup(player, gid, ws, wpObj, bb, words) == 0)
                 {
                     ws.Score = 0;
                     wpObj.Score = 0;
-                    return AddScore(word, gid, ws, player, wpObj);
+                    return AddScore(gid, ws, player, wpObj, playerScore, w.UserToken);
                 }
 
                 if (dic.strings.Contains(word) && bb.CanBeFormed(word))
                 {
-
                     if (word.Length == 3 | word.Length == 4)
                         ws.Score = 1;
                     else if (word.Length == 5)
@@ -492,21 +511,21 @@ namespace Boggle
                     ws.Score = -1;
                     wpObj.Score = -1;
                 }
-                return AddScore(word, gid, ws, player, wpObj);
+                return AddScore(gid, ws, player, wpObj, playerScore, w.UserToken);
             }
         }
 
-        public static int CheckSetDup(int player, string gid, string word, WordScore ws, WordsPlayed wpObj, BoggleBoard bb)
+        public int CheckSetDup(int player, string gid, WordScore ws, WordsPlayed wpObj, BoggleBoard bb, List<Dictionary<string, dynamic>> words)
         {
             lock (sync)
             {
                 IEnumerator<WordsPlayed> iwp;
-                iwp = games[gid].Player1.WordsPlayed.GetEnumerator();
+                iwp = GetWordList(words).GetEnumerator();
                 if (player == 2)
                     iwp = games[gid].Player2.WordsPlayed.GetEnumerator();
                 while (iwp.MoveNext())
                 {
-                    if (iwp.Current.Word.Equals(word))
+                    if (iwp.Current.Word.Equals(wpObj.Word))
                         return 0;
                 }
                 return -100;
@@ -522,21 +541,32 @@ namespace Boggle
         /// <param name="player"></param>
         /// <param name="wpObj"></param>
         /// <returns></returns>
-        public static WordScore AddScore(string word, string gid, WordScore ws, int player, WordsPlayed wpObj)
+        public WordScore AddScore(string gid, WordScore ws, int player, WordsPlayed wpObj, int playerScore, string UserID)
         {
             lock (sync)
             {
                 SetStatus(OK);
+                Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
+                string sql = "insert into Words (Word, GameID, Player, Score) values(@Word, @GameID, @Player, @Score)";
+                d.Add("@GameID", gid);
+                d.Add("@Score", ws.Score);
+                d.Add("@Player", UserID);
+                d.Add("@Word", wpObj.Word);
+                Helper(sql, d, 1);
+                d.Clear();
                 if (player == 1)
                 {
-                    games[gid].Player1.Score = ws.Score + games[gid].Player1.Score;
-                    games[gid].Player1.WordsPlayed.Add(wpObj);
+                    sql = "insert into Games (Player1Score) values(@Player1Score)";
+                    d.Add("@GameID", gid);
+                    d.Add("@Player1Score", ws.Score + playerScore);
+                    Helper(sql, d, 1);
                 }
-
                 else if (player == 2)
                 {
-                    games[gid].Player2.Score = ws.Score + games[gid].Player2.Score;
-                    games[gid].Player2.WordsPlayed.Add(wpObj);
+                    sql = "insert into Games (Player2Score) values(@Player2Score)";
+                    d.Add("@GameID", gid);
+                    d.Add("@Player2Score", ws.Score + playerScore);
+                    Helper(sql, d, 1);
                 }
                 return ws;
             }
