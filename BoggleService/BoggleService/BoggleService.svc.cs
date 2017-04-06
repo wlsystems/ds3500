@@ -289,14 +289,14 @@ namespace Boggle
                 ActiveGameBrief agb = new ActiveGameBrief();
                 Player p1 = new Player();
                 Player p2 = new Player();
-                agb.TimeLeft = timeLeft;
-                if (timeLeft > 0)
+                agb.TimeLeft = timeLeft;                    
+                if (timeLeft > 0)                       //checks time to decide if game is active or completed
                 {
                     agb.GameState = "active";
                 }
                 else
                     agb.GameState = "completed";
-                p1.Score = int.Parse(obj2[0]["Player1Score"]);
+                p1.Score = int.Parse(obj2[0]["Player1Score"]);     //adds player1 and player2
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
                 agb.Player1 = p1;
                 agb.Player2 = p2;
@@ -309,6 +309,12 @@ namespace Boggle
                 gc.TimeLimit = int.Parse(obj2[0]["TimeLimit"]);
                 gc.Board = obj2[0]["Board"];
                 gc.TimeLeft = 0;
+                PlayerCompleted p1 = new PlayerCompleted();
+                PlayerCompleted p2 = new PlayerCompleted();
+                p1.Score = int.Parse(obj2[0]["Player1Score"]);
+                p2.Score = int.Parse(obj2[0]["Player2Score"]);
+                gc.Player1 = p1;
+                gc.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(gc);
             }
 
