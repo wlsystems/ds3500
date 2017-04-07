@@ -549,18 +549,19 @@ namespace Boggle
                 d.Add("@Word", wpObj.Word);
                 Helper(sql, d, 1);
                 d.Clear();
+                int newScore = ws.Score + playerScore;
                 if (player == 1)
                 {
-                    sql = "update Games set Player1Score=Player1Score where GameID=@GameID";
+                    sql = "update Games set Player1Score=@Player1Score where GameID=@GameID";
                     d.Add("@GameID", gid);
-                    d.Add("@Player1Score", ws.Score + playerScore);
+                    d.Add("@Player1Score", newScore);
                     Helper(sql, d, 1);
                 }
                 else if (player == 2)
                 {
                     sql = "update Games set Player2Score =@Player2Score where GameID=@GameID";
                     d.Add("@GameID", gid);
-                    d.Add("@Player2Score", ws.Score + playerScore);
+                    d.Add("@Player2Score", newScore);
                     Helper(sql, d, 1);
                 }
                 return ws;
