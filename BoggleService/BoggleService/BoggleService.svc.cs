@@ -326,6 +326,7 @@ namespace Boggle
                 Dictionary<string, dynamic>[] obj4 = new Dictionary<string, dynamic>[100];
                 obj4 = Helper(sql, d, 3);
                 p2.Nickname = obj4[0]["Nickname"];
+
                 ///looking up player words
                 sql = "select * from Word where CAST (UserID as nvarchar(50)) = @UserId";
                 d.Clear();
