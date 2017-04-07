@@ -203,7 +203,7 @@ namespace Boggle
             else
             {
                 string board = new BoggleBoard().ToString();
-                cmd = "update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@startTime, Board=@Board, Player1Score=@Player1Score, Player2Score=@Player2Score where GameID=@GameID";
+                cmd = "update Games set Player2= @Player2, TimeLimit=@TimeLimit, StartTime=@StartTime, Board=@Board, Player1Score=@Player1Score, Player2Score=@Player2Score where GameID=@GameID";
                 placeholders.Clear();
                 int time = (pending.TimeLimit + obj.TimeLimit) / 2;
                 int startTime = (int)DateTime.Now.TimeOfDay.TotalSeconds;
@@ -332,7 +332,7 @@ namespace Boggle
                 p1.Nickname = nickname1[0]["Nickname"];
                 p2.Nickname = nickname2[0]["Nickname"];
                 ///looking up player words
-                sql = "select Word, Score from Words where GameID = @GameId AND Player = @UserID";
+                sql = "select Word, Score from Words where GameID = @GameID AND Player = @UserID";
                 d.Clear();
                 d.Add("@GameID", GameID); //first lookup player 2 using previously stored GameID
                 d.Add("@UserID", UserID);
@@ -376,6 +376,7 @@ namespace Boggle
             List<WordsPlayed> wp = new List<WordsPlayed>();
             if (obj == null)
                 return wp;
+            int i = 1;
             foreach (var row in obj)
             {
                 WordsPlayed thisWord = new WordsPlayed();
@@ -464,7 +465,7 @@ namespace Boggle
                     return null;
                 }
                 dd.Add("@GameID", gid);
-                sql = "select Word, Score from Words where GameID = @GameId AND Player = @UserID";
+                sql = "select Word, Score from Words where GameID = @GameID AND Player = @UserID";
                 words = Helper(sql, dd, 3);
                int timeLeft = SetTime(Int32.Parse(game[0]["TimeLimit"]), Int32.Parse(game[0]["StartTime"]));
 
