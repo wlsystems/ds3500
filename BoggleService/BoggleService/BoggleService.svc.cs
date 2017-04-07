@@ -294,9 +294,9 @@ namespace Boggle
             string UserID = obj2[0]["Player1"];
             d.Add("@UserID", UserID);
             nickname1 = Helper(sql, d, 3);
-            d.Clear();
-            UserID = obj2[0]["Player2"];
-            d.Add("@UserID", UserID);
+            d.Remove("@UserID");
+            string UserID2 = obj2[0]["Player2"];
+            d.Add("@UserID", UserID2);
             nickname2 = Helper(sql, d, 3);
 
             timeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), Int32.Parse(obj2[0]["StartTime"]));
@@ -333,17 +333,16 @@ namespace Boggle
                 p1.Nickname = nickname1[0]["Nickname"];
                 p2.Nickname = nickname2[0]["Nickname"];
                 ///looking up player words
-                sql = "select Word, Score from Words where GameID = @GameId AND Player = @UserID";
-                d.Clear();
-                d.Add("@GameID", GameID); //first lookup player 2 using previously stored GameID
+                sql = "select Word, Score from Words where GameID = @GameID AND Player = @UserID";
+                d.Add("@GameID", GameID);
+                obj2 = Helper(sql, d, 3); //first lookup player 2 using previously stored GameID
+                if (obj2 != null)
+                    p2.WordsPlayed = GetWordList(obj2);
+                d.Remove("@UserID");
                 d.Add("@UserID", UserID);
                 obj2 = Helper(sql, d, 3);
-                p2.WordsPlayed = GetWordList(obj2);
-                d.Clear();
-                UserID = obj2[0]["Player1"];
-                d.Add("@Player", UserID);
-                obj2 = Helper(sql, d, 3);
-                p1.WordsPlayed = GetWordList(obj2);
+                if (obj2 != null)
+                    p1.WordsPlayed = GetWordList(obj2);
                 gc.Player1 = p1;  
                 gc.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(gc);
@@ -464,10 +463,10 @@ namespace Boggle
                     return null;
                 }
                 dd.Add("@GameID", gid);
-                sql = "select Word, Score from Words where GameID = @GameId AND Player = @UserID";
+                sql = "select Word, Score from Words where GameID = @GameID AND Player = @UserID";
                 words = Helper(sql, dd, 3);
                 GameStatus(gid, "y");
-                if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | !game[0]["GameID"] == null | player == 3)
+                if (word == null | word == "" | gid == null | w.UserToken == null | !users.ContainsKey(w.UserToken) | game[0]["GameID"] != null | player == 3)
                 {
                     SetStatus(Forbidden);
                     return ws;
