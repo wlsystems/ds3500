@@ -305,17 +305,21 @@ namespace Boggle
                 ActiveGameBrief agb = new ActiveGameBrief();
                 Player p1 = new Player();
                 Player p2 = new Player();
-                agb.TimeLeft = timeLeft;                    
-                if (timeLeft > 0)                       //checks time to decide if game is active or completed
-                {
-                    agb.GameState = "active";
-                }
-                else
-                    agb.GameState = "completed";
+
                 p1.Score = int.Parse(obj2[0]["Player1Score"]);     //adds player1 and player2
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
                 agb.Player1 = p1;
                 agb.Player2 = p2;
+                if (timeLeft > 0)                       //checks time to decide if game is active or completed
+                {
+                    agb.GameState = "active";
+                    agb.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
+                }
+                else
+                {
+                    agb.GameState = "completed";
+                    agb.TimeLeft = 0;
+                }
                 jsonClient = JsonConvert.SerializeObject(agb);
             }
             else if (timeLeft <= 0)
@@ -332,15 +336,18 @@ namespace Boggle
                 p1.Nickname = nickname1[0]["Nickname"];
                 p2.Nickname = nickname2[0]["Nickname"];
                 ///looking up player words
-                sql = "select Word, Score from Words where GameID = @GameID AND Player = @UserID";
+                sql = "select Word, Score from Words where GameID = @GameID AND Player = @UserID order by Id";
                 d.Clear();
                 d.Add("@GameID", GameID); //first lookup player 2 using previously stored GameID
                 d.Add("@UserID", UserID);
                 obj2 = Helper(sql, d, 3);
-                p2.WordsPlayed = GetWordList(obj2);
+                p2.WordsPlayed = GetWordList(sql, UserID, GameID);
                 UserID = user1;
+                d.Clear();
+                d.Add("@GameID", GameID); //first lookup player 2 using previously stored GameID
+                d.Add("@UserID", UserID);
                 obj2 = Helper(sql, d, 3);
-                p1.WordsPlayed = GetWordList(obj2);
+                p1.WordsPlayed = GetWordList(sql, user1, GameID);
                 gc.Player1 = p1;  
                 gc.Player2 = p2;
                 jsonClient = JsonConvert.SerializeObject(gc);
@@ -349,7 +356,6 @@ namespace Boggle
             else      //game state is active and not brief
             {
                 ActiveGame ag = new ActiveGame();
-                ag.TimeLeft = timeLeft;
                 ag.TimeLimit = int.Parse(obj2[0]["TimeLimit"]);
                 ag.GameState = "active";
                 ag.Board = obj2[0]["Board"];
@@ -361,6 +367,7 @@ namespace Boggle
                 p2.Score = int.Parse(obj2[0]["Player2Score"]);
                 ag.Player1 = p1;
                 ag.Player2 = p2;
+                ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
                 jsonClient = JsonConvert.SerializeObject(ag);
             }
             //serializes which ever game was pulled and returns a stream
@@ -368,24 +375,47 @@ namespace Boggle
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
             return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
         }
-        public List<WordsPlayed> GetWordList(List<Dictionary<string, dynamic>> obj)
+        public List<WordsPlayed> GetWordList(string sql, string userID, string gid)
         {
-            List<WordsPlayed> wp = new List<WordsPlayed>();
-            if (obj == null)
-                return wp;
-            int i = 1;
-            foreach (var row in obj)
+            using (SqlConnection conn = new SqlConnection(BoggleDB))
             {
-                if (i % 2 == 1)
+                conn.Open();
+                using (SqlTransaction trans = conn.BeginTransaction())
                 {
-                    WordsPlayed thisWord = new WordsPlayed();
-                    thisWord.Word = row["Word"];
-                    thisWord.Score = int.Parse(row["Score"]);
-                    wp.Add(thisWord);
+
+                    // Notice that we have to work a bit to construct the proper query, since it depends on what
+                    // options the user specified.
+                    String query = sql;
+
+                    using (SqlCommand command = new SqlCommand(query, conn, trans))
+                    {
+                        
+                            command.Parameters.AddWithValue("@UserID", userID);
+                            command.Parameters.AddWithValue("@GameID", gid);
+
+
+                        // We are going to be creating some ToDoItem objects and returning them in
+                        // this list.
+                        List<WordsPlayed> result = new List<WordsPlayed>();
+
+                        // As with all queries, we use the ExecuteReader method:
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                // Notice how we extract the values from each row by column name.
+                                result.Add(new WordsPlayed
+                                {
+                                    Word = (string)reader["Word"],
+                                    Score = (int)reader["Score"]
+                                });
+                            }
+                        }
+                        trans.Commit();
+                        return result;
+                    }
                 }
-                i = i + 1;
             }
-            return wp;
         }
 
         /// <summary>
@@ -488,7 +518,7 @@ namespace Boggle
                 }
 
                 BoggleBoard bb = new BoggleBoard(game[0]["Board"]);
-                if (CheckSetDup(wpObj, words) == 0)
+                if (CheckSetDup(wpObj, sql, w.UserToken, gid) == 0)
                 {
                     ws.Score = 0;
                     wpObj.Score = 0;
@@ -518,14 +548,18 @@ namespace Boggle
             
         }
 
-        public int CheckSetDup(WordsPlayed wpObj,  List<Dictionary<string, dynamic>> words)
+        public int CheckSetDup(WordsPlayed wpObj, String sql, string userID, string gid)
         {
-                IEnumerator<WordsPlayed> iwp;
-                iwp = GetWordList(words).GetEnumerator();   
-                while (iwp.MoveNext())
+                string wordNew = wpObj.Word;
+                List<WordsPlayed> iwp;
+                iwp = GetWordList(sql, userID, gid);
+                 foreach (var word in iwp)
                 {
-                    if (iwp.Current.Word.Equals(wpObj.Word))
-                        return 0;
+                      if (word.Word.Equals(wordNew))
+                {
+                    return 0;
+                }
+                            
                 }
                 return -100;
 
@@ -561,7 +595,7 @@ namespace Boggle
                 }
                 else if (player == 2)
                 {
-                    sql = "update Games set Player2Score =@Player2Score where GameID=@GameID";
+                    sql = "update Games set Player2Score=@Player2Score where GameID=@GameID";
                     d.Add("@GameID", gid);
                     d.Add("@Player2Score", newScore);
                     Helper(sql, d, 1);
