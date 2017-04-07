@@ -338,10 +338,7 @@ namespace Boggle
                 d.Add("@UserID", UserID);
                 obj2 = Helper(sql, d, 3);
                 p2.WordsPlayed = GetWordList(obj2);
-                d.Clear();
                 UserID = user1;
-                d.Add("@UserID", UserID);
-                d.Add("@GameID", GameID);
                 obj2 = Helper(sql, d, 3);
                 p1.WordsPlayed = GetWordList(obj2);
                 gc.Player1 = p1;  
@@ -379,10 +376,14 @@ namespace Boggle
             int i = 1;
             foreach (var row in obj)
             {
-                WordsPlayed thisWord = new WordsPlayed();
-                thisWord.Word = row["Word"];
-                thisWord.Score = int.Parse(row["Score"]);
-                wp.Add(thisWord);
+                if (i % 2 == 1)
+                {
+                    WordsPlayed thisWord = new WordsPlayed();
+                    thisWord.Word = row["Word"];
+                    thisWord.Score = int.Parse(row["Score"]);
+                    wp.Add(thisWord);
+                }
+                i = i + 1;
             }
             return wp;
         }
@@ -541,7 +542,7 @@ namespace Boggle
         /// <returns></returns>
         public WordScore AddScore(string gid, WordScore ws, int player, WordsPlayed wpObj, int playerScore, string UserID)
         {
-                SetStatus(OK);
+                SetStatus(OK); 
                 Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
                 string sql = "insert into Words (Word, GameID, Player, Score) values(@Word, @GameID, @Player, @Score)";
                 d.Add("@GameID", gid);
