@@ -12,7 +12,7 @@ namespace BoggleList
 
 {
     /// <summary>
-    /// Load dictionary. 
+    /// Load dictionary... 
     /// </summary>
     public class Dict
     {
