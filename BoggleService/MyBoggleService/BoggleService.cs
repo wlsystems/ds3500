@@ -1,4 +1,4 @@
-﻿using BoggleList;
+﻿using Boggle;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -52,12 +52,12 @@ namespace Boggle
         /// </summary>
         /// <param name="newUser"></param>
         /// <returns></returns>
-        public Person Register(NewPlayer user)
+        public Person Register(NewPlayer user, out HttpStatusCode status)
         {
             Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
             if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return null;
             }
             dynamic userID = Guid.NewGuid().ToString();
@@ -66,7 +66,7 @@ namespace Boggle
             string sql = "insert into Users (UserID, Nickname) values(@UserID, @Nickname)";
             Person p = new Person();
             p.UserToken = userID;
-            SetStatus(Created);
+            status = Created;
             Helper(sql, placeholders, 1);
             return p;
         }
@@ -178,7 +178,7 @@ namespace Boggle
             if (pending.UserToken == null)  //very first request, initializes pending
             {
                 pending.UserToken = "";
-                dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
+                //dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
             }
             if (pending.UserToken == "")
             {
@@ -263,9 +263,9 @@ namespace Boggle
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
                 SetStatus(OK);
-                jsonClient = JsonConvert.SerializeObject(pg);
+               // jsonClient = JsonConvert.SerializeObject(pg);
                 //WebOperationContext.Current.OutgoingResponse.ContentType =
-                    "application/json; charset=utf-8";
+              //      "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
 
@@ -317,7 +317,7 @@ namespace Boggle
                     agb.GameState = "completed";
                     agb.TimeLeft = 0;
                 }
-                jsonClient = JsonConvert.SerializeObject(agb);
+           //     jsonClient = JsonConvert.SerializeObject(agb);
             }
             else if (timeLeft <= 0)
             {
@@ -347,7 +347,7 @@ namespace Boggle
                 p1.WordsPlayed = GetWordList(sql, user1, GameID);
                 gc.Player1 = p1;
                 gc.Player2 = p2;
-                jsonClient = JsonConvert.SerializeObject(gc);
+           //     jsonClient = JsonConvert.SerializeObject(gc);
             }
 
             else      //game state is active and not brief
@@ -365,7 +365,7 @@ namespace Boggle
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
-                jsonClient = JsonConvert.SerializeObject(ag);
+              //  jsonClient = JsonConvert.SerializeObject(ag);
             }
             //serializes which ever game was pulled and returns a stream
             SetStatus(OK);

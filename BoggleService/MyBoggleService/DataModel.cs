@@ -1,16 +1,16 @@
 ﻿//Dustin Shiozaki u0054455
 //Tracy King u0040235
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq; 
 using System.Web;
 
-namespace BoggleList
+namespace Boggle
 
 {
+
     /// <summary>
     /// Load dictionary... 
     /// </summary>
