@@ -28,11 +28,11 @@ namespace Boggle
         private static string BoggleDB;
         private readonly static Pending pending = new Pending();
         private readonly static Dict dic = new Dict();
-
         static BoggleService()
         {
-            //BoggleDB = BoggleDB;
-
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            //BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
+            BoggleDB = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = " + baseDirectory + @"BoggleDB.mdf; Integrated Security = True; User Instance=False;";
         }
         /// <summary>
         /// The most recent call to SetStatus determines the response code used when.
@@ -55,6 +55,7 @@ namespace Boggle
         public Person Register(NewPlayer user, out HttpStatusCode status)
         {
             Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
+            
             if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
             {
                 status = Forbidden;
