@@ -31,7 +31,7 @@ namespace Boggle
 
         static BoggleService()
         {
-            //BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
+            //BoggleDB = BoggleDB;
 
         }
         /// <summary>
