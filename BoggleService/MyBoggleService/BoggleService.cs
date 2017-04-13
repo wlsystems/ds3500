@@ -1,18 +1,17 @@
-﻿using Boggle;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Resources;
 using System.Text;
 using System.Threading;
-using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 using static System.Net.HttpStatusCode;
+using Newtonsoft.Json.Linq;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -58,16 +57,19 @@ namespace Boggle
         // index of the leftmost byte whose send has not yet been completed
         private byte[] pendingBytes = new byte[0];
         private int pendingIndex = 0;
-
+        //save the command string because the state is reset.
+        String[] cmd;
         // Name of chatter or null if unknown
         private string name = null;
         private BoggleService server;
-
+        private int programCounter;
         /// <summary>
         /// Creates a ClientConnection from the socket, then begins communicating with it.
         /// </summary>
         public ClientConnection(Socket s, BoggleService server)
         {
+            cmd = new String[3]; 
+            programCounter = 0;
             // Record the socket and server and initialize incoming/outgoing
             this.server = server;
             socket = s;
@@ -92,7 +94,7 @@ namespace Boggle
         {
             // Figure out how many bytes have come in
             int bytesRead = socket.EndReceive(result);
-
+            HttpStatusCode status;
             // If no bytes were received, it means the client closed its side of the socket.
             // Report that to the console and close our socket.
             if (bytesRead == 0)
@@ -105,6 +107,7 @@ namespace Boggle
             // Otherwise, decode and display the incoming bytes.  Then request more bytes.
             else
             {
+
                 // Convert the bytes into characters and appending to incoming
                 int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                 incoming.Append(incomingChars, 0, charsRead);
@@ -114,6 +117,9 @@ namespace Boggle
                 int lastNewline = -1;
                 int start = 0;
                 String line = "";
+                String[] input = new string[5];
+   
+
                 for (int i = 0; i < incoming.Length; i++)
                 {
                     if (incoming[i] == '\n')
@@ -123,20 +129,7 @@ namespace Boggle
                         {
                             name = line.Substring(0, line.Length - 2);
                             server.SendToAllClients("Welcome " + name + "\r\n");
-                            try
-                            {
-                                String[] g = new String[3];
-                                g = name.Split('/');
-                                if (g[0].Equals("POST "))
-                                {
-                                    if (g[2].Equals("users HTTP"))
-                                        Console.Write("a");
-                                }
-                            }
-                            finally
-                            {
-
-                            }
+                            cmd = name.Split('/');
                         }
                         else
                         {
@@ -146,17 +139,22 @@ namespace Boggle
                         start = i + 1;
                     }
                 }
-                dynamic obj2 = null;
-                using (var sr = new StringReader(incoming.ToString()))
-                using (var jr = new JsonTextReader(sr))
+                if (programCounter == 1)
                 {
-                    var js = new JsonSerializer();
-                    var u = js.Deserialize<Person>(jr);
-                    Console.WriteLine(u.Person.Nickname);
+                    if (cmd[0].Equals("POST "))
+                    {
+                        if (cmd[2].Equals("users HTTP"))
+                        {
+                            line = incoming.ToString();
+                            input = line.Split('"');
+                            NewPlayer np = new NewPlayer();
+                            np.Nickname = input[3];
+                            server.Register(np, out status);
+                        }                       
+                    }
                 }
-                obj2 = JsonConvert.DeserializeObject<ExpandoObject>(incoming, new ExpandoObjectConverter());
-                incoming.Remove(0, lastNewline + 1);
-
+                programCounter += 1;
+                incoming.Remove(0, lastNewline + 1);    
                 try
                 {
                     // Ask for some more data
