@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using static System.Net.HttpStatusCode;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -151,10 +153,10 @@ namespace Boggle
                 using (var jr = new JsonTextReader(sr))
                 {
                     var js = new JsonSerializer();
-                    var u = js.Deserialize<Person>(jr);
-                    Console.WriteLine(u.Person.Nickname);
+                    var u = js.Deserialize<NewPlayer>(jr);
+                    Console.WriteLine(u.Nickname);
                 }
-                obj2 = JsonConvert.DeserializeObject<ExpandoObject>(incoming, new ExpandoObjectConverter());
+                obj2 = JsonConvert.DeserializeObject<ExpandoObject>(incoming.ToString(), new ExpandoObjectConverter());
                 incoming.Remove(0, lastNewline + 1);
 
                 try
