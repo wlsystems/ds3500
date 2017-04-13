@@ -16,9 +16,9 @@ namespace MyBoggleService
             HttpStatusCode status;
             Player name = new Player { Nickname = "Joe" };
             BoggleService service = new BoggleService(60000);
-            Person user = service.Register(name, out status);
-            Console.WriteLine(user.UserToken);
-            Console.WriteLine(status.ToString());
+            //Person user = service.Register(name, out status);
+           // Console.WriteLine(user.UserToken);
+            //Console.WriteLine(status.ToString());
             // This is our way of preventing the main thread from
             // exiting while the server is in use
             Console.ReadLine();

@@ -113,15 +113,30 @@ namespace Boggle
                 // Echo any complete lines, after capitalizing them
                 int lastNewline = -1;
                 int start = 0;
+                String line = "";
                 for (int i = 0; i < incoming.Length; i++)
                 {
                     if (incoming[i] == '\n')
                     {
-                        String line = incoming.ToString(start, i + 1 - start);
+                        line = incoming.ToString(start, i + 1 - start);
                         if (name == null)
                         {
                             name = line.Substring(0, line.Length - 2);
                             server.SendToAllClients("Welcome " + name + "\r\n");
+                            try
+                            {
+                                String[] g = new String[3];
+                                g = name.Split('/');
+                                if (g[0].Equals("POST "))
+                                {
+                                    if (g[2].Equals("users HTTP"))
+                                        Console.Write("a");
+                                }
+                            }
+                            finally
+                            {
+
+                            }
                         }
                         else
                         {
@@ -131,6 +146,15 @@ namespace Boggle
                         start = i + 1;
                     }
                 }
+                dynamic obj2 = null;
+                using (var sr = new StringReader(incoming.ToString()))
+                using (var jr = new JsonTextReader(sr))
+                {
+                    var js = new JsonSerializer();
+                    var u = js.Deserialize<Person>(jr);
+                    Console.WriteLine(u.Person.Nickname);
+                }
+                obj2 = JsonConvert.DeserializeObject<ExpandoObject>(incoming, new ExpandoObjectConverter());
                 incoming.Remove(0, lastNewline + 1);
 
                 try
