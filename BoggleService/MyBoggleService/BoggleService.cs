@@ -68,7 +68,7 @@ namespace Boggle
         /// </summary>
         public ClientConnection(Socket s, BoggleService server)
         {
-            cmd = new String[3]; 
+            cmd = new String[3];
             programCounter = 0;
             // Record the socket and server and initialize incoming/outgoing
             this.server = server;
@@ -111,14 +111,14 @@ namespace Boggle
                 // Convert the bytes into characters and appending to incoming
                 int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                 incoming.Append(incomingChars, 0, charsRead);
-                Console.WriteLine(incoming);
+                 Console.WriteLine(incoming);
 
                 // Echo any complete lines, after capitalizing them
                 int lastNewline = -1;
                 int start = 0;
                 String line = "";
                 String[] input = new string[5];
-   
+
 
                 for (int i = 0; i < incoming.Length; i++)
                 {
@@ -150,11 +150,11 @@ namespace Boggle
                             NewPlayer np = new NewPlayer();
                             np.Nickname = input[3];
                             server.Register(np, out status);
-                        }                       
+                        }
                     }
                 }
                 programCounter += 1;
-                incoming.Remove(0, lastNewline + 1);    
+                incoming.Remove(0, lastNewline + 1);
                 try
                 {
                     // Ask for some more data
@@ -262,7 +262,7 @@ namespace Boggle
     /// <summary>
     /// 
     /// </summary>
-    public class BoggleService 
+    public class BoggleService
     {
         /// <summary>
         /// Keeps track of the currently pending game
@@ -362,13 +362,13 @@ namespace Boggle
                 sync.ExitWriteLock();
             }
         }
-  
-    /// <summary>
-    /// The most recent call to SetStatus determines the response code used when.
-    /// an http response is sent..
-    /// </summary>
-    /// <param name="status"></param>
-    private static void SetStatus(HttpStatusCode status)
+
+        /// <summary>
+        /// The most recent call to SetStatus determines the response code used when.
+        /// an http response is sent..
+        /// </summary>
+        /// <param name="status"></param>
+        private static void SetStatus(HttpStatusCode status)
         {
             //WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
@@ -384,7 +384,7 @@ namespace Boggle
         public Person Register(NewPlayer user, out HttpStatusCode status)
         {
             Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
-            
+
             if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
             {
                 status = Forbidden;
@@ -593,9 +593,9 @@ namespace Boggle
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
                 SetStatus(OK);
-               // jsonClient = JsonConvert.SerializeObject(pg);
+                // jsonClient = JsonConvert.SerializeObject(pg);
                 //WebOperationContext.Current.OutgoingResponse.ContentType =
-              //      "application/json; charset=utf-8";
+                //      "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
 
@@ -647,7 +647,7 @@ namespace Boggle
                     agb.GameState = "completed";
                     agb.TimeLeft = 0;
                 }
-           //     jsonClient = JsonConvert.SerializeObject(agb);
+                //     jsonClient = JsonConvert.SerializeObject(agb);
             }
             else if (timeLeft <= 0)
             {
@@ -677,7 +677,7 @@ namespace Boggle
                 p1.WordsPlayed = GetWordList(sql, user1, GameID);
                 gc.Player1 = p1;
                 gc.Player2 = p2;
-           //     jsonClient = JsonConvert.SerializeObject(gc);
+                //     jsonClient = JsonConvert.SerializeObject(gc);
             }
 
             else      //game state is active and not brief
@@ -695,7 +695,7 @@ namespace Boggle
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
-              //  jsonClient = JsonConvert.SerializeObject(ag);
+                //  jsonClient = JsonConvert.SerializeObject(ag);
             }
             //serializes which ever game was pulled and returns a stream
             SetStatus(OK);
