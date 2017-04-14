@@ -12,6 +12,7 @@ using Newtonsoft.Json.Converters;
 
 using static System.Net.HttpStatusCode;
 using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -42,7 +43,7 @@ namespace Boggle
 
         // For decoding incoming UTF8-encoded byte streams.
         private Decoder decoder = encoding.GetDecoder();
-
+        private object obj;
         // Buffers that will contain incoming bytes and characters
         private byte[] incomingBytes = new byte[BUFFER_SIZE];
         private char[] incomingChars = new char[BUFFER_SIZE];
@@ -68,6 +69,7 @@ namespace Boggle
         /// </summary>
         public ClientConnection(Socket s, BoggleService server)
         {
+            obj = new object();
             cmd = new String[3]; 
             programCounter = 0;
             // Record the socket and server and initialize incoming/outgoing
@@ -128,12 +130,12 @@ namespace Boggle
                         if (name == null)
                         {
                             name = line.Substring(0, line.Length - 2);
-                            server.SendToAllClients("Welcome " + name + "\r\n");
+                            //server.SendToAllClients("Welcome " + name + "\r\n");
                             cmd = name.Split('/');
                         }
                         else
                         {
-                            server.SendToAllClients(name + "> " + line.ToUpper());
+                            //server.SendToAllClients(name + "> " + line.ToUpper());
                         }
                         lastNewline = i;
                         start = i + 1;
@@ -149,7 +151,8 @@ namespace Boggle
                             input = line.Split('"');
                             NewPlayer np = new NewPlayer();
                             np.Nickname = input[3];
-                            server.Register(np, out status);
+                            obj = server.Register(np, out status);
+                            SendMessage(JsonConvert.SerializeObject(obj));
                         }                       
                     }
                 }
@@ -163,7 +166,24 @@ namespace Boggle
                 }
                 catch (ObjectDisposedException)
                 {
+
                 }
+            }
+        }
+        /// <summary>
+        /// Convert the obj to byte
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        byte[] ObjectToByteArray(object obj)
+        {
+            if (obj == null)
+                return null;
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
             }
         }
 
@@ -177,7 +197,6 @@ namespace Boggle
             {
                 // Append the message to the outgoing lines
                 outgoing.Append(lines);
-
                 // If there's not a send ongoing, start one.
                 if (!sendIsOngoing)
                 {
@@ -211,7 +230,7 @@ namespace Boggle
             // out of outgoing and start sending that.
             else if (outgoing.Length > 0)
             {
-                pendingBytes = encoding.GetBytes(outgoing.ToString());
+                pendingBytes = ObjectToByteArray(obj);
                 pendingIndex = 0;
                 outgoing.Clear();
                 try
