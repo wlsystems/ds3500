@@ -13,6 +13,7 @@ using Newtonsoft.Json.Converters;
 using static System.Net.HttpStatusCode;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Net.Http;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -197,6 +198,7 @@ namespace Boggle
             {
                 // Append the message to the outgoing lines
                 outgoing.Append(lines);
+
                 // If there's not a send ongoing, start one.
                 if (!sendIsOngoing)
                 {
@@ -714,7 +716,7 @@ namespace Boggle
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
-              //  jsonClient = JsonConvert.SerializeObject(ag);
+                jsonClient = JsonConvert.SerializeObject(ag);
             }
             //serializes which ever game was pulled and returns a stream
             SetStatus(OK);
