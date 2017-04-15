@@ -13,6 +13,7 @@ using Newtonsoft.Json.Converters;
 using static System.Net.HttpStatusCode;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Web;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -230,9 +231,19 @@ namespace Boggle
             // out of outgoing and start sending that.
             else if (outgoing.Length > 0)
             {
-                pendingBytes = ObjectToByteArray(obj);
+                //WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
+                pendingBytes = Encoding.UTF8.GetBytes(outgoing.ToString());
                 pendingIndex = 0;
-                outgoing.Clear();
+                MemoryStream stream = new MemoryStream(pendingBytes);
+                TextWriter tw = new StreamWriter(stream);
+                HttpResponse response = new HttpResponse(tw);
+                response.Clear();
+                response.BufferOutput = true;
+                response.StatusCode = 200; // HttpStatusCode.OK;
+                response.Write("Hello");
+                response.ContentType = "text/xml";
+                response.End();
+
                 try
                 {
                     socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
