@@ -8,12 +8,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
 using static System.Net.HttpStatusCode;
-using Newtonsoft.Json.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
+
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -25,10 +22,13 @@ namespace Boggle
     /// </summary>
     public class ClientConnection
     {
+        
         // Incoming/outgoing is UTF8-encoded.  This is a multi-byte encoding.  The first 128 Unicode characters
         // (which corresponds to the old ASCII character set and contains the common keyboard characters) are
         // encoded into a single byte.  The rest of the Unicode characters can take from 2 to 4 bytes to encode.
         private static System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+
+        HttpStatusCode status;
 
         // Buffer size for reading incoming bytes
         private const int BUFFER_SIZE = 1024;
@@ -97,7 +97,7 @@ namespace Boggle
         {
             // Figure out how many bytes have come in
             int bytesRead = socket.EndReceive(result);
-            HttpStatusCode status;
+            //HttpStatusCode status;
             // If no bytes were received, it means the client closed its side of the socket.
             // Report that to the console and close our socket.
             if (bytesRead == 0)
@@ -131,7 +131,6 @@ namespace Boggle
                         if (name == null)
                         {
                             name = line.Substring(0, line.Length - 2);
-                            //server.SendToAllClients("Welcome " + name + "\r\n");
                             cmd = name.Split('/');
                         }
                         else
@@ -142,6 +141,7 @@ namespace Boggle
                         start = i + 1;
                     }
                 }
+                SendMessage(JsonConvert.SerializeObject(obj));
                 if (programCounter == 1)
                 {
                     if (cmd[0].Equals("POST "))
@@ -152,7 +152,7 @@ namespace Boggle
                             input = line.Split('"');
                             NewPlayer np = new NewPlayer();
                             np.Nickname = input[3];
-                            obj = server.Register(np, out status);
+                            Person obj = server.Register(np, out status);
                             SendMessage(JsonConvert.SerializeObject(obj));
                         }                       
                     }
@@ -171,22 +171,7 @@ namespace Boggle
                 }
             }
         }
-        /// <summary>
-        /// Convert the obj to byte
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        byte[] ObjectToByteArray(object obj)
-        {
-            if (obj == null)
-                return null;
-            BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
+
 
         /// <summary>
         /// Sends a string to the client
@@ -239,11 +224,12 @@ namespace Boggle
                 HttpResponse response = new HttpResponse(tw);
                 response.Clear();
                 response.BufferOutput = true;
-                response.StatusCode = 200; // HttpStatusCode.OK;
-                response.Write("Ok");
+                response.StatusCode = 201;
+                response.Write("Created");
                 response.ContentType = "application/json; charset=utf-8";
                 response.Flush();
-
+                string s = response.ToString();
+                pendingBytes = Encoding.UTF8.GetBytes(s);
                 try
                 {
                     socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
