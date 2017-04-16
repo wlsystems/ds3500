@@ -240,9 +240,9 @@ namespace Boggle
                 response.Clear();
                 response.BufferOutput = true;
                 response.StatusCode = 200; // HttpStatusCode.OK;
-                response.Write("Hello");
-                response.ContentType = "text/xml";
-                response.End();
+                response.Write("Ok");
+                response.ContentType = "application/json; charset=utf-8";
+                response.Flush();
 
                 try
                 {
