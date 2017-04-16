@@ -8,9 +8,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
-using static System.Net.HttpStatusCode;
-using System.Web;
+using Newtonsoft.Json.Converters;
 
+using static System.Net.HttpStatusCode;
+using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Web;
+using System.Net.Http;
+using System.Net.Http.Headers;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -22,13 +27,10 @@ namespace Boggle
     /// </summary>
     public class ClientConnection
     {
-        
         // Incoming/outgoing is UTF8-encoded.  This is a multi-byte encoding.  The first 128 Unicode characters
         // (which corresponds to the old ASCII character set and contains the common keyboard characters) are
         // encoded into a single byte.  The rest of the Unicode characters can take from 2 to 4 bytes to encode.
         private static System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
-
-        HttpStatusCode status;
 
         // Buffer size for reading incoming bytes
         private const int BUFFER_SIZE = 1024;
@@ -44,6 +46,9 @@ namespace Boggle
 
         // For decoding incoming UTF8-encoded byte streams.
         private Decoder decoder = encoding.GetDecoder();
+
+        private Encoder encoder;
+
         private object obj;
         // Buffers that will contain incoming bytes and characters
         private byte[] incomingBytes = new byte[BUFFER_SIZE];
@@ -95,83 +100,131 @@ namespace Boggle
         /// </summary>
         private void MessageReceived(IAsyncResult result)
         {
-            // Figure out how many bytes have come in
-            int bytesRead = socket.EndReceive(result);
-            //HttpStatusCode status;
-            // If no bytes were received, it means the client closed its side of the socket.
-            // Report that to the console and close our socket.
-            if (bytesRead == 0)
+            try
             {
-                Console.WriteLine("Socket closed");
-                server.RemoveClient(this);
-                socket.Close();
+                int bytesRead=0;
+                // Figure out how many bytes have come in
+                if (socket.Connected.Equals(true))
+                    bytesRead = socket.EndReceive(result);
+                HttpStatusCode status;
+                // If no bytes were received, it means the client closed its side of the socket.
+                // Report that to the console and close our socket.
+                if (bytesRead == 0)
+                {
+                    Console.WriteLine("Socket closed");
+                    server.RemoveClient(this);
+                    socket.Close();
+                }
+
+                // Otherwise, decode and display the incoming bytes.  Then request more bytes.
+                else
+                {
+
+                    // Convert the bytes into characters and appending to incoming
+                    int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
+                    incoming.Append(incomingChars, 0, charsRead);
+                    Console.WriteLine(incoming);
+
+                    // Echo any complete lines, after capitalizing them
+                    int lastNewline = -1;
+                    int start = 0;
+                    String line = "";
+                    String[] input = new string[5];
+
+
+                    for (int i = 0; i < incoming.Length; i++)
+                    {
+                        if (incoming[i] == '\n')
+                        {
+                            line = incoming.ToString(start, i + 1 - start);
+                            if (name == null)
+                            {
+                                name = line.Substring(0, line.Length - 2);
+                                //server.SendToAllClients("Welcome " + name + "\r\n");
+                                cmd = name.Split('/');
+                            }
+                            else
+                            {
+                                //server.SendToAllClients(name + "> " + line.ToUpper());
+                            }
+                            lastNewline = i;
+                            start = i + 1;
+                        }
+                    }
+                    if (programCounter == 1)
+                    {
+                        if (cmd[0].Equals("POST "))
+                        {
+                            if (cmd[2].Equals("users HTTP"))
+                            {
+                                line = incoming.ToString();
+                                input = line.Split('"');
+                                NewPlayer np = new NewPlayer();
+                                np.Nickname = input[3];
+                                string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
+                                HttpResponseMessage rm = new HttpResponseMessage();
+                                var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
+                                rm.Content = content;
+                                rm.IsSuccessStatusCode.Equals(true);
+                                rm.ReasonPhrase = status.ToString();
+                                rm.StatusCode = (HttpStatusCode)201;
+
+                                TextWriter tw = new StreamWriter(server.stream);
+                                HttpResponse resp = new HttpResponse(tw);
+                                resp.ContentType = "application/json";
+                                resp.Write(jsonClient);
+                                resp.Flush();
+
+
+                                BinaryFormatter bf = new BinaryFormatter();
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    bf.Serialize(ms, obj);
+                                    pendingBytes = ms.ToArray();
+                                }
+                                if (!sendIsOngoing)
+                                {
+                                    sendIsOngoing = true;
+                                    //SendBytes();
+                                }
+                            }
+                        }
+                    }
+                    programCounter += 1;
+                    incoming.Remove(0, lastNewline + 1);
+                    try
+                    {
+                        // Ask for some more data
+                        socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
+                            SocketFlags.None, MessageReceived, null);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
+                }
             }
-
-            // Otherwise, decode and display the incoming bytes.  Then request more bytes.
-            else
+            catch(Exception e)
             {
-
-                // Convert the bytes into characters and appending to incoming
-                int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
-                incoming.Append(incomingChars, 0, charsRead);
-                Console.WriteLine(incoming);
-
-                // Echo any complete lines, after capitalizing them
-                int lastNewline = -1;
-                int start = 0;
-                String line = "";
-                String[] input = new string[5];
-   
-
-                for (int i = 0; i < incoming.Length; i++)
-                {
-                    if (incoming[i] == '\n')
-                    {
-                        line = incoming.ToString(start, i + 1 - start);
-                        if (name == null)
-                        {
-                            name = line.Substring(0, line.Length - 2);
-                            cmd = name.Split('/');
-                        }
-                        else
-                        {
-                            //server.SendToAllClients(name + "> " + line.ToUpper());
-                        }
-                        lastNewline = i;
-                        start = i + 1;
-                    }
-                }
-                SendMessage(JsonConvert.SerializeObject(obj));
-                if (programCounter == 1)
-                {
-                    if (cmd[0].Equals("POST "))
-                    {
-                        if (cmd[2].Equals("users HTTP"))
-                        {
-                            line = incoming.ToString();
-                            input = line.Split('"');
-                            NewPlayer np = new NewPlayer();
-                            np.Nickname = input[3];
-                            Person obj = server.Register(np, out status);
-                            SendMessage(JsonConvert.SerializeObject(obj));
-                        }                       
-                    }
-                }
-                programCounter += 1;
-                incoming.Remove(0, lastNewline + 1);    
-                try
-                {
-                    // Ask for some more data
-                    socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
-                        SocketFlags.None, MessageReceived, null);
-                }
-                catch (ObjectDisposedException)
-                {
-
-                }
+                Console.WriteLine(e.ToString());
             }
         }
-
+        /// <summary>
+        /// Convert the obj to byte
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        byte[] ObjectToByteArray(object obj)
+        {
+            if (obj == null)
+                return null;
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+        }
 
         /// <summary>
         /// Sends a string to the client
@@ -214,28 +267,16 @@ namespace Boggle
 
             // If we're not currently dealing with a block of bytes, make a new block of bytes
             // out of outgoing and start sending that.
-            else if (outgoing.Length > 0)
+            else if (pendingBytes != null)
             {
-                //WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
-                pendingBytes = Encoding.UTF8.GetBytes(outgoing.ToString());
-                pendingIndex = 0;
-                MemoryStream stream = new MemoryStream(pendingBytes);
-                TextWriter tw = new StreamWriter(stream);
-                HttpResponse response = new HttpResponse(tw);
-                response.Clear();
-                response.BufferOutput = true;
-                response.StatusCode = 201;
-                response.Write("Created");
-                response.ContentType = "application/json; charset=utf-8";
-                response.Flush();
-                string s = response.ToString();
-                pendingBytes = Encoding.UTF8.GetBytes(s);
+
+                //pendingBytes = Encoding.UTF8.GetBytes(outgoing.ToString());
                 try
                 {
                     socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
                                      SocketFlags.None, MessageSent, null);
                 }
-                catch (ObjectDisposedException)
+                catch (Exception e)
                 {
                 }
             }
@@ -288,7 +329,7 @@ namespace Boggle
         private readonly static Dict dic = new Dict();
         // Listens for incoming connection requests
         private TcpListener server;
-
+        public NetworkStream stream;
         // All the clients that have connected but haven't closed
         private List<ClientConnection> clients = new List<ClientConnection>();
 
@@ -301,16 +342,15 @@ namespace Boggle
 
             // Start the TcpListener
             server.Start();
-
             // Ask the server to call ConnectionRequested at some point in the future when 
             // a connection request arrives.  It could be a very long time until this happens.
             // The waiting and the calling will happen on another thread.  BeginAcceptSocket 
             // returns immediately, and the constructor returns to Main.
             server.BeginAcceptSocket(ConnectionRequested, null);
-
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AppDomain.CurrentDomain.SetData("DataDirectory", baseDirectory);
             //BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
+
             BoggleDB = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = " + baseDirectory + @"BoggleDB.mdf; Integrated Security = True; User Instance=False;";
         }
 
@@ -323,10 +363,12 @@ namespace Boggle
             // We obtain the socket corresonding to the connection request.  Notice that we
             // are passing back the IAsyncResult object.
             Socket s = server.EndAcceptSocket(result);
+            stream = new NetworkStream(s);
 
             // We ask the server to listen for another connection request.  As before, this
             // will happen on another thread.
             server.BeginAcceptSocket(ConnectionRequested, null);
+
 
             // We create a new ClientConnection, which will take care of communicating with
             // the remote client.  We add the new client to the list of clients, taking 
