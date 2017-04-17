@@ -141,12 +141,7 @@ namespace Boggle
                             if (name == null)
                             {
                                 name = line.Substring(0, line.Length - 2);
-                                //server.SendToAllClients("Welcome " + name + "\r\n");
                                 cmd = name.Split('/');
-                            }
-                            else
-                            {
-                                //server.SendToAllClients(name + "> " + line.ToUpper());
                             }
                             lastNewline = i;
                             start = i + 1;
@@ -162,49 +157,28 @@ namespace Boggle
                                 input = line.Split('"');
                                 NewPlayer np = new NewPlayer();
 
-                                if (input.Length == 3)
-                                    SendResponse("D");
-                                else
+                                try
+                                {
                                     np.Nickname = input[3];
-                                string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
-                                //convert the json to bytes.
-                                var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
+                                    string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
+                                    //convert the json to bytes.
+                                    var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
 
-                                var result1 = new List<byte>();
-                                result1.AddRange(Encoding.UTF8.GetBytes(jsonClient));
-                                //format the response
-                                var response =
-                                       "HTTP/1.1 403 Forbidden" + Environment.NewLine +
-                                       "content-type: application/json; charset=utf-8" + Environment.NewLine +
-                                       "Content-Length: 0" + Environment.NewLine +
-                                       "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
-                                        Environment.NewLine;
-                                       //HttpContext context = HttpContext.Current;
-                                //HttpResponse rp = context.Response;
-                                //rp.StatusCode = 201;
-                                //rp.ContentType = "application/json";
-                                //rp.Write(jsonClient);
-                                //rp.End();
+                                    var result1 = new List<byte>();
+                                    result1.AddRange(Encoding.UTF8.GetBytes(jsonClient));
+                                    //format the response
+                                    var response =
+                                           "HTTP/1.1 403 Forbidden" + Environment.NewLine +
+                                           "content-type: application/json; charset=utf-8" + Environment.NewLine +
+                                           "Content-Length: 0" + Environment.NewLine +
+                                           "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
+                                            Environment.NewLine;
+                                }
+                                catch
+                                {
+                                    SendResponse("D", 403);
+                                }
 
-                               // HttpResponseMessage rm = new HttpResponseMessage();
-                                //rm.StatusCode = status;
-                                //rm.ReasonPhrase = "Created";
-                                //rm.Content = content;
-                                //HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create("http://localhost:60000");
-
-
-
-
-                            //    using (var md5 = MD5.Create())
-                             //   {
-                             //       pendingBytes = md5.ComputeHash(result1.ToArray());
-                              //  }
-
-                            //    if (!sendIsOngoing)
-                               // {
-                                    //sendIsOngoing = true;
-                                    //SendBytes();
-                                //}
                             }
                         }
                     }
@@ -227,17 +201,19 @@ namespace Boggle
                 Console.WriteLine(e.ToString());
             }
         }
-        private void SendResponse(string resp)
+        private void SendResponse(string resp, int type)
         {
-
-            var response =
-            "HTTP/1.1 403 Forbidden" + Environment.NewLine +
-            "content-type: application/json; charset=utf-8" + Environment.NewLine +
-            "Content-Length: 0" + Environment.NewLine +
-            "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
-            Environment.NewLine;
-            pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-            SendMessage("a");
+            if (type == 403)
+            {
+                var response =
+                "HTTP/1.1 403 Forbidden" + Environment.NewLine +
+                "content-type: application/json; charset=utf-8" + Environment.NewLine +
+                "Content-Length: 0" + Environment.NewLine +
+                "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
+                Environment.NewLine;
+                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
+                SendMessage("a");
+            }
         }
 
         /// <summary>
