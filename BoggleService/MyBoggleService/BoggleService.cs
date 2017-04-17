@@ -8,14 +8,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
 using static System.Net.HttpStatusCode;
-using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
 using System.Net.Http;
-using System.Net.Http.Headers;
+
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -47,8 +44,6 @@ namespace Boggle
         // For decoding incoming UTF8-encoded byte streams.
         private Decoder decoder = encoding.GetDecoder();
 
-        private Encoder encoder;
-
         private object obj;
         // Buffers that will contain incoming bytes and characters
         private byte[] incomingBytes = new byte[BUFFER_SIZE];
@@ -78,6 +73,8 @@ namespace Boggle
             obj = new object();
             cmd = new String[3]; 
             programCounter = 0;
+
+
             // Record the socket and server and initialize incoming/outgoing
             this.server = server;
             socket = s;
@@ -134,22 +131,19 @@ namespace Boggle
 
                     for (int i = 0; i < incoming.Length; i++)
                     {
-                        if (incoming[i] == '\n')
-                        {
-                            line = incoming.ToString(start, i + 1 - start);
-                            if (name == null)
+                        
+                            if (incoming[i] == '\n')
                             {
-                                name = line.Substring(0, line.Length - 2);
-                                //server.SendToAllClients("Welcome " + name + "\r\n");
-                                cmd = name.Split('/');
+                                line = incoming.ToString(start, i + 1 - start);
+                                if (name == null)
+                                {
+                                    name = line.Substring(0, line.Length - 2);
+                                }
+
+                                lastNewline = i;
+                                start = i + 1;
                             }
-                            else
-                            {
-                                //server.SendToAllClients(name + "> " + line.ToUpper());
-                            }
-                            lastNewline = i;
-                            start = i + 1;
-                        }
+                        
                     }
                     if (programCounter == 1)
                     {
@@ -161,32 +155,29 @@ namespace Boggle
                                 input = line.Split('"');
                                 NewPlayer np = new NewPlayer();
                                 np.Nickname = input[3];
-                                string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
-                                HttpResponseMessage rm = new HttpResponseMessage();
-                                var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
-                                rm.Content = content;
-                                rm.IsSuccessStatusCode.Equals(true);
-                                rm.ReasonPhrase = status.ToString();
-                                rm.StatusCode = (HttpStatusCode)201;
+                                obj = server.Register(np, out status);
+                                string jsonClient = JsonConvert.SerializeObject(obj);
+                                //HttpResponseMessage rm = new HttpResponseMessage();
+                                //var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
+                                //rm.Content = content;
+                                //rm.IsSuccessStatusCode.Equals(true);
+                                //rm.ReasonPhrase = status.ToString();
+                                //rm.StatusCode = (HttpStatusCode)201;
+                                
+                                //TextWriter tw = new StreamWriter(server.stream);
+                                //HttpResponse resp = new HttpResponse(tw);
+                                //resp.ContentType = "application/json";
+                                //resp.Write(jsonClient);
+                                //resp.Flush();
 
-                                TextWriter tw = new StreamWriter(server.stream);
-                                HttpResponse resp = new HttpResponse(tw);
-                                resp.ContentType = "application/json";
-                                resp.Write(jsonClient);
-                                resp.Flush();
 
-
-                                BinaryFormatter bf = new BinaryFormatter();
-                                using (MemoryStream ms = new MemoryStream())
-                                {
-                                    bf.Serialize(ms, obj);
-                                    pendingBytes = ms.ToArray();
-                                }
-                                if (!sendIsOngoing)
-                                {
-                                    sendIsOngoing = true;
-                                    //SendBytes();
-                                }
+                                SendMessage(jsonClient);
+                                //BinaryFormatter bf = new BinaryFormatter();
+                                //using (MemoryStream ms = new MemoryStream())
+                                //{
+                                //    bf.Serialize(ms, obj);
+                                //    pendingBytes = ms.ToArray();
+                                //}
                             }
                         }
                     }
@@ -209,22 +200,7 @@ namespace Boggle
                 Console.WriteLine(e.ToString());
             }
         }
-        /// <summary>
-        /// Convert the obj to byte
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        byte[] ObjectToByteArray(object obj)
-        {
-            if (obj == null)
-                return null;
-            BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
+
 
         /// <summary>
         /// Sends a string to the client
@@ -267,16 +243,19 @@ namespace Boggle
 
             // If we're not currently dealing with a block of bytes, make a new block of bytes
             // out of outgoing and start sending that.
-            else if (pendingBytes != null)
+            else if (outgoing.Length>0)
             {
 
-                //pendingBytes = Encoding.UTF8.GetBytes(outgoing.ToString());
+                pendingBytes = Encoding.UTF8.GetBytes(outgoing.ToString());
                 try
                 {
+                    pendingBytes = encoding.GetBytes(outgoing.ToString());
+                    pendingIndex = 0;
+                    outgoing.Clear();
                     socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
                                      SocketFlags.None, MessageSent, null);
                 }
-                catch (Exception e)
+                catch (ObjectDisposedException)
                 {
                 }
             }
@@ -363,7 +342,6 @@ namespace Boggle
             // We obtain the socket corresonding to the connection request.  Notice that we
             // are passing back the IAsyncResult object.
             Socket s = server.EndAcceptSocket(result);
-            stream = new NetworkStream(s);
 
             // We ask the server to listen for another connection request.  As before, this
             // will happen on another thread.
