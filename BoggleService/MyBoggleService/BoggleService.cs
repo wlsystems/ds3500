@@ -171,6 +171,7 @@ namespace Boggle
 
                                     var result1 = new List<byte>();
                                     result1.AddRange(Encoding.UTF8.GetBytes(jsonClient));
+                                    status = Created; 
                                     SendResponse("D", status);
                                     //format the response
                                     var response =
