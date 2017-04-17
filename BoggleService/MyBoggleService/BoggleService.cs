@@ -159,6 +159,11 @@ namespace Boggle
 
                                 try
                                 {
+                                    if (input[3].Equals(""))
+                                    { 
+                                        status = Forbidden;
+                                        SendResponse("D", status);
+                                    }
                                     np.Nickname = input[3];
                                     string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
                                     //convert the json to bytes.
@@ -166,6 +171,7 @@ namespace Boggle
 
                                     var result1 = new List<byte>();
                                     result1.AddRange(Encoding.UTF8.GetBytes(jsonClient));
+                                    SendResponse("D", status);
                                     //format the response
                                     var response =
                                            "HTTP/1.1 403 Forbidden" + Environment.NewLine +
@@ -176,7 +182,9 @@ namespace Boggle
                                 }
                                 catch
                                 {
-                                    SendResponse("D", 403);
+
+                                    status = Forbidden;
+                                    SendResponse("D", status);
                                 }
 
                             }
@@ -201,12 +209,22 @@ namespace Boggle
                 Console.WriteLine(e.ToString());
             }
         }
-        private void SendResponse(string resp, int type)
+        private void SendResponse(string resp, HttpStatusCode status)
         {
-            if (type == 403)
+            if (status == Forbidden)
             {
                 var response =
                 "HTTP/1.1 403 Forbidden" + Environment.NewLine +
+                "content-type: application/json; charset=utf-8" + Environment.NewLine +
+                "Content-Length: 0" + Environment.NewLine +
+                "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
+                Environment.NewLine;
+                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
+                SendMessage("a");
+            }
+            else  {
+                var response =
+                "HTTP/1.1 201 Created" + Environment.NewLine +
                 "content-type: application/json; charset=utf-8" + Environment.NewLine +
                 "Content-Length: 0" + Environment.NewLine +
                 "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
