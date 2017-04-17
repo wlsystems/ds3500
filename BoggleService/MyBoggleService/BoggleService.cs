@@ -16,6 +16,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -76,7 +77,7 @@ namespace Boggle
         public ClientConnection(Socket s, BoggleService server)
         {
             obj = new object();
-            cmd = new String[3]; 
+            cmd = new String[3];
             programCounter = 0;
             // Record the socket and server and initialize incoming/outgoing
             this.server = server;
@@ -102,7 +103,7 @@ namespace Boggle
         {
             try
             {
-                int bytesRead=0;
+                int bytesRead = 0;
                 // Figure out how many bytes have come in
                 if (socket.Connected.Equals(true))
                     bytesRead = socket.EndReceive(result);
@@ -160,33 +161,50 @@ namespace Boggle
                                 line = incoming.ToString();
                                 input = line.Split('"');
                                 NewPlayer np = new NewPlayer();
-                                np.Nickname = input[3];
+
+                                if (input.Length == 3)
+                                    SendResponse("D");
+                                else
+                                    np.Nickname = input[3];
                                 string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
-                                HttpResponseMessage rm = new HttpResponseMessage();
+                                //convert the json to bytes.
                                 var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
-                                rm.Content = content;
-                                rm.IsSuccessStatusCode.Equals(true);
-                                rm.ReasonPhrase = status.ToString();
-                                rm.StatusCode = (HttpStatusCode)201;
 
-                                TextWriter tw = new StreamWriter(server.stream);
-                                HttpResponse resp = new HttpResponse(tw);
-                                resp.ContentType = "application/json";
-                                resp.Write(jsonClient);
-                                resp.Flush();
+                                var result1 = new List<byte>();
+                                result1.AddRange(Encoding.UTF8.GetBytes(jsonClient));
+                                //format the response
+                                var response =
+                                       "HTTP/1.1 403 Forbidden" + Environment.NewLine +
+                                       "content-type: application/json; charset=utf-8" + Environment.NewLine +
+                                       "Content-Length: 0" + Environment.NewLine +
+                                       "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
+                                        Environment.NewLine;
+                                       //HttpContext context = HttpContext.Current;
+                                //HttpResponse rp = context.Response;
+                                //rp.StatusCode = 201;
+                                //rp.ContentType = "application/json";
+                                //rp.Write(jsonClient);
+                                //rp.End();
+
+                               // HttpResponseMessage rm = new HttpResponseMessage();
+                                //rm.StatusCode = status;
+                                //rm.ReasonPhrase = "Created";
+                                //rm.Content = content;
+                                //HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create("http://localhost:60000");
 
 
-                                BinaryFormatter bf = new BinaryFormatter();
-                                using (MemoryStream ms = new MemoryStream())
-                                {
-                                    bf.Serialize(ms, obj);
-                                    pendingBytes = ms.ToArray();
-                                }
-                                if (!sendIsOngoing)
-                                {
-                                    sendIsOngoing = true;
+
+
+                            //    using (var md5 = MD5.Create())
+                             //   {
+                             //       pendingBytes = md5.ComputeHash(result1.ToArray());
+                              //  }
+
+                            //    if (!sendIsOngoing)
+                               // {
+                                    //sendIsOngoing = true;
                                     //SendBytes();
-                                }
+                                //}
                             }
                         }
                     }
@@ -204,11 +222,24 @@ namespace Boggle
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
         }
+        private void SendResponse(string resp)
+        {
+
+            var response =
+            "HTTP/1.1 403 Forbidden" + Environment.NewLine +
+            "content-type: application/json; charset=utf-8" + Environment.NewLine +
+            "Content-Length: 0" + Environment.NewLine +
+            "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
+            Environment.NewLine;
+            pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
+            SendMessage("a");
+        }
+
         /// <summary>
         /// Convert the obj to byte
         /// </summary>
@@ -319,7 +350,7 @@ namespace Boggle
     /// <summary>
     /// 
     /// </summary>
-    public class BoggleService 
+    public class BoggleService
     {
         /// <summary>
         /// Keeps track of the currently pending game
@@ -420,13 +451,13 @@ namespace Boggle
                 sync.ExitWriteLock();
             }
         }
-  
-    /// <summary>
-    /// The most recent call to SetStatus determines the response code used when.
-    /// an http response is sent..
-    /// </summary>
-    /// <param name="status"></param>
-    private static void SetStatus(HttpStatusCode status)
+
+        /// <summary>
+        /// The most recent call to SetStatus determines the response code used when.
+        /// an http response is sent..
+        /// </summary>
+        /// <param name="status"></param>
+        private static void SetStatus(HttpStatusCode status)
         {
             //WebOperationContext.Current.OutgoingResponse.StatusCode = status;
         }
@@ -442,7 +473,7 @@ namespace Boggle
         public Person Register(NewPlayer user, out HttpStatusCode status)
         {
             Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
-            
+
             if (user.Nickname == null || user.Nickname.Trim().Length == 0 || user.Nickname.Trim().Length > 50)
             {
                 status = Forbidden;
@@ -651,9 +682,9 @@ namespace Boggle
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
                 SetStatus(OK);
-               // jsonClient = JsonConvert.SerializeObject(pg);
+                // jsonClient = JsonConvert.SerializeObject(pg);
                 //WebOperationContext.Current.OutgoingResponse.ContentType =
-              //      "application/json; charset=utf-8";
+                //      "application/json; charset=utf-8";
                 return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
             }
 
@@ -705,7 +736,7 @@ namespace Boggle
                     agb.GameState = "completed";
                     agb.TimeLeft = 0;
                 }
-           //     jsonClient = JsonConvert.SerializeObject(agb);
+                //     jsonClient = JsonConvert.SerializeObject(agb);
             }
             else if (timeLeft <= 0)
             {
@@ -735,7 +766,7 @@ namespace Boggle
                 p1.WordsPlayed = GetWordList(sql, user1, GameID);
                 gc.Player1 = p1;
                 gc.Player2 = p2;
-           //     jsonClient = JsonConvert.SerializeObject(gc);
+                //     jsonClient = JsonConvert.SerializeObject(gc);
             }
 
             else      //game state is active and not brief
@@ -753,7 +784,7 @@ namespace Boggle
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
-              //  jsonClient = JsonConvert.SerializeObject(ag);
+                //  jsonClient = JsonConvert.SerializeObject(ag);
             }
             //serializes which ever game was pulled and returns a stream
             SetStatus(OK);

@@ -98,6 +98,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BoggleServiceTests\BoggleServiceTests.csproj">
+      <Project>{71936e2c-e15e-44de-abff-b69805fae163}</Project>
+      <Name>BoggleServiceTests</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
