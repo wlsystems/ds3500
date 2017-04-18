@@ -48,8 +48,6 @@ namespace Boggle
         // For decoding incoming UTF8-encoded byte streams.
         private Decoder decoder = encoding.GetDecoder();
 
-        private Encoder encoder;
-
         private object obj;
         // Buffers that will contain incoming bytes and characters
         private byte[] incomingBytes = new byte[BUFFER_SIZE];
@@ -160,33 +158,48 @@ namespace Boggle
                                 try
                                 {
                                     if (input[3].Equals(""))
-                                    { 
+                                    {
                                         status = Forbidden;
-                                        SendResponse("D", status);
+                                        SendResponse("d", status);
                                     }
                                     np.Nickname = input[3];
                                     string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
                                     //convert the json to bytes.
-                                    var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
-
-                                    var result1 = new List<byte>();
-                                    result1.AddRange(Encoding.UTF8.GetBytes(jsonClient));
-                                    status = Created; 
-                                    SendResponse("D", status);
-                                    //format the response
-                                    var response =
-                                           "HTTP/1.1 403 Forbidden" + Environment.NewLine +
-                                           "content-type: application/json; charset=utf-8" + Environment.NewLine +
-                                           "Content-Length: 0" + Environment.NewLine +
-                                           "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
-                                            Environment.NewLine;
+                                    status = Created;
+                                    SendResponse(jsonClient, status);
                                 }
                                 catch
                                 {
 
                                     status = Forbidden;
-                                    SendResponse("D", status);
+                                    SendResponse("", status);
                                 }
+                            }
+                            else if (cmd[2].Equals("games HTTP"))
+                            {
+                                line = incoming.ToString();
+                                input = line.Split('"');
+                               NewGameRequest game = new NewGameRequest();
+                                try
+                                {
+                                    if (input[3].Equals(""))
+                                    {
+                                        status = Forbidden;
+                                        SendResponse("d", status);
+                                    }
+                                    game.UserToken = input[3];
+                                    game.TimeLimit = int.Parse(input[4]);
+                                    string jsonClient = JsonConvert.SerializeObject(server.JoinGame(game, out status));
+                                    SendResponse(jsonClient, status);
+                                }
+                                catch
+                                {
+
+                                    status = Forbidden;
+                                    SendResponse("", status);
+                                }
+
+
 
                             }
                         }
@@ -223,34 +236,37 @@ namespace Boggle
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
                 SendMessage("a");
             }
-            else  {
+            else if (status == Created)
+            {
                 var response =
                 "HTTP/1.1 201 Created" + Environment.NewLine +
                 "content-type: application/json; charset=utf-8" + Environment.NewLine +
-                "Content-Length: 0" + Environment.NewLine +
+                "Content-Length: " + resp.Length + Environment.NewLine +
                 "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
                 Environment.NewLine;
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
                 SendMessage("a");
+                pendingBytes = Encoding.UTF8.GetBytes(resp);
+                SendMessage("a");
             }
+            else
+            {
+                var response =
+                "HTTP/1.1 202 Accepted" + Environment.NewLine +
+                "content-type: application/json; charset=utf-8" + Environment.NewLine +
+                "Content-Length: " + resp.Length + Environment.NewLine +
+                "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
+                Environment.NewLine;
+                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
+                SendMessage("a");
+                pendingBytes = Encoding.UTF8.GetBytes(resp);
+                SendMessage("a");
+            }
+
+
+            
         }
 
-        /// <summary>
-        /// Convert the obj to byte
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        byte[] ObjectToByteArray(object obj)
-        {
-            if (obj == null)
-                return null;
-            BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
 
         /// <summary>
         /// Sends a string to the client
@@ -375,7 +391,6 @@ namespace Boggle
             server.BeginAcceptSocket(ConnectionRequested, null);
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AppDomain.CurrentDomain.SetData("DataDirectory", baseDirectory);
-            //BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
 
             BoggleDB = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = " + baseDirectory + @"BoggleDB.mdf; Integrated Security = True; User Instance=False;";
         }
@@ -565,19 +580,19 @@ namespace Boggle
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public NewGame JoinGame(NewGameRequest obj)
+        public NewGame JoinGame(NewGameRequest obj, out HttpStatusCode status)
         {
             string cmd = "";
             Dictionary<string, dynamic> placeholders = new Dictionary<string, dynamic>();
             NewGame ng = new NewGame();
             if (obj.UserToken == null | obj.TimeLimit < 5 | obj.TimeLimit > 120)   //token is null or time is invalid
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return null;
             }
             else if (obj.UserToken == pending.UserToken)    //user is already in pending game, so returns status conflict
             {
-                SetStatus(Conflict);
+                status = Forbidden;
                 return null;
             }
             // Here, the SqlCommand is a select query.  We are interested in whether item.UserID exists in
@@ -586,7 +601,7 @@ namespace Boggle
             placeholders.Add("@UserID", obj.UserToken);
             if (Helper(cmd, placeholders, 3) == null)
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return null;
             }
             if (pending.UserToken == null)  //very first request, initializes pending
@@ -606,7 +621,7 @@ namespace Boggle
                 // us the requested auto-generated ItemID.
                 obj2 = Helper(cmd, placeholders, 2);
                 pending.TimeLimit = obj.TimeLimit;
-                SetStatus(Accepted);
+                status = Accepted;
                 ng.GameID = obj2[0]["GameID"];
                 pending.GameID = Int32.Parse(obj2[0]["GameID"]);
                 pending.UserToken = obj.UserToken;
@@ -627,7 +642,7 @@ namespace Boggle
                 placeholders.Add("@Player1Score", score);
                 placeholders.Add("@Player2Score", score);
                 Helper(cmd, placeholders, 1);
-                SetStatus(Created);
+                status = Created;
                 ng.GameID = pending.GameID.ToString();
                 pending.UserToken = "";
                 pending.GameID = 0;
