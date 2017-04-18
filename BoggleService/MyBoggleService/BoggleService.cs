@@ -67,17 +67,15 @@ namespace Boggle
         //save the command string because the state is reset.
         String[] cmd;
         // Name of chatter or null if unknown
-        private string name = null;
         private BoggleService server;
-        private int programCounter;
+
         /// <summary>
         /// Creates a ClientConnection from the socket, then begins communicating with it.
         /// </summary>
         public ClientConnection(Socket s, BoggleService server)
         {
             obj = new object();
-            cmd = new String[3];
-            programCounter = 0;
+            cmd = new String[5];
             // Record the socket and server and initialize incoming/outgoing
             this.server = server;
             socket = s;
@@ -100,11 +98,13 @@ namespace Boggle
         /// </summary>
         private void MessageReceived(IAsyncResult result)
         {
+
             try
             {
+                dynamic expandoObj = new ExpandoObject();
+                expandoObj = null;
                 int bytesRead = 0;
-                if (socket.Connected.Equals(true))
-                    bytesRead = socket.EndReceive(result);
+                bytesRead = socket.EndReceive(result);
                 HttpStatusCode status;
                 // If no bytes were received, it means the client closed its side of the socket.
                 // Report that to the console and close our socket.
@@ -123,99 +123,49 @@ namespace Boggle
                     int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                     incoming.Append(incomingChars, 0, charsRead);
                     Console.WriteLine(incoming);
-
-                    // Echo any complete lines, after capitalizing them
-                    int lastNewline = -1;
-                    int start = 0;
-                    String line = "";
-                    String[] input = new string[5];
-
-
-                    for (int i = 0; i < incoming.Length; i++)
+                    string[] line= new string[20]; 
+                    string[] stringSeparators = new string[] { "\r\n\r\n" }; //detect the empty line 
+                    string jsonString = "";
+                    if (incoming.ToString().Contains("\r\n\r\n")) //obtain the json after the empty line. 
                     {
-                        if (incoming[i] == '\n')
-                        {
-                            line = incoming.ToString(start, i + 1 - start);
-                            if (name == null)
-                            {
-                                name = line.Substring(0, line.Length - 2);
-                                cmd = name.Split('/');
-                            }
-                            lastNewline = i;
-                            start = i + 1;
-                        }
-                    }
-                    if (programCounter > 0)
+                        line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);
+                        jsonString = line[1];
+                    } 
+                    stringSeparators = new string[] { "\r\n" }; 
+                    line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);//break up the incoming further for parsing later
+                    cmd = line[0].Split('/'); //split the request into lines to parse the type of request
+
+                    if (!jsonString.Equals(""))
                     {
-                        if (cmd[0].Equals("POST "))
+                        expandoObj = JsonConvert.DeserializeObject(jsonString); 
+                        if (cmd[0].Equals("POST ")) 
                         {
-                            if (cmd[2].Equals("users HTTP"))
+                            if (cmd[2].Equals("users HTTP")) //register
                             {
-                                line = incoming.ToString();
-                                input = line.Split('"');
                                 NewPlayer np = new NewPlayer();
-
-                                try
-                                {
-                                    if (input[3].Equals(""))
-                                    {
-                                        status = Forbidden;
-                                        SendResponse("d", status);
-                                    }
-                                    np.Nickname = input[3];
-                                    string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
-                                    //convert the json to bytes.
-
-                                    status = Created;
-                                    SendResponse(jsonClient, status);
-                                }
-                                catch
-                                {
-
-                                    status = Forbidden;
-                                    SendResponse("", status);
-                                }
+                                np.Nickname = expandoObj["Nickname"];
+                                //convert the json to bytes.
+                                string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
+                                SendResponse(jsonClient, status);
                             }
-                            else if (cmd[2].Equals("games HTTP"))
+                            else if (cmd[2].Equals("games HTTP")) //join game
                             {
-                                dynamic game = new ExpandoObject();
-                                game = JsonConvert.DeserializeObject(incoming.ToString());
                                 NewGameRequest ng = new NewGameRequest();
-                                ng.UserToken = game["UserToken"];
-                                ng.TimeLimit = game["TimeLimit"];
-
-                                try
-                                {
-                                    string jsonClient = JsonConvert.SerializeObject(server.JoinGame(ng, out status));
-                                    SendResponse(jsonClient, status);
-                                }
-                                catch
-                                {
-                                    status = Forbidden;
-                                    SendResponse("", status);
-                                }
-
+                                ng.UserToken = expandoObj["UserToken"];
+                                ng.TimeLimit = expandoObj["TimeLimit"];
+                                string jsonClient = JsonConvert.SerializeObject(server.JoinGame(ng, out status));
+                                SendResponse(jsonClient, status);
                             }
                         }
                         else if (cmd[0].Equals("PUT "))
                         {
                             if (cmd[2].Equals("games HTTP"))
                             {
-                                dynamic user = new ExpandoObject();
-                                user = JsonConvert.DeserializeObject(incoming.ToString());
                                 Person cancelPerson = new Person();
-                                cancelPerson.UserToken = user["UserToken"];
+                                cancelPerson.UserToken = expandoObj["UserToken"];
+                                server.CancelJoin(cancelPerson, out status);
+                                SendResponse("", status);
 
-                                try
-                                {
-                                    server.CancelJoin(cancelPerson, out status);
-                                    SendResponse(null, status);
-                                }
-                                catch
-                                {
-                                    status = Forbidden;
-                                    SendResponse(null, status);
-                                }
                             }
                             else   //This is play word 
                             {
@@ -265,18 +215,13 @@ namespace Boggle
                             }
                         }
                     }
-                    programCounter += 1;
-                    incoming.Remove(0, lastNewline + 1);
-
 
                     try
                     {
                         // Ask for some more data
-                        if (sendIsOngoing == false)
-                        {
-                            socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
-                                SocketFlags.None, MessageReceived, null);
-                        }
+                        
+                        socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
+                            SocketFlags.None, MessageReceived, null);
                     }
                     catch (Exception e)
                     {
@@ -290,57 +235,35 @@ namespace Boggle
                 Console.WriteLine(e.ToString());
             }
         }
-        private void SendResponse(string jsonClient, HttpStatusCode status)
+        private void SendResponse(string jsonClient, HttpStatusCode s)
         {
-              
-            string partofReponse = Environment.NewLine +
+            string status = "";
+            string length = "";
+            var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
+            byte[] jsonObj = Encoding.UTF8.GetBytes(content.ToString());
+            length = "Content-Length: " + jsonClient.Length;
+            if (s == Forbidden)
+                status = "HTTP/1.1 403 Forbidden";
+            else if (s == Created)
+                status = "HTTP/1.1 201 Created";
+            else if (s == Accepted)
+                status = "HTTP/1.1 202 Accepted";
+            else if (s == OK)
+                status = "HTTP/1.1 200 OK";
+            else
+                status = "HTTP/1.1 409 Conflict";
+
+            var response =
+                status + Environment.NewLine +
                 "content-type: application/json; charset=utf-8" + Environment.NewLine +
-                "Content-Length: " + jsonClient.Length + Environment.NewLine +
+                length + Environment.NewLine +
                 "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
                 Environment.NewLine;
 
-            if (status == Forbidden)
-            {
-                var response =
-                "HTTP/1.1 403 Forbidden" + partofReponse;
-                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage();
-            }
-            else if (status == Created)
-            {
-                var response =
-                "HTTP/1.1 201 Created" + partofReponse;
-                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage();
-                pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
-                SendMessage();
-            }
-            else if (status == Accepted)
-            {
-                var response =
-                "HTTP/1.1 202 Accepted" + partofReponse;
-                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage();
-                pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
-                SendMessage();
-            }
-            else if (status == OK)
-            {
-                var response =
-                "HTTP/1.1 200 OK" + partofReponse;
-                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage();
-            }
-            else
-            {
-                var response =
-                "HTTP/1.1 409 Conflict" + partofReponse;
-                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage();
-            }
-
-
-
+            pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
+            SendMessage();
+            pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
+            SendMessage();
         }
 
 
