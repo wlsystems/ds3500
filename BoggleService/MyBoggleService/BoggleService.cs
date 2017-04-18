@@ -102,9 +102,8 @@ namespace Boggle
             try
             {
                 int bytesRead = 0;
-                // Figure out how many bytes have come in
-                if (socket.Connected.Equals(true))
-                    bytesRead = socket.EndReceive(result);
+                
+                bytesRead = socket.EndReceive(result);
                 HttpStatusCode status;
                 // If no bytes were received, it means the client closed its side of the socket.
                 // Report that to the console and close our socket.
@@ -165,6 +164,7 @@ namespace Boggle
                                     np.Nickname = input[3];
                                     string jsonClient = JsonConvert.SerializeObject(server.Register(np, out status));
                                     //convert the json to bytes.
+
                                     status = Created;
                                     SendResponse(jsonClient, status);
                                 }
@@ -177,29 +177,22 @@ namespace Boggle
                             }
                             else if (cmd[2].Equals("games HTTP"))
                             {
-                                line = incoming.ToString();
-                                input = line.Split('"');
-                               NewGameRequest game = new NewGameRequest();
+                                dynamic game = new ExpandoObject();
+                                game = JsonConvert.DeserializeObject(incoming.ToString());
+                                NewGameRequest ng = new NewGameRequest();
+                                ng.UserToken = game["UserToken"];
+                                ng.TimeLimit = game["TimeLimit"];
+
                                 try
                                 {
-                                    if (input[3].Equals(""))
-                                    {
-                                        status = Forbidden;
-                                        SendResponse("d", status);
-                                    }
-                                    game.UserToken = input[3];
-                                    game.TimeLimit = int.Parse(input[4]);
-                                    string jsonClient = JsonConvert.SerializeObject(server.JoinGame(game, out status));
+                                    string jsonClient = JsonConvert.SerializeObject(server.JoinGame(ng, out status));
                                     SendResponse(jsonClient, status);
                                 }
                                 catch
                                 {
-
                                     status = Forbidden;
                                     SendResponse("", status);
                                 }
-
-
 
                             }
                         }
@@ -234,7 +227,7 @@ namespace Boggle
                 "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
                 Environment.NewLine;
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage("a");
+                SendMessage();
             }
             else if (status == Created)
             {
@@ -245,9 +238,9 @@ namespace Boggle
                 "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
                 Environment.NewLine;
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage("a");
+                SendMessage();
                 pendingBytes = Encoding.UTF8.GetBytes(resp);
-                SendMessage("a");
+                SendMessage();
             }
             else
             {
@@ -258,9 +251,9 @@ namespace Boggle
                 "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
                 Environment.NewLine;
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage("a");
+                SendMessage();
                 pendingBytes = Encoding.UTF8.GetBytes(resp);
-                SendMessage("a");
+                SendMessage();
             }
 
 
@@ -271,13 +264,11 @@ namespace Boggle
         /// <summary>
         /// Sends a string to the client
         /// </summary>
-        public void SendMessage(string lines)
+        public void SendMessage()
         {
             // Get exclusive access to send mechanism
             lock (sendSync)
             {
-                // Append the message to the outgoing lines
-                outgoing.Append(lines);
                 // If there's not a send ongoing, start one.
                 if (!sendIsOngoing)
                 {
@@ -428,23 +419,7 @@ namespace Boggle
         /// <summary>
         /// Sends the message to all clients
         /// </summary>
-        public void SendToAllClients(string msg)
-        {
-            // Here we use a read lock to access the clients list, which allows concurrent
-            // message sending.
-            try
-            {
-                sync.EnterReadLock();
-                foreach (ClientConnection c in clients)
-                {
-                    c.SendMessage(msg);
-                }
-            }
-            finally
-            {
-                sync.ExitReadLock();
-            }
-        }
+
 
         /// <summary>
         /// Remove c from the client list.
