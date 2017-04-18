@@ -17,6 +17,7 @@ using System.Web;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 /// <summary>
 /// The Bogglenamespace contains the boggle.svc
 /// </summary>
@@ -102,7 +103,6 @@ namespace Boggle
             try
             {
                 int bytesRead = 0;
-                
                 bytesRead = socket.EndReceive(result);
                 HttpStatusCode status;
                 // If no bytes were received, it means the client closed its side of the socket.
@@ -196,12 +196,82 @@ namespace Boggle
 
                             }
                         }
+                        else if (cmd[0].Equals("PUT "))
+                        {
+                            if (cmd[2].Equals("games HTTP"))
+                            {
+                                dynamic user = new ExpandoObject();
+                                user = JsonConvert.DeserializeObject(incoming.ToString());
+                                Person cancelPerson = new Person();
+                                cancelPerson.UserToken = user["UserToken"];
+
+                                try
+                                {
+                                    server.CancelJoin(cancelPerson, out status);
+                                    SendResponse(null, status);
+                                }
+                                catch
+                                {
+                                    status = Forbidden;
+                                    SendResponse(null, status);
+                                }
+                            }
+                            else   //This is play word 
+                            {
+                                Regex r = new Regex(@"^/BoggleService.svc/games/(G\d+)$");
+                                string url1 = "/BoggleService.svc/games";
+                                Match m1 = r.Match(url1);
+                                string gid = m1.Groups[1].ToString();
+                                dynamic word = new ExpandoObject();
+                                word = JsonConvert.DeserializeObject(incoming.ToString());
+                                PlayerWord pw = new PlayerWord();
+                                pw.UserToken = word["UserToken"];
+                                pw.Word = word["Word"];
+
+                                try
+                                {
+                                    WordScore ws = new WordScore();
+                                    string jsonClient = JsonConvert.SerializeObject(server.PlayWord(pw, gid, out status));
+                                    SendResponse(null, status);
+                                }
+                                catch
+                                {
+                                    status = Forbidden;
+                                    SendResponse(null, status);
+                                }
+                            }
+                        }
+                        else if (cmd[0].Equals("Get"))
+                        {
+                            Regex r = new Regex(@"^/BoggleService.svc/games/(G\d+)$");
+                            string url1 = "/BoggleService.svc/games";
+                            Match m1 = r.Match(url1);
+                            string gid = m1.Groups[1].ToString();
+                            dynamic brief = new ExpandoObject();
+                            brief = JsonConvert.DeserializeObject(incoming.ToString());
+
+
+                            try
+                            {
+                                WordScore ws = new WordScore();
+                                string jsonClient = (server.GameStatus(gid, brief, out status));
+                                SendResponse(null, status);
+                            }
+                            catch
+                            {
+                                status = Forbidden;
+                                SendResponse(null, status);
+                            }
+                        }
                     }
                     programCounter += 1;
                     incoming.Remove(0, lastNewline + 1);
+
+
                     try
                     {
                         // Ask for some more data
+                        
                         socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
                             SocketFlags.None, MessageReceived, null);
                     }
@@ -209,6 +279,7 @@ namespace Boggle
                     {
                         Console.WriteLine(e.ToString());
                     }
+
                 }
             }
             catch (Exception e)
@@ -216,48 +287,56 @@ namespace Boggle
                 Console.WriteLine(e.ToString());
             }
         }
-        private void SendResponse(string resp, HttpStatusCode status)
+        private void SendResponse(string jsonClient, HttpStatusCode status)
         {
+            string partofReponse = Environment.NewLine +
+                "content-type: application/json; charset=utf-8" + Environment.NewLine +
+                "Content-Length: " + jsonClient.Length + Environment.NewLine +
+                "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
+                Environment.NewLine;
+
             if (status == Forbidden)
             {
                 var response =
-                "HTTP/1.1 403 Forbidden" + Environment.NewLine +
-                "content-type: application/json; charset=utf-8" + Environment.NewLine +
-                "Content-Length: 0" + Environment.NewLine +
-                "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
-                Environment.NewLine;
+                "HTTP/1.1 403 Forbidden" + partofReponse;
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
                 SendMessage();
             }
             else if (status == Created)
             {
                 var response =
-                "HTTP/1.1 201 Created" + Environment.NewLine +
-                "content-type: application/json; charset=utf-8" + Environment.NewLine +
-                "Content-Length: " + resp.Length + Environment.NewLine +
-                "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
-                Environment.NewLine;
+                "HTTP/1.1 201 Created" + partofReponse;
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
                 SendMessage();
-                pendingBytes = Encoding.UTF8.GetBytes(resp);
+                pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
+                SendMessage();
+            }
+            else if (status == Accepted)
+            {
+                var response =
+                "HTTP/1.1 202 Accepted" + partofReponse;
+                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
+                SendMessage();
+                pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
+                SendMessage();
+            }
+            else if (status == OK)
+            {
+                var response =
+                "HTTP/1.1 200 OK" + partofReponse;
+                pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
                 SendMessage();
             }
             else
             {
                 var response =
-                "HTTP/1.1 202 Accepted" + Environment.NewLine +
-                "content-type: application/json; charset=utf-8" + Environment.NewLine +
-                "Content-Length: " + resp.Length + Environment.NewLine +
-                "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
-                Environment.NewLine;
+                "HTTP/1.1 409 Conflict" + partofReponse;
                 pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
-                SendMessage();
-                pendingBytes = Encoding.UTF8.GetBytes(resp);
                 SendMessage();
             }
 
 
-            
+
         }
 
 
@@ -303,9 +382,9 @@ namespace Boggle
             else if (pendingBytes != null)
             {
 
-                //pendingBytes = Encoding.UTF8.GetBytes(outgoing.ToString());
                 try
                 {
+                    
                     socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
                                      SocketFlags.None, MessageSent, null);
                 }
@@ -628,11 +707,11 @@ namespace Boggle
         ///  Takes in a user token.  If userToken is invalid or user is not in the pending game returns a status of Forbidden. If user
         ///  in the pending game, they are removed and returns a status response of OK. 
         /// </summary>
-        public void CancelJoin(Person cancelobj)
+        public void CancelJoin(Person cancelobj, out HttpStatusCode status)
         {
             if ((cancelobj.UserToken == null) | (pending.UserToken != cancelobj.UserToken))
             {
-                SetStatus(Forbidden);      //the userToken was null, the user is not registered or they are not in the pending game
+                status = Forbidden;      //the userToken was null, the user is not registered or they are not in the pending game
                 return;
             }
             string sql = "delete from Games where GameID = @GameID";
@@ -641,7 +720,7 @@ namespace Boggle
             Helper(sql, placeholders, 1);
             pending.UserToken = "";
             pending.TimeLimit = 0;
-            SetStatus(OK);
+            status = OK;
         }
 
 
@@ -652,12 +731,12 @@ namespace Boggle
         /// </summary>
         /// <param name="gameobj"></param>
         /// <returns></returns>
-        public Stream GameStatus(string GameID, string Brief)
+        public string GameStatus(string GameID, string Brief, out HttpStatusCode status)
         {
             GameID = GameID.Trim(' ');
             if (GameID == null || GameID == "")  //this is checking for null or empty gameIDs
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return null;
             }
             string jsonClient = null;
@@ -666,11 +745,8 @@ namespace Boggle
             {
                 PendingGame pg = new PendingGame();
                 pg.GameState = "pending";
-                SetStatus(OK);
-                // jsonClient = JsonConvert.SerializeObject(pg);
-                //WebOperationContext.Current.OutgoingResponse.ContentType =
-                //      "application/json; charset=utf-8";
-                return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+                status = OK;
+                return jsonClient = JsonConvert.SerializeObject(pg);
             }
 
             string sql = "select * from Games where GameID = @GameID";
@@ -682,7 +758,7 @@ namespace Boggle
             int timeLeft = 0;
             if (obj2 == null)    //the obj is empty so GameID is not in the the table
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return null;
             }
 
@@ -721,7 +797,7 @@ namespace Boggle
                     agb.GameState = "completed";
                     agb.TimeLeft = 0;
                 }
-                //     jsonClient = JsonConvert.SerializeObject(agb);
+                jsonClient = JsonConvert.SerializeObject(agb);
             }
             else if (timeLeft <= 0)
             {
@@ -751,7 +827,7 @@ namespace Boggle
                 p1.WordsPlayed = GetWordList(sql, user1, GameID);
                 gc.Player1 = p1;
                 gc.Player2 = p2;
-                //     jsonClient = JsonConvert.SerializeObject(gc);
+                jsonClient = JsonConvert.SerializeObject(gc);
             }
 
             else      //game state is active and not brief
@@ -769,12 +845,11 @@ namespace Boggle
                 ag.Player1 = p1;
                 ag.Player2 = p2;
                 ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
-                //  jsonClient = JsonConvert.SerializeObject(ag);
+                jsonClient = JsonConvert.SerializeObject(ag);
             }
             //serializes which ever game was pulled and returns a stream
-            SetStatus(OK);
-            //WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
-            return new MemoryStream(Encoding.UTF8.GetBytes(jsonClient));
+            status = OK;
+            return jsonClient;
         }
         public List<WordsPlayed> GetWordList(string sql, string userID, string gid)
         {
@@ -841,12 +916,12 @@ namespace Boggle
         /// <param name="w"></param>
         /// <param name="gid"></param>
         /// <returns></returns>
-        public WordScore PlayWord(PlayerWord w, string gid)
+        public WordScore PlayWord(PlayerWord w, string gid, out HttpStatusCode status)
         {
             gid = gid.Trim(' ');
             if (gid == null || gid == "")  //this is checking for null or empty gameIDs
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return null;
             }
             WordScore ws = new WordScore();
@@ -864,7 +939,7 @@ namespace Boggle
             int playerScore = 0;
             if (pending.GameID.ToString() == gid)
             {
-                SetStatus(Conflict);
+                status = Conflict;
                 return null;
             }
             if (game != null)
@@ -874,7 +949,7 @@ namespace Boggle
                 dd.Add("@UserID", w.UserToken);
                 if (Helper(sql, dd, 3) == null)
                 {
-                    SetStatus(Forbidden);
+                    status = Forbidden;
                     return null;
                 }
                 int i;
@@ -893,7 +968,7 @@ namespace Boggle
             }
             else
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return null;
             }
             dd.Add("@GameID", gid);
@@ -903,18 +978,19 @@ namespace Boggle
 
             if (word == null | word == "" | player == 3)
             {
-                SetStatus(Forbidden);
+                status = Forbidden;
                 return ws;
             }
             else if (timeLeft <= 0)
             {
-                SetStatus(Conflict);
+                status = Conflict;
                 return ws;
             }
             if (word.Length <= 2)
             {
                 ws.Score = 0;
                 wpObj.Score = 0;
+                status = OK;
                 return AddScore(gid, ws, player, wpObj, playerScore, w.UserToken);
             }
 
@@ -923,6 +999,7 @@ namespace Boggle
             {
                 ws.Score = 0;
                 wpObj.Score = 0;
+                status = OK;
                 return AddScore(gid, ws, player, wpObj, playerScore, w.UserToken);
             }
 
@@ -945,6 +1022,7 @@ namespace Boggle
                 ws.Score = -1;
                 wpObj.Score = -1;
             }
+            status = OK;
             return AddScore(gid, ws, player, wpObj, playerScore, w.UserToken);
 
         }
@@ -977,7 +1055,6 @@ namespace Boggle
         /// <returns></returns>
         public WordScore AddScore(string gid, WordScore ws, int player, WordsPlayed wpObj, int playerScore, string UserID)
         {
-            SetStatus(OK);
             Dictionary<string, dynamic> d = new Dictionary<string, dynamic>();
             string sql = "insert into Words (Word, GameID, Player, Score) values(@Word, @GameID, @Player, @Score)";
             d.Add("@GameID", gid);
