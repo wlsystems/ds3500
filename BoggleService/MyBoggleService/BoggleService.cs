@@ -67,9 +67,8 @@ namespace Boggle
         //save the command string because the state is reset.
         String[] cmd;
         // Name of chatter or null if unknown
-        private string name = null;
         private BoggleService server;
-        private int programCounter;
+
         /// <summary>
         /// Creates a ClientConnection from the socket, then begins communicating with it.
         /// </summary>
@@ -77,7 +76,6 @@ namespace Boggle
         {
             obj = new object();
             cmd = new String[5];
-            programCounter = 0;
             // Record the socket and server and initialize incoming/outgoing
             this.server = server;
             socket = s;
@@ -217,9 +215,6 @@ namespace Boggle
                             }
                         }
                     }
-                    programCounter += 1;
-                    //incoming.Remove(0, lastNewline + 1);
-
 
                     try
                     {
