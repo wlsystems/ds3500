@@ -103,7 +103,8 @@ namespace Boggle
             try
             {
                 int bytesRead = 0;
-                bytesRead = socket.EndReceive(result);
+                if (socket.Connected.Equals(true))
+                    bytesRead = socket.EndReceive(result);
                 HttpStatusCode status;
                 // If no bytes were received, it means the client closed its side of the socket.
                 // Report that to the console and close our socket.
@@ -144,7 +145,7 @@ namespace Boggle
                             start = i + 1;
                         }
                     }
-                    if (programCounter == 1)
+                    if (programCounter > 0)
                     {
                         if (cmd[0].Equals("POST "))
                         {
@@ -271,9 +272,11 @@ namespace Boggle
                     try
                     {
                         // Ask for some more data
-                        
-                        socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
-                            SocketFlags.None, MessageReceived, null);
+                        if (sendIsOngoing == false)
+                        {
+                            socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
+                                SocketFlags.None, MessageReceived, null);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -289,6 +292,7 @@ namespace Boggle
         }
         private void SendResponse(string jsonClient, HttpStatusCode status)
         {
+              
             string partofReponse = Environment.NewLine +
                 "content-type: application/json; charset=utf-8" + Environment.NewLine +
                 "Content-Length: " + jsonClient.Length + Environment.NewLine +
