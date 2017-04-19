@@ -121,6 +121,7 @@ namespace Boggle
                 {
                     incomingChars = new char[BUFFER_SIZE];
                     // Convert the bytes into characters and appending to incoming
+
                     int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                     incoming.Append(incomingChars, 0, charsRead);
                     Console.WriteLine(incoming);
@@ -136,7 +137,7 @@ namespace Boggle
                     line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);//break up the incoming further for parsing later
                     cmd = line[0].Split('/'); //split the request into lines to parse the type of request
 
-                    if (!jsonString.Equals(""))
+                    if ((!jsonString.Equals("") || (cmd[0].Equals("GET "))))
                     {
                         expandoObj = JsonConvert.DeserializeObject(jsonString); 
                         if (cmd[0].Equals("POST ")) 
@@ -170,10 +171,10 @@ namespace Boggle
                             }
                             else   //This is play word 
                             {
-                                Regex r = new Regex(@"^/BoggleService.svc/games/(\d+)$");
-                                string url1 = "/BoggleService.svc/games";
+                                Regex r = new Regex(@"\d+");
+                                string url1 = incoming.ToString();
                                 Match m1 = r.Match(url1);
-                                string gid = m1.Groups[1].ToString();
+                                string gid = m1.ToString();
                                 PlayerWord pw = new PlayerWord();
                                 pw.UserToken = expandoObj["UserToken"];
                                 pw.Word = expandoObj["Word"];
@@ -192,12 +193,11 @@ namespace Boggle
                         }
                         else if (cmd[0].Equals("GET "))
                         {
-                            Regex r = new Regex(@"^/BoggleService.svc/games/(G\d+)$");
-                            string url1 = "/BoggleService.svc/games";
+                            Regex r = new Regex(@"\d+");
+                            string url1 = incoming.ToString();
                             Match m1 = r.Match(url1);
-                            string gid = m1.Groups[1].ToString();
-                            dynamic brief = new ExpandoObject();
-                            brief = JsonConvert.DeserializeObject(incoming.ToString());
+                            string gid = m1.ToString();
+                            string brief = "no";
 
                             try
                             {
