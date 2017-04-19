@@ -104,7 +104,8 @@ namespace Boggle
                 dynamic expandoObj = new ExpandoObject();
                 expandoObj = null;
                 int bytesRead = 0;
-                bytesRead = socket.EndReceive(result);
+                if (socket.Connected)
+                    bytesRead = socket.EndReceive(result);
                 HttpStatusCode status;
                 // If no bytes were received, it means the client closed its side of the socket.
                 // Report that to the console and close our socket.
@@ -118,7 +119,7 @@ namespace Boggle
                 // Otherwise, decode and display the incoming bytes.  Then request more bytes.
                 else
                 {
-                    incomingChars.Initialize();
+                    incomingChars = new char[BUFFER_SIZE];
                     // Convert the bytes into characters and appending to incoming
                     int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                     incoming.Append(incomingChars, 0, charsRead);
@@ -189,7 +190,7 @@ namespace Boggle
                                 }
                             }
                         }
-                        else if (cmd[0].Equals("Get"))
+                        else if (cmd[0].Equals("GET "))
                         {
                             Regex r = new Regex(@"^/BoggleService.svc/games/(G\d+)$");
                             string url1 = "/BoggleService.svc/games";
@@ -210,7 +211,6 @@ namespace Boggle
                             }
                         }
                     }
-                    incoming.Remove(0, incoming.Length);
                     try
                     {
                         // Ask for some more data
@@ -257,7 +257,7 @@ namespace Boggle
 
             pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
             SendMessage();
-            if (jsonClient != "")
+            if (!jsonClient.Equals(""))
             {
                 pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
                 SendMessage();
@@ -330,8 +330,10 @@ namespace Boggle
         /// </summary>
         private void MessageSent(IAsyncResult result)
         {
+            int bytesSent = 0;
             // Find out how many bytes were actually sent
-            int bytesSent = socket.EndSend(result);
+            if (socket.Connected)
+                bytesSent = socket.EndSend(result);
 
             // Get exclusive access to send mechanism
             lock (sendSync)
