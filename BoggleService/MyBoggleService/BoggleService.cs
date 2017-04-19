@@ -118,7 +118,7 @@ namespace Boggle
                 // Otherwise, decode and display the incoming bytes.  Then request more bytes.
                 else
                 {
-
+                    incomingChars.Initialize();
                     // Convert the bytes into characters and appending to incoming
                     int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                     incoming.Append(incomingChars, 0, charsRead);
@@ -215,7 +215,7 @@ namespace Boggle
                             }
                         }
                     }
-
+                    incoming.Remove(0, incoming.Length);
                     try
                     {
                         // Ask for some more data
