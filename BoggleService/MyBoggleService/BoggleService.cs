@@ -104,7 +104,8 @@ namespace Boggle
                 dynamic expandoObj = new ExpandoObject();
                 expandoObj = null;
                 int bytesRead = 0;
-                bytesRead = socket.EndReceive(result);
+                if (socket.Connected)
+                    bytesRead = socket.EndReceive(result);
                 HttpStatusCode status;
                 // If no bytes were received, it means the client closed its side of the socket.
                 // Report that to the console and close our socket.
@@ -120,6 +121,7 @@ namespace Boggle
                 {
 
                     // Convert the bytes into characters and appending to incoming
+
                     int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                     incoming.Append(incomingChars, 0, charsRead);
                     Console.WriteLine(incoming);
@@ -135,7 +137,7 @@ namespace Boggle
                     line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);//break up the incoming further for parsing later
                     cmd = line[0].Split('/'); //split the request into lines to parse the type of request
 
-                    if (!jsonString.Equals(""))
+                    if ((!jsonString.Equals("") || (cmd[0].Equals("GET "))))
                     {
                         expandoObj = JsonConvert.DeserializeObject(jsonString); 
                         if (cmd[0].Equals("POST ")) 
@@ -189,13 +191,13 @@ namespace Boggle
                                 }
                             }
                         }
-                        else if (cmd[0].Equals("Get"))
+                        else if (cmd[0].Equals("GET "))
                         {
                             Regex r = new Regex(@"\d+");
                             string url1 = incoming.ToString();
                             Match m1 = r.Match(url1);
                             string gid = m1.ToString();
-                            dynamic brief = expandoObj["Brief"];
+                            string brief = "no";
 
                             try
                             {
