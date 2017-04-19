@@ -773,6 +773,7 @@ namespace Boggle
                 ag.Player2 = p2;
                 ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
                 jsonClient = JsonConvert.SerializeObject(ag);
+                JsonConvert.DeserializeObject(jsonClient);
             }
             //serializes which ever game was pulled and returns a stream
             status = OK;
