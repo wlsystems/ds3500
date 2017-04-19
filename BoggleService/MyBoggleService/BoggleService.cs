@@ -81,7 +81,7 @@ namespace Boggle
             socket = s;
             incoming = new StringBuilder();
             outgoing = new StringBuilder();
-
+            
             try
             {
                 // Ask the socket to call MessageReceive as soon as up to 1024 bytes arrive.
@@ -166,7 +166,7 @@ namespace Boggle
                                 Person cancelPerson = new Person();
                                 cancelPerson.UserToken = expandoObj["UserToken"];
                                 server.CancelJoin(cancelPerson, out status);
-                                SendResponse("", status);
+                                SendResponse(null, status);
 
                             }
                             else   //This is play word 
@@ -203,6 +203,7 @@ namespace Boggle
                             {
                                 string jsonClient = (server.GameStatus(gid, brief, out status));
                                 SendResponse(jsonClient, status);
+
                             }
                             catch
                             {
@@ -214,8 +215,6 @@ namespace Boggle
 
                     try
                     {
-                        // Ask for some more data
-                        
                         socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
                             SocketFlags.None, MessageReceived, null);
                     }
@@ -235,9 +234,17 @@ namespace Boggle
         {
             string status = "";
             string length = "";
-            var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
-            byte[] jsonObj = Encoding.UTF8.GetBytes(content.ToString());
-            length = "Content-Length: " + jsonClient.Length;
+            if (jsonClient != null)
+            {
+                var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
+                byte[] jsonObj = Encoding.UTF8.GetBytes(content.ToString());
+                length = "Content-Length: " + jsonClient.Length;
+            }
+            else
+            {
+                length = "Content-Length: " + 0;
+            }
+            
             if (s == Forbidden)
                 status = "HTTP/1.1 403 Forbidden";
             else if (s == Created)
@@ -258,7 +265,7 @@ namespace Boggle
 
             pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
             SendMessage();
-            if (jsonClient != "")
+            if (jsonClient != null)
             {
                 pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
                 SendMessage();
@@ -295,7 +302,7 @@ namespace Boggle
             {
                 try
                 {
-                    socket.BeginSend(pendingBytes, pendingIndex, pendingBytes.Length - pendingIndex,
+                     socket.BeginSend(pendingBytes, pendingIndex, pendingBytes.Length - pendingIndex,
                                      SocketFlags.None, MessageSent, null);
                 }
                 catch (ObjectDisposedException)
@@ -332,7 +339,9 @@ namespace Boggle
         private void MessageSent(IAsyncResult result)
         {
             // Find out how many bytes were actually sent
-            int bytesSent = socket.EndSend(result);
+            int bytesSent = 0;
+            if (socket.Connected)
+                bytesSent = socket.EndReceive(result);
 
             // Get exclusive access to send mechanism
             lock (sendSync)
@@ -406,19 +415,19 @@ namespace Boggle
             // will happen on another thread.
             server.BeginAcceptSocket(ConnectionRequested, null);
 
-
-            // We create a new ClientConnection, which will take care of communicating with
-            // the remote client.  We add the new client to the list of clients, taking 
-            // care to use a write lock.
-            try
-            {
-                sync.EnterWriteLock();
-                clients.Add(new ClientConnection(s, this));
-            }
-            finally
-            {
-                sync.ExitWriteLock();
-            }
+            new ClientConnection(s, this);
+            //// We create a new ClientConnection, which will take care of communicating with
+            //// the remote client.  We add the new client to the list of clients, taking 
+            //// care to use a write lock.
+            //try
+            //{
+            //    sync.EnterWriteLock();
+            //    clients.Add(new ClientConnection(s, this));
+            //}
+            //finally
+            //{
+            //    sync.ExitWriteLock();
+            //}
         }
 
         /// <summary>
@@ -659,13 +668,14 @@ namespace Boggle
         /// <returns></returns>
         public string GameStatus(string GameID, string Brief, out HttpStatusCode status)
         {
+
+            string jsonClient = null;
             GameID = GameID.Trim(' ');
             if (GameID == null || GameID == "")  //this is checking for null or empty gameIDs
             {
                 status = Forbidden;
-                return null;
+                return jsonClient;
             }
-            string jsonClient = null;
 
             if (pending.GameID.ToString() == GameID)              //the game status requested is for the pending game
             {
@@ -685,7 +695,7 @@ namespace Boggle
             if (obj2 == null)    //the obj is empty so GameID is not in the the table
             {
                 status = Forbidden;
-                return null;
+                return jsonClient;
             }
 
             List<Dictionary<string, dynamic>> nickname1 = new List<Dictionary<string, dynamic>>();
