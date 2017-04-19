@@ -169,10 +169,10 @@ namespace Boggle
                             }
                             else   //This is play word 
                             {
-                                Regex r = new Regex(@"^/BoggleService.svc/games/(\d+)$");
-                                string url1 = "/BoggleService.svc/games";
+                                Regex r = new Regex(@"\d+");
+                                string url1 = incoming.ToString();
                                 Match m1 = r.Match(url1);
-                                string gid = m1.Groups[1].ToString();
+                                string gid = m1.ToString();
                                 PlayerWord pw = new PlayerWord();
                                 pw.UserToken = expandoObj["UserToken"];
                                 pw.Word = expandoObj["Word"];
@@ -191,12 +191,11 @@ namespace Boggle
                         }
                         else if (cmd[0].Equals("Get"))
                         {
-                            Regex r = new Regex(@"^/BoggleService.svc/games/(G\d+)$");
-                            string url1 = "/BoggleService.svc/games";
+                            Regex r = new Regex(@"\d+");
+                            string url1 = incoming.ToString();
                             Match m1 = r.Match(url1);
-                            string gid = m1.Groups[1].ToString();
-                            dynamic brief = new ExpandoObject();
-                            brief = JsonConvert.DeserializeObject(incoming.ToString());
+                            string gid = m1.ToString();
+                            dynamic brief = expandoObj["Brief"];
 
                             try
                             {
