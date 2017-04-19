@@ -169,21 +169,18 @@ namespace Boggle
                             }
                             else   //This is play word 
                             {
-                                Regex r = new Regex(@"^/BoggleService.svc/games/(G\d+)$");
+                                Regex r = new Regex(@"^/BoggleService.svc/games/(\d+)$");
                                 string url1 = "/BoggleService.svc/games";
                                 Match m1 = r.Match(url1);
                                 string gid = m1.Groups[1].ToString();
-                                dynamic word = new ExpandoObject();
-                                word = JsonConvert.DeserializeObject(incoming.ToString());
                                 PlayerWord pw = new PlayerWord();
-                                pw.UserToken = word["UserToken"];
-                                pw.Word = word["Word"];
+                                pw.UserToken = expandoObj["UserToken"];
+                                pw.Word = expandoObj["Word"];
 
                                 try
                                 {
-                                    WordScore ws = new WordScore();
                                     string jsonClient = JsonConvert.SerializeObject(server.PlayWord(pw, gid, out status));
-                                    SendResponse(null, status);
+                                    SendResponse(jsonClient, status);
                                 }
                                 catch
                                 {
@@ -201,12 +198,10 @@ namespace Boggle
                             dynamic brief = new ExpandoObject();
                             brief = JsonConvert.DeserializeObject(incoming.ToString());
 
-
                             try
                             {
-                                WordScore ws = new WordScore();
                                 string jsonClient = (server.GameStatus(gid, brief, out status));
-                                SendResponse(null, status);
+                                SendResponse(jsonClient, status);
                             }
                             catch
                             {
@@ -262,8 +257,11 @@ namespace Boggle
 
             pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
             SendMessage();
-            pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
-            SendMessage();
+            if (jsonClient != "")
+            {
+                pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
+                SendMessage();
+            }
         }
 
 
@@ -573,7 +571,7 @@ namespace Boggle
             }
             else if (obj.UserToken == pending.UserToken)    //user is already in pending game, so returns status conflict
             {
-                status = Forbidden;
+                status = Conflict;
                 return null;
             }
             // Here, the SqlCommand is a select query.  We are interested in whether item.UserID exists in
