@@ -119,28 +119,28 @@ namespace Boggle
                 // Otherwise, decode and display the incoming bytes.  Then request more bytes.
                 else
                 {
-                    incomingChars = new char[BUFFER_SIZE];
+
                     // Convert the bytes into characters and appending to incoming
 
                     int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
                     incoming.Append(incomingChars, 0, charsRead);
                     Console.WriteLine(incoming);
-                    string[] line= new string[20]; 
+                    string[] line = new string[20];
                     string[] stringSeparators = new string[] { "\r\n\r\n" }; //detect the empty line 
                     string jsonString = "";
                     if (incoming.ToString().Contains("\r\n\r\n")) //obtain the json after the empty line. 
                     {
                         line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);
                         jsonString = line[1];
-                    } 
-                    stringSeparators = new string[] { "\r\n" }; 
+                    }
+                    stringSeparators = new string[] { "\r\n" };
                     line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);//break up the incoming further for parsing later
                     cmd = line[0].Split('/'); //split the request into lines to parse the type of request
 
                     if ((!jsonString.Equals("") || (cmd[0].Equals("GET "))))
                     {
-                        expandoObj = JsonConvert.DeserializeObject(jsonString); 
-                        if (cmd[0].Equals("POST ")) 
+                        expandoObj = JsonConvert.DeserializeObject(jsonString);
+                        if (cmd[0].Equals("POST "))
                         {
                             if (cmd[2].Equals("users HTTP")) //register
                             {
@@ -211,12 +211,13 @@ namespace Boggle
                             }
                         }
                     }
+
                     try
                     {
                         // Ask for some more data
-                        
-                        socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
-                            SocketFlags.None, MessageReceived, null);
+                        if (!sendIsOngoing)
+                            socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
+                                SocketFlags.None, MessageReceived, null);
                     }
                     catch (Exception e)
                     {
@@ -234,9 +235,17 @@ namespace Boggle
         {
             string status = "";
             string length = "";
-            var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
-            byte[] jsonObj = Encoding.UTF8.GetBytes(content.ToString());
-            length = "Content-Length: " + jsonClient.Length;
+            if (jsonClient != null)
+            {
+                var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
+                //  byte[] jsonObj = Encoding.UTF8.GetBytes(content.ToString());
+                length = "Content-Length: " + jsonClient.Length;
+            }
+            else
+            {
+                length = "Content-Length: " + 0;
+            }
+
             if (s == Forbidden)
                 status = "HTTP/1.1 403 Forbidden";
             else if (s == Created)
@@ -253,15 +262,11 @@ namespace Boggle
                 "content-type: application/json; charset=utf-8" + Environment.NewLine +
                 length + Environment.NewLine +
                 "Date: Mon, 24 Nov 2014 10:21:21 GMT" + Environment.NewLine +
-                Environment.NewLine;
+                Environment.NewLine +
+                jsonClient + Environment.NewLine;
 
             pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
             SendMessage();
-            if (!jsonClient.Equals(""))
-            {
-                pendingBytes = Encoding.UTF8.GetBytes(jsonClient);
-                SendMessage();
-            }
         }
 
 
@@ -295,7 +300,7 @@ namespace Boggle
                 try
                 {
                     socket.BeginSend(pendingBytes, pendingIndex, pendingBytes.Length - pendingIndex,
-                                     SocketFlags.None, MessageSent, null);
+                                    SocketFlags.None, MessageSent, null);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -309,7 +314,7 @@ namespace Boggle
 
                 try
                 {
-                    
+
                     socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
                                      SocketFlags.None, MessageSent, null);
                 }
@@ -330,10 +335,10 @@ namespace Boggle
         /// </summary>
         private void MessageSent(IAsyncResult result)
         {
-            int bytesSent = 0;
             // Find out how many bytes were actually sent
+            int bytesSent = 0;
             if (socket.Connected)
-                bytesSent = socket.EndSend(result);
+                bytesSent = socket.EndReceive(result);
 
             // Get exclusive access to send mechanism
             lock (sendSync)
@@ -407,19 +412,8 @@ namespace Boggle
             // will happen on another thread.
             server.BeginAcceptSocket(ConnectionRequested, null);
 
+            new ClientConnection(s, this);
 
-            // We create a new ClientConnection, which will take care of communicating with
-            // the remote client.  We add the new client to the list of clients, taking 
-            // care to use a write lock.
-            try
-            {
-                sync.EnterWriteLock();
-                clients.Add(new ClientConnection(s, this));
-            }
-            finally
-            {
-                sync.ExitWriteLock();
-            }
         }
 
         /// <summary>
@@ -588,7 +582,7 @@ namespace Boggle
             if (pending.UserToken == null)  //very first request, initializes pending
             {
                 pending.UserToken = "";
-                //dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
+                dic.strings = new HashSet<string>(File.ReadAllLines("dictionary.txt"));
             }
             if (pending.UserToken == "")
             {
@@ -660,13 +654,14 @@ namespace Boggle
         /// <returns></returns>
         public string GameStatus(string GameID, string Brief, out HttpStatusCode status)
         {
+
+            string jsonClient = null;
             GameID = GameID.Trim(' ');
             if (GameID == null || GameID == "")  //this is checking for null or empty gameIDs
             {
                 status = Forbidden;
-                return null;
+                return jsonClient;
             }
-            string jsonClient = null;
 
             if (pending.GameID.ToString() == GameID)              //the game status requested is for the pending game
             {
@@ -686,7 +681,7 @@ namespace Boggle
             if (obj2 == null)    //the obj is empty so GameID is not in the the table
             {
                 status = Forbidden;
-                return null;
+                return jsonClient;
             }
 
             List<Dictionary<string, dynamic>> nickname1 = new List<Dictionary<string, dynamic>>();
@@ -773,7 +768,6 @@ namespace Boggle
                 ag.Player2 = p2;
                 ag.TimeLeft = SetTime(Int32.Parse(obj2[0]["TimeLimit"]), int.Parse(obj2[0]["StartTime"]));
                 jsonClient = JsonConvert.SerializeObject(ag);
-                JsonConvert.DeserializeObject(jsonClient);
             }
             //serializes which ever game was pulled and returns a stream
             status = OK;
