@@ -166,7 +166,7 @@ namespace Boggle
                                 Person cancelPerson = new Person();
                                 cancelPerson.UserToken = expandoObj["UserToken"];
                                 server.CancelJoin(cancelPerson, out status);
-                                SendResponse(null, status);
+                                SendResponse("", status);
 
                             }
                             else   //This is play word 
@@ -203,7 +203,6 @@ namespace Boggle
                             {
                                 string jsonClient = (server.GameStatus(gid, brief, out status));
                                 SendResponse(jsonClient, status);
-
                             }
                             catch
                             {
@@ -215,6 +214,8 @@ namespace Boggle
 
                     try
                     {
+                        // Ask for some more data
+                        if (!sendIsOngoing)
                         socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
                             SocketFlags.None, MessageReceived, null);
                     }
@@ -237,7 +238,7 @@ namespace Boggle
             if (jsonClient != null)
             {
                 var content = new StringContent(jsonClient, Encoding.UTF8, "application/json");
-                byte[] jsonObj = Encoding.UTF8.GetBytes(content.ToString());
+                //  byte[] jsonObj = Encoding.UTF8.GetBytes(content.ToString());
                 length = "Content-Length: " + jsonClient.Length;
             }
             else
@@ -416,18 +417,7 @@ namespace Boggle
             server.BeginAcceptSocket(ConnectionRequested, null);
 
             new ClientConnection(s, this);
-            //// We create a new ClientConnection, which will take care of communicating with
-            //// the remote client.  We add the new client to the list of clients, taking 
-            //// care to use a write lock.
-            //try
-            //{
-            //    sync.EnterWriteLock();
-            //    clients.Add(new ClientConnection(s, this));
-            //}
-            //finally
-            //{
-            //    sync.ExitWriteLock();
-            //}
+
         }
 
         /// <summary>
@@ -596,7 +586,7 @@ namespace Boggle
             if (pending.UserToken == null)  //very first request, initializes pending
             {
                 pending.UserToken = "";
-                //dic.strings = new HashSet<string>(File.ReadAllLines(HttpRuntime.AppDomainAppPath + "/dictionary.txt"));
+                dic.strings = new HashSet<string>(File.ReadAllLines("dictionary.txt"));
             }
             if (pending.UserToken == "")
             {
