@@ -108,7 +108,7 @@ namespace Boggle
                     bytesRead = socket.EndReceive(result);
                 HttpStatusCode status;
                 // If no bytes were received, it means the client closed its side of the socket.
-                // Report that to the console and close our socket.
+                // Report that to the console and close our socket...
                 if (bytesRead == 0)
                 {
                     Console.WriteLine("Socket closed");
