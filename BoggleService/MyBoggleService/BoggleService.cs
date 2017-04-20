@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Dustin Shiozaki u0054455
+//Tracy King
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Dynamic;
@@ -231,6 +234,12 @@ namespace Boggle
                 Console.WriteLine(e.ToString());
             }
         }
+
+        /// <summary>
+        /// Helper method to send the response after converting it to json and bytes.
+        /// </summary>
+        /// <param name="jsonClient"></param>
+        /// <param name="s"></param>
         private void SendResponse(string jsonClient, HttpStatusCode s)
         {
             string status = "";
@@ -265,7 +274,7 @@ namespace Boggle
                 Environment.NewLine +
                 jsonClient + Environment.NewLine;
 
-            pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
+            pendingBytes = Encoding.UTF8.GetBytes(response.ToString()); //encode the object
             SendMessage();
             }
 
@@ -361,7 +370,7 @@ namespace Boggle
         }
     }
     /// <summary>
-    /// 
+    /// Create the server and socket.
     /// </summary>
     public class BoggleService
     {
@@ -474,7 +483,13 @@ namespace Boggle
             Helper(sql, placeholders, 1);
             return p;
         }
-
+        /// <summary>
+        /// Helper method that execute the sql commands.
+        /// </summary>
+        /// <param name="strCommand"></param>
+        /// <param name="coms"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public List<Dictionary<string, dynamic>> Helper(string strCommand, Dictionary<string, dynamic> coms, int type)
         {
             List<Dictionary<string, dynamic>> obj = new List<Dictionary<string, dynamic>>();
