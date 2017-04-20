@@ -81,7 +81,7 @@ namespace Boggle
             socket = s;
             incoming = new StringBuilder();
             outgoing = new StringBuilder();
-
+            
             try
             {
                 // Ask the socket to call MessageReceive as soon as up to 1024 bytes arrive.
@@ -132,15 +132,15 @@ namespace Boggle
                     {
                         line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);
                         jsonString = line[1];
-                    }
-                    stringSeparators = new string[] { "\r\n" };
+                    } 
+                    stringSeparators = new string[] { "\r\n" }; 
                     line = incoming.ToString().Split(stringSeparators, StringSplitOptions.None);//break up the incoming further for parsing later
                     cmd = line[0].Split('/'); //split the request into lines to parse the type of request
 
                     if ((!jsonString.Equals("") || (cmd[0].Equals("GET "))))
                     {
-                        expandoObj = JsonConvert.DeserializeObject(jsonString);
-                        if (cmd[0].Equals("POST "))
+                        expandoObj = JsonConvert.DeserializeObject(jsonString); 
+                        if (cmd[0].Equals("POST ")) 
                         {
                             if (cmd[2].Equals("users HTTP")) //register
                             {
@@ -216,8 +216,8 @@ namespace Boggle
                     {
                         // Ask for some more data
                         if (!sendIsOngoing)
-                            socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
-                                SocketFlags.None, MessageReceived, null);
+                        socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
+                            SocketFlags.None, MessageReceived, null);
                     }
                     catch (Exception e)
                     {
@@ -245,7 +245,7 @@ namespace Boggle
             {
                 length = "Content-Length: " + 0;
             }
-
+            
             if (s == Forbidden)
                 status = "HTTP/1.1 403 Forbidden";
             else if (s == Created)
@@ -267,7 +267,7 @@ namespace Boggle
 
             pendingBytes = Encoding.UTF8.GetBytes(response.ToString());
             SendMessage();
-        }
+            }
 
 
         /// <summary>
@@ -299,8 +299,8 @@ namespace Boggle
             {
                 try
                 {
-                    socket.BeginSend(pendingBytes, pendingIndex, pendingBytes.Length - pendingIndex,
-                                    SocketFlags.None, MessageSent, null);
+                     socket.BeginSend(pendingBytes, pendingIndex, pendingBytes.Length - pendingIndex,
+                                     SocketFlags.None, MessageSent, null);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -314,7 +314,7 @@ namespace Boggle
 
                 try
                 {
-
+                    
                     socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
                                      SocketFlags.None, MessageSent, null);
                 }
