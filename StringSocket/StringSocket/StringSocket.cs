@@ -41,7 +41,7 @@ namespace CustomNetworking
     /// where callback is a SendCallback (see below) and payload is an arbitrary object.
     /// This is a non-blocking, asynchronous operation.  When the StringSocket has 
     /// successfully written the string to the underlying Socket, or failed in the 
-    /// attempt, it invokes the callback.  The parameter to the callback is the payload.  
+    /// attempt, it invokes the callback.  The parameter to the callback is the payload...  
     /// 
     /// We can read a string from a StringSocket ss by doing
     /// 
