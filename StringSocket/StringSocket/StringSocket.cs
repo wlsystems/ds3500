@@ -107,7 +107,7 @@ namespace CustomNetworking
         /// This method is non-blocking.  This means that it does not wait until the string
         /// has been sent before returning.  Instead, it arranges for the string to be sent
         /// and then returns.  When the send is completed (at some time in the future), the
-        /// callback is called on another thread.
+        /// callback is called on another thread...
         /// 
         /// This method is thread safe.  This means that multiple threads can call BeginSend
         /// on a shared socket without worrying around synchronization.  The implementation of
