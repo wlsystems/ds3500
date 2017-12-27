@@ -51,4 +51,64 @@ Put all of the above, ideally during development, in your assignment repository.
 Write a short document interpreting the output from running your test program and describing the failing test cases you have found. Describe your setup and results. Give a hypothesis that is your best guess as to what might be causing the issue for each failing test. Formulating a hypothesis based on execution data is an important debugging skill. Start the document with your team information - names and GitHub repository link. Show some organization and communication skills in the document.
 Add to the document how you and your partner split up the work. If you worked together, say that. If you broke the problem into categories and each worked on part, say what those categories work. Save the document as Testing.pdf document.
 Both partners should submit the Testing.pdf.
-Previous Next
+
+## Submission
+Andrew Schneider
+Dustin Shiozaki
+https://github.com/University-of-Utah-CS3505/cs3505-f17-a4-googletest-wlsystems.git
+TEST​ ​(Students,​ ​addPhoneNumbers)
+- If the name is in the records but has no phone the method returns 111-111-1111
+- If the name is not in the records the method returns 111-111-1111.
+For adding phone numbers to a name that is not in the records, it returns a default phone
+number rather than correctly handling it as an invalid input.
+TEST​ ​(Students,​ ​phoneForName)
+- If you add two users that have the same userID then changing the phone number
+will result in both users having the same phone number.
+- If you try to look up a non existent name then it will add that name and the total
+number of records will increase by one.
+When the phoneForName method is given a nonexistent name, it adds that name and
+increases the number of entries in the Students object by one. This should be taken care of and
+returned as an error, but it adds the user instead.
+- If the name is an empty string it returns an empty string.
+When an empty string is added with a user ID and then a phone number is added,
+the phoneForName("") returns the correct phone. Then if you change the phone number
+it is changed correctly. However, if call addUser("", 123) and assign it a different userId and
+phone number then it incorrectly returns a memory address instead of the phone number.
+TEST​ ​(Students,​ ​addGrade)
+- Like the other methods if two users have the same ID they can still only have
+one grade for both of them.
+Each user ID can only contain one grade, so if there is another student with the same
+user ID that is created, it is the same student rather than adding a new student with the same
+user ID.
+TEST​ ​(Students,​ ​fullRecord)
+When an incomplete record containing a grade but not a phone number is entered, the
+test should fail but returns true. So our guess is that it checks if the user is valid and has a
+grade and then returns true but there is no logic to check if there is also a phone number. But in
+the part where it checks if there is a phone number and no grade, it sees there is no grade and
+correctly returns false. So the part that checks if it has a phone number is probably the last part
+in a block of if statements and they just returned true if the previous logic (has grade) is true.
+TEST​ ​(Students,​ ​removeList)
+- Segmentation fault caused by passing in empty vector.
+Our best guess as to what is causing this behavior is that the method in Students does
+not know how to properly handle the empty vector as input. If I had to guess, I would say that it
+tries to access slots in memory that it think the vector has, but then a segmentation fault occurs
+because there is nothing there.
+- When more than 5 users are added and then removed by calling removeList, it does not
+remove them properly
+-When I added 20 users calling removeList removed only 4.
+-when I add 51-100 removeList removes 10.
+-when I add 50 removiesLIst removes 5.
+-when I added 2000 names removeList removes 10.
+TEST​ ​(Students,​ ​numberOfNames)
+- Results skewed by the phoneForName method
+For every time the phoneForName method is called given a non-exsistent name, a new
+user is added when it shouldn’t be added. This causes the numberOfNames count to go up
+wrongly, resulting in an off count of the numberOfNames in the Students map.
+Problem​ ​solving​ ​and​ ​organization:
+Dustin​ ​shiozaki​ ​-​ ​ ​worked on .travis.yml. submitted initial makefile. Worked on initial and later
+tests. Found and documented errors in the following methods: phoneforname, numberofnames,
+removeList,​ ​ ​fullRecord,​ ​ ​addPhoneNumbers.​ ​ ​Formulated hypothesis as to why
+fullRecord is malfunctioning. Did additional stress testing on removeList and
+documented the cases with the different numbers of names. I also created the main
+function and made it return 0 so that travis would build. I added the test variable to the
+makefile and also added the ?= to allow the variable to be overridden.
