@@ -1,3 +1,5 @@
+## A1: C++ Starter
+
 ![alt text](https://raw.githubusercontent.com/wlsystems/ds3500/A1/fox.png)
 Computer science is a wonderful tool for studying the world. Using computers, we can examine processes and phenomena that are difficult to study experimentally or through pure theory.
 
