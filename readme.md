@@ -96,7 +96,7 @@ Second, do not worry too much about what libharu is doing. Much of your code wil
 Finally, do not get hung up on the spiral code. You can make a spiral by making the radius bigger as you go around in a circle. Many of you will make logarithmic spirals, some of you may try an Archimedean spiral. The difficulty is that a constant change in angle results in close-spaced letters in the center of the spiral and far-spaced further out. You need to work to make the letters roughly evenly spaced, at least for a spiral that fits on a page. The further out you go, the smaller the angle between letters needs to be.
 
 Here are some examples. This first one looks nice. It would get full credit for the spiral and is better than needed.
- ![alt text](https://raw.githubusercontent.com/wlsystems/ds3500/A1/spiral.png)
+ ![alt text](https://raw.githubusercontent.com/wlsystems/ds3500/A2/spiral.png)
 
 
 Here is one with some problems. The inner part is obviously overlapping and the outer part has too much space between characters. To be honest, if this person has just expanded the spiral faster and started at a bigger inner radius, those edge cases wouldn't have come into play and just the pretty good middle part would be visible.
