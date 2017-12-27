@@ -1,1 +1,1 @@
-![alt text](https://raw.githubusercontent.com/username/projectname/branch/path/to/img.png)
+![alt text](https://raw.githubusercontent.com/wlsystems/ds3500/A1/Screen Shot 2016-08-25 at 9.56.17 AM.png)
