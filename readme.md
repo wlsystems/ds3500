@@ -1,5 +1,5 @@
 ## A7: Sprite Editor Implementation
-
+## This is a short demo video of our finished project:
 <div align="center">
   <a href="https://www.youtube.com/watch?v=IMjw2c7UWjU"><img src="https://img.youtube.com/vi/IMjw2c7UWjU/0.jpg" alt="IMAGE ALT TEXT"></a>
 </div>
