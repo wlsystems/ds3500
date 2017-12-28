@@ -53,7 +53,7 @@ Add to the document how you and your partner split up the work. If you worked to
 Both partners should submit the Testing.pdf.
 Previous Next
 
-Dustin Shiozaki
+# Submission
 https://github.com/University-of-Utah-CS3505/cs3505-f17-a4-googletest-wlsystems.git
 TEST​ ​(Students,​ ​addPhoneNumbers)
 - If the name is in the records but has no phone the method returns 111-111-1111
