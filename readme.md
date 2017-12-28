@@ -1,7 +1,9 @@
 
 # A5: A Simon Game
-[Watch Demo on Youtube](https://youtu.be/3cncl2jl2I0)
-
+## This is a short demo video of our finished project:
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=3cncl2jl2I0"><img src="https://img.youtube.com/vi/3cncl2jl2I0/0.jpg" alt="IMAGE ALT TEXT"></a>
+</div>
 
 Pairs
 You should do this assignment in pairs. One partner should accept the repo invitation at
