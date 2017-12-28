@@ -1,0 +1,29 @@
+language: cpp
+compiler: gcc
+sudo: false
+addons:
+  apt: 
+   sources: 
+      - ubuntu-toolchain-r-test
+   packages:
+      - libgtest-dev
+
+
+before_script:
+    - uname -a
+    - printenv
+
+
+install: 
+    # Install gtest without sudo 
+    - mkdir ~/gtest && cd ~/gtest
+    - export LIBRARY_PATH=$(pwd)
+    - cp -r /usr/src/gtest/* ./
+    - cmake -D CMAKE_INSTALL_PREFIX:PATH=./ ./
+    - make
+    - cd -
+
+script:
+    - make
+    - make students_tests
+    - ./students_tests

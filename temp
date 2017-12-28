@@ -1,0 +1,116 @@
+#include "Students.h"
+#include "gtest/gtest.h"
+#include <iostream>
+using namespace std;
+#include <exception>
+using namespace std;
+
+Students s;
+std::string bob = "bob";
+std::string joe = "joe";
+std::string jack = "jack";
+std::string john = "john";
+std::string empty = ""; //edge case
+unsigned int id1 = 1;
+unsigned int id2 = 2;
+unsigned int id3 = 3;
+unsigned int id4 = 4;
+unsigned int id5 = 5;
+
+int main (int argc, char** argv){
+	s.addUser(bob, id1);
+	s.addUser(joe, id2);
+	s.addUser(jack, id3);
+	s.addUser(john, id4);
+	s.addUser(empty, id5);
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
+	return 0;
+}
+
+// Create students in the students object
+
+
+TEST (Students, addUser) {
+	// Assert that each ID matches the corresponding student it was added to
+	EXPECT_EQ(id1, s.idForName(bob));
+	EXPECT_EQ(id2, s.idForName(joe));
+	EXPECT_EQ(id3, s.idForName(jack));
+	EXPECT_EQ(id4, s.idForName(john));
+	EXPECT_EQ(id5, s.idForName(empty)); //edge case
+}
+
+TEST (Students, addPhoneNumbers) { 
+		// Add a couple phone numbers
+	std::string num1;
+	std::string num2;
+
+	num1 = "111-222-3333";
+	num2 = "444-555-6666";
+
+	// Add the phone numbers to a student
+	s.addPhoneNumbers(id1, num1);
+	s.addPhoneNumbers(id2, num2);
+
+	// Assert that each phone number matches the corresponding student it was added to
+	EXPECT_EQ("111-222-3333", s.phoneForName("bob"));
+	EXPECT_EQ("444-555-6666", s.phoneForName("joe"));
+
+	// Add phone number to a student id that does not exist. (Students.h doesn't specifically say what should happen here)
+	//try
+	//{
+	////	s.addPhoneNumbers(111, num2);
+	//	FAIL();
+	//}
+	//catch(exception& e){
+	//	std::cout<<"e"<<endl;
+	//}
+}
+
+TEST (Students, addGrade) { 
+	
+
+}
+
+TEST (Students, idForName) { 
+
+	
+	
+}
+
+TEST (Students, gradeForName) { 
+
+	
+}
+
+TEST (Students, phoneForName) { 
+	
+
+}
+
+TEST (Students, nameExists) { 
+
+}	
+
+
+TEST (Students, fullRecord) { 
+	
+	// Create a couple students with all variables set
+	// Create a couple students with half of the variables set
+	// Create a couple students with none of the variables set
+
+	// Assert the full record returns true on students with all variables set
+	// Assert the full record returns false on students with half of variables set
+	// Assert the full record returns false on students with none of variables set
+}
+
+TEST (Students, numberOfNames) { 
+	
+	// Clear out Students Map
+	// Assert number of names is 0
+	// Add some names to the map
+	// Assert the number of names that should be in the map
+	// Remove some of the names
+	// Assert the number of names that should be in the map
+
+}
